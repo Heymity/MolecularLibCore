@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0022: Usar o corpo do bloco para métodos
+csharp_style_expression_bodied_methods = when_on_single_line
