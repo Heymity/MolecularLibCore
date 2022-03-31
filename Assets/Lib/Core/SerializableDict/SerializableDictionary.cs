@@ -38,20 +38,16 @@ namespace Molecular
         {
             keys ??= new List<TKey>();
             values ??= new List<TValue>();
-            
-            if (keys.Count == Keys.Count && values.Count == Keys.Count)
+
+            if (keys.Count != Keys.Count || values.Count != Keys.Count) return;
+            for (var i = 0; i < keys.Count; i++)
             {
-                for (var i = 0; i < keys.Count; i++)
-                {
-                    if (Equals(keys[i], Keys.ElementAt(i)) && Equals(values[i], Values.ElementAt(i))) continue;
+                if (Equals(keys[i], Keys.ElementAt(i)) && Equals(values[i], Values.ElementAt(i))) continue;
                     
-                    keys = Keys.ToList();
-                    values = Values.ToList();
-                    break;
-                }
+                keys = Keys.ToList();
+                values = Values.ToList();
+                break;
             }
-            
-            base.Clear();
         }
         
         public void OnAfterDeserialize()
@@ -65,6 +61,11 @@ namespace Molecular
             }
             for (var i = 0; i < keys.Count; i++)
             {
+                if (ContainsKey(keys[i]))
+                {
+                    Debug.LogWarning("The item with key " + keys[i] + " already exists, please change the key");
+                    continue;
+                }
                 base.Add(keys[i], values[i]);
             }
         }

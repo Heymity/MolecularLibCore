@@ -100,11 +100,10 @@ namespace MolecularEditor
             EditorGUI.PropertyField(keyRect, keyProp, GUIContent.none);
             EditorGUI.PropertyField(valueRect, valueProp, GUIContent.none);
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                Undo.RecordObject(keyProp.serializedObject.targetObject, "Dictionary Changed");
-                EditorUtility.SetDirty(keyProp.serializedObject.targetObject);
-            }
+            if (!EditorGUI.EndChangeCheck()) return;
+            
+            Undo.RecordObject(keyProp.serializedObject.targetObject, "Dictionary Changed");
+            EditorUtility.SetDirty(keyProp.serializedObject.targetObject);
         }
 
         private void DrawFooter(Rect position, SerializedProperty keysProp, SerializedProperty valuesProp)
@@ -122,7 +121,6 @@ namespace MolecularEditor
             {
                 keysProp.arraySize++;
                 valuesProp.arraySize++;
-
             }
             if (GUI.Button(removeBtnRect, EditorGUIUtility.TrIconContent("Toolbar Minus", "Remove selection from the list"), "RL FooterButton") && _selectedIndex >= 0)
             {
