@@ -7,7 +7,7 @@ namespace MolecularLib.Testing
 {
     public class Tests : MonoBehaviour
     {
-        [SerializeField] private Tag tagTest;
+        /*[SerializeField] private Tag tagTest;
 
         [SerializeField] private Range<double> doubleRange;
         [SerializeField] private Range<float> genericFloatRange;
@@ -17,7 +17,7 @@ namespace MolecularLib.Testing
         [SerializeField] private RangeVector3 vec3Range;
 
         [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
-
+*/
         [SerializeField] private TestArgInstantiable prefab;
 
         [SerializeField] private SerializableDictionary<string, int> stringToInt;

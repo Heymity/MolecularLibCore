@@ -12,6 +12,9 @@ namespace Molecular
 
         public void OnBeforeSerialize()
         {
+            keys ??= new List<TKey>();
+            values ??= new List<TValue>();
+            
             if (keys.Count == Keys.Count && values.Count == Keys.Count)
             {
                 for (var i = 0; i < keys.Count; i++)
@@ -23,6 +26,7 @@ namespace Molecular
                     break;
                 }
             }
+            
             Clear();
         }
 

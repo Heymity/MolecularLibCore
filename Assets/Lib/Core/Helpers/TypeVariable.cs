@@ -10,9 +10,9 @@ namespace MolecularLib
         [SerializeField] private string typeName;
         [SerializeField] private string assemblyName;
 
-        private Type type;
+        private Type _type;
 
-        public Type Type { get => type; set => type = value; }
+        public Type Type { get => _type; set => _type = value; }
 
         public void OnAfterDeserialize()
         {
