@@ -28,6 +28,7 @@ namespace MolecularLib.Testing
         [SerializeField] private SerializableDictionary<TestStruct, string> myStructsOpposite;
         [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
         public TestStruct h;
+        public List<string> gh;
         [ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()
         {

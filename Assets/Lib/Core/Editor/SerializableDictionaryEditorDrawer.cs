@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Molecular;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace MolecularEditor
@@ -21,9 +22,9 @@ namespace MolecularEditor
                                                   System.Reflection.BindingFlags.Public |
                                                   System.Reflection.BindingFlags.NonPublic |
                                                   System.Reflection.BindingFlags.DeclaredOnly;
-        
+       
         private int _selectedIndex = -1;
-        private float _cumulativeHeight = 0;
+        private float _cumulativeHeight;
         private bool _dontCheckForNewSelection;
         
         private IDictionary _dictionary;
@@ -101,7 +102,7 @@ namespace MolecularEditor
             var dictKeys = _dictionary.Keys.Cast<object>().ToList();
 
             _cumulativeHeight = 0f;
-            const float handleWidth = 20f;
+            const float handleWidth = 0; //= 10f;
             for (var i = 0; i < keysProp.arraySize; i++)
             {
                 var keyProp = keysProp.GetArrayElementAtIndex(i);
@@ -114,9 +115,9 @@ namespace MolecularEditor
                 var elementHeight = maxHeight <= ElementHeight ? ElementHeight : maxHeight;
                 var elementAreaRect = new Rect(boxRect.x + 1, boxRect.y + _cumulativeHeight, boxRect.width - 2, elementHeight);
                 var elementRect = new Rect(
-                    elementAreaRect.x + Padding + handleWidth, 
+                    elementAreaRect.x + 2 * Padding + handleWidth, 
                     elementAreaRect.y, 
-                    elementAreaRect.width - (2 * Padding) - handleWidth, 
+                    elementAreaRect.width - (3 * Padding) - handleWidth, 
                     elementAreaRect.height);
 
                 _cumulativeHeight += elementHeight;
@@ -125,6 +126,10 @@ namespace MolecularEditor
                 var style = _selectedIndex == i ? "selectionRect" : i % 2 == 0 ? "CN EntryBackEven" : "CN EntryBackOdd"; 
                 if (Event.current.type == EventType.Repaint) ((GUIStyle)style).Draw(elementAreaRect, false, false, false, false);
 
+                //var dragHandleStyle = (GUIStyle)"RL DragHandle";
+                //var dragHandleRect = new Rect(elementAreaRect.x + Padding, elementAreaRect.y + elementAreaRect.height / 2 - dragHandleStyle.fixedHeight / 2.5f, handleWidth, elementAreaRect.height);
+                //if (Event.current.type == EventType.Repaint) dragHandleStyle.Draw(dragHandleRect, false, false, false, false);
+                
                 var isDuplicate = false;
                 
                 if (i >= dictKeys.Count) isDuplicate = true;
@@ -149,7 +154,6 @@ namespace MolecularEditor
             
             if (duplicatedKey)
             {
-                //d_Invalid@2x
                 var duplicatedKeyRect = keyRect;
                 duplicatedKeyRect.width = 18;
                 
@@ -165,7 +169,7 @@ namespace MolecularEditor
             if (keyProp.isExpanded) EditorGUIUtility.labelWidth = originalLabelWidth / 2;
             EditorGUI.PropertyField(keyRect, keyProp, new GUIContent($"Key {index}"), true);
             
-            if (!valueProp.isExpanded) EditorGUIUtility.labelWidth = 50;
+            if (!valueProp.isExpanded) EditorGUIUtility.labelWidth = 55;
             else EditorGUIUtility.labelWidth = originalLabelWidth / 2;
             EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"Value {index}"), true);
             
@@ -182,7 +186,7 @@ namespace MolecularEditor
             const int footerSize = 60;
             var footerStyle = (GUIStyle) "RL Footer";
             
-            var footerRect = new Rect(position.width - footerSize, position.y + position.height, footerSize, FooterHeight);
+            var footerRect = new Rect(position.width - footerSize + Padding, position.y + position.height, footerSize, FooterHeight);
             GUI.Box(footerRect, GUIContent.none, footerStyle);
 
             var btnsRect = new Rect(footerRect.x + 5, footerRect.y, footerRect.width - 10, footerRect.height);

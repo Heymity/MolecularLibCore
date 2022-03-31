@@ -123,17 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &208706777 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 144877854337345029, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-  m_PrefabInstance: {fileID: 144877854337345027}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b956684d322427daf0a847bcefb6825, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &315966460
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,11 +367,42 @@ MonoBehaviour:
     values:
     - {r: 0, g: 0, b: 0, a: 0}
     - {r: 0, g: 0, b: 0, a: 0}
-  argsInstantiables:
+  myStructs:
     keys:
-    - First
+    - 
+    - B
+    - C
+    - D
     values:
-    - {fileID: 208706777}
+    - MyInt: 0
+      MyBool: 0
+    - MyInt: 0
+      MyBool: 0
+    - MyInt: 0
+      MyBool: 0
+    - MyInt: 0
+      MyBool: 0
+  myStructsOpposite:
+    keys:
+    - MyInt: 0
+      MyBool: 0
+    values:
+    - 
+  myStructsBoth:
+    keys:
+    - MyInt: 0
+      MyBool: 0
+    values:
+    - MyInt: 0
+      MyBool: 0
+  h:
+    MyInt: 0
+    MyBool: 0
+  gh:
+  - 
+  - 
+  - 
+  - 
 --- !u!1001 &144877854337345027
 PrefabInstance:
   m_ObjectHideFlags: 0
