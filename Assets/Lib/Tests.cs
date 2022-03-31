@@ -7,6 +7,7 @@ namespace MolecularLib.Testing
 {
     public class Tests : MonoBehaviour
     {
+        //TODO somewhere in the editor (including OnBefore and After (De)Serialize) code of these vars there is a HUGE performance hog.
         /*[SerializeField] private Tag tagTest;
 
         [SerializeField] private Range<double> doubleRange;

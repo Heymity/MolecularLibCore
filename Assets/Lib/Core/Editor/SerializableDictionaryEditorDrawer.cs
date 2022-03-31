@@ -45,13 +45,13 @@ namespace MolecularEditor
             rectBox.height = position.height - rectBox.height - 25;
             GUI.Box(rectBox, GUIContent.none, bgStyle);
             
-            
+            const float handleWidth = 20f;
             for (var i = 0; i < keysProp.arraySize; i++)
             {
                 var keyProp = keysProp.GetArrayElementAtIndex(i);
                 var valueProp = valuesProp.GetArrayElementAtIndex(i);
                 //EditorGUI.GetPropertyHeight(keyProp);
-                var elementRect = new Rect(rectBox.x + Padding, rectBox.y + (i * 20) + 2, rectBox.width - (2 * Padding), 22);
+                var elementRect = new Rect(rectBox.x + Padding + handleWidth, rectBox.y + (i * 20) + 2, rectBox.width - (2 * Padding) - handleWidth, 22);
                 DrawDictionaryElement(elementRect, keyProp, valueProp);
             }
             
@@ -63,7 +63,7 @@ namespace MolecularEditor
             const int footerSize = 60;
             var footerStyle = (GUIStyle) "RL Footer";
             
-            var footerRect = new Rect(position.width - footerSize - 25, position.y + position.height, footerSize, footerStyle.fixedHeight);
+            var footerRect = new Rect(position.width - footerSize, position.y + position.height, footerSize, footerStyle.fixedHeight);
             GUI.Box(footerRect, GUIContent.none, footerStyle);
 
             var btnsRect = new Rect(footerRect.x + 5, footerRect.y, footerRect.width - 10, footerRect.height);

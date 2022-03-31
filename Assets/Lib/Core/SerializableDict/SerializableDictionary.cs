@@ -34,7 +34,12 @@ namespace Molecular
         {
             Clear();
 
-            if (keys.Count != values.Count) return;
+            Debug.Log($"AfterDeserialize {keys.Count} {values.Count}");
+            if (keys.Count != values.Count)
+            {
+                Debug.LogWarning("The key and value array sizes are not the same");
+                return;
+            }
             for (var i = 0; i < keys.Count; i++)
             {
                 Add(keys[i], values[i]);

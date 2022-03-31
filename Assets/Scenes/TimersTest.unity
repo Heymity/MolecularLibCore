@@ -355,34 +355,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 674d1503a5156754d9c548d0b5dc8ac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tagTest:
-    tag: Untagged
-  doubleRange:
-    min: 0
-    max: 0
-  genericFloatRange:
-    min: -1.8
-    max: 0
-  floatRange:
-    min: 1.2786674
-    max: 21.563957
-    minValuePossible: -30.6345
-    maxValuePossible: 24.34634
-  intRange:
-    min: -23
-    max: 12
-    minValuePossible: -30
-    maxValuePossible: 20
-  vec2Range:
-    minVector2SaveData: {x: -29.08, y: 0}
-    maxVector2SaveData: {x: 26.52, y: 0}
-  vec3Range:
-    minVector3SaveData: {x: 0, y: 0, z: 0}
-    maxVector3SaveData: {x: 0, y: 0, z: 0}
-  type:
-    typeName: UnityEngine.UI.Graphic
-    assemblyName: UnityEngine.UI
-  prefab: {fileID: 144877854337345029, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
+  prefab: {fileID: 0}
+  stringToInt:
+    keys:
+    - Hello
+    - World
+    - How you doing
+    - Good moarning
+    - sad
+    - happy
+    - Ayy
+    - hey
+    - sthf
+    - hjljhk
+    values: 92a40600536b00004c7e010002000000ffffff7f22490700034b0a00034b0a00034b0a00034b0a00
 --- !u!1001 &144877854337345027
 PrefabInstance:
   m_ObjectHideFlags: 0
