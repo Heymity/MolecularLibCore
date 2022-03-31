@@ -358,17 +358,9 @@ MonoBehaviour:
   prefab: {fileID: 0}
   stringToInt:
     keys:
-    - Hello
-    - World
-    - How you doing
-    - Good moarning
-    - sad
-    - happy
-    - Ayy
-    - hey
-    - sthf
-    - fdgf
-    values: 92a40600536b00004c7e010002000000ffffff7f22490700034b0a00300000006000000006000000
+    - fgfghsdf
+    - 
+    values: 0000000000000000
 --- !u!1001 &144877854337345027
 PrefabInstance:
   m_ObjectHideFlags: 0

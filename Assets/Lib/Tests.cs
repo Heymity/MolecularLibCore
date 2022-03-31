@@ -22,6 +22,7 @@ namespace MolecularLib.Testing
         [SerializeField] private TestArgInstantiable prefab;
 
         [SerializeField] private SerializableDictionary<string, int> stringToInt;
+        [SerializeField] private SerializableDictionary<HideFlags, Color> flagsToColor;
 
         [ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()

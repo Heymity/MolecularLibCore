@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using Molecular;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace MolecularEditor
@@ -15,7 +13,8 @@ namespace MolecularEditor
         private const float NoElementHeight = 25f;
         private const float ElementHeight = 22f;
         
-        private static int _selectedIndex = -1;
+        private int _selectedIndex = -1;
+        private bool _dontCheckForNewSelection;
         
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
@@ -27,13 +26,19 @@ namespace MolecularEditor
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            EditorGUI.BeginProperty(position, label, property);
+            
+            _dontCheckForNewSelection = false;
+            
             var keysProp = property.FindPropertyRelative("keys");
             var valuesProp = property.FindPropertyRelative("values");
 
-            DrawDictionary(position, keysProp, valuesProp);
+            DrawDictionary(position, keysProp, valuesProp, label);
+
+            EditorGUI.EndChangeCheck();
         }
 
-        private void DrawDictionary(Rect position, SerializedProperty keysProp, SerializedProperty valuesProp)
+        private void DrawDictionary(Rect position, SerializedProperty keysProp, SerializedProperty valuesProp, GUIContent label)
         {
             // Draw header
             var headerStyle = (GUIStyle)"RL Header";
@@ -44,7 +49,7 @@ namespace MolecularEditor
 
             var headerTextRect = rectBox;
             headerTextRect.x += 5;
-            EditorGUI.LabelField(headerTextRect, "Dictionary");
+            EditorGUI.LabelField(headerTextRect, label);
             
             // Draw background
             var bgStyle = (GUIStyle)"RL Background";
@@ -68,11 +73,38 @@ namespace MolecularEditor
                 var keyProp = keysProp.GetArrayElementAtIndex(i);
                 var valueProp = valuesProp.GetArrayElementAtIndex(i);
                 //EditorGUI.GetPropertyHeight(keyProp);
-                var elementRect = new Rect(rectBox.x + Padding + handleWidth, rectBox.y + (i * ElementHeight) + 2, rectBox.width - (2 * Padding) - handleWidth, ElementHeight);
+                var elementAreaRect = new Rect(rectBox.x + 1, rectBox.y + (i * ElementHeight), rectBox.width - 2, ElementHeight);
+                var elementRect = new Rect(
+                    elementAreaRect.x + Padding + handleWidth, 
+                    elementAreaRect.y, 
+                    elementAreaRect.width - (2 * Padding) - handleWidth, 
+                    elementAreaRect.height);
+
+                HandleSelection(elementAreaRect, i, keyProp);
+                if (_selectedIndex == i && Event.current.type == EventType.Repaint) ((GUIStyle)"selectionRect").Draw(elementAreaRect, false, false, false, false);
+                
                 DrawDictionaryElement(elementRect, keyProp, valueProp);
             }
             
             DrawFooter(rectBox, keysProp, valuesProp);
+        }
+
+        private void DrawDictionaryElement(Rect position, SerializedProperty keyProp, SerializedProperty valueProp)
+        {
+            EditorGUI.BeginChangeCheck();
+
+            var keyRect = new Rect(position.x, position.y + 2, position.width * 0.5f - Padding, position.height - 4);
+            var valueRect = new Rect(position.x + position.width * 0.5f + Padding,
+                position.y + (position.height - 18) / 2, position.width * 0.5f - Padding, 18);
+
+            EditorGUI.PropertyField(keyRect, keyProp, GUIContent.none);
+            EditorGUI.PropertyField(valueRect, valueProp, GUIContent.none);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(keyProp.serializedObject.targetObject, "Dictionary Changed");
+                EditorUtility.SetDirty(keyProp.serializedObject.targetObject);
+            }
         }
 
         private void DrawFooter(Rect position, SerializedProperty keysProp, SerializedProperty valuesProp)
@@ -99,14 +131,16 @@ namespace MolecularEditor
                 _selectedIndex = -1;
             }
         }
-
-        private void DrawDictionaryElement(Rect position, SerializedProperty keyProp, SerializedProperty valueProp)
+        
+        private void HandleSelection(Rect area, int currentIndex, SerializedProperty property)
         {
-            var keyRect = new Rect(position.x, position.y, position.width * 0.5f - Padding, 18);
-            var valueRect = new Rect(position.x + position.width * 0.5f + Padding, position.y, position.width * 0.5f - Padding, 18);
-
-            EditorGUI.PropertyField(keyRect, keyProp, GUIContent.none);
-            EditorGUI.PropertyField(valueRect, valueProp, GUIContent.none);
+            if (_dontCheckForNewSelection || Event.current.type != EventType.MouseDown) return;
+            if (!area.Contains(Event.current.mousePosition))
+                return;
+            
+            _selectedIndex = currentIndex; //<--- This (setting it to some value) is causing the bug
+            _dontCheckForNewSelection = true;
+            EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
     }
 }

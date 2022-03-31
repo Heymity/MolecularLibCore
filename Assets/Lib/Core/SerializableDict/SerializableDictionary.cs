@@ -10,26 +10,6 @@ namespace Molecular
         [SerializeField] private List<TKey> keys;
         [SerializeField] private List<TValue> values;
 
-        public void OnBeforeSerialize()
-        {
-            keys ??= new List<TKey>();
-            values ??= new List<TValue>();
-            
-            if (keys.Count == Keys.Count && values.Count == Keys.Count)
-            {
-                for (var i = 0; i < keys.Count; i++)
-                {
-                    if (Equals(keys[i], Keys.ElementAt(i)) && Equals(values[i], Values.ElementAt(i))) continue;
-                    
-                    keys = Keys.ToList();
-                    values = Values.ToList();
-                    break;
-                }
-            }
-            
-            base.Clear();
-        }
-        
         public new void Add(TKey key, TValue value)
         {
             base.Add(key, value);
@@ -52,6 +32,26 @@ namespace Molecular
             
             keys.Clear();
             values.Clear();
+        }
+        
+        public void OnBeforeSerialize()
+        {
+            keys ??= new List<TKey>();
+            values ??= new List<TValue>();
+            
+            if (keys.Count == Keys.Count && values.Count == Keys.Count)
+            {
+                for (var i = 0; i < keys.Count; i++)
+                {
+                    if (Equals(keys[i], Keys.ElementAt(i)) && Equals(values[i], Values.ElementAt(i))) continue;
+                    
+                    keys = Keys.ToList();
+                    values = Values.ToList();
+                    break;
+                }
+            }
+            
+            base.Clear();
         }
         
         public void OnAfterDeserialize()
