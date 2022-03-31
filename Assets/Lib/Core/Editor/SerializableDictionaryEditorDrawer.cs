@@ -11,7 +11,7 @@ namespace MolecularEditor
     [CustomPropertyDrawer(typeof(SerializableDictionary<,>))]
     public class SerializableDictionaryEditorDrawer : PropertyDrawer
     {
-        private const float Padding = 5f;
+        private const float Padding = 6f;
         private const float HeaderHeight = 25f;
         private const float FooterHeight = 20f;
         private const float NoElementHeight = 25f;
@@ -23,6 +23,7 @@ namespace MolecularEditor
                                                   System.Reflection.BindingFlags.DeclaredOnly;
         
         private int _selectedIndex = -1;
+        private float _cumulativeHeight = 0;
         private bool _dontCheckForNewSelection;
         
         private IDictionary _dictionary;
@@ -33,7 +34,7 @@ namespace MolecularEditor
             if (!property.isExpanded) return HeaderHeight;
             
             var arraySize = property.FindPropertyRelative("keys").arraySize;
-            var height = HeaderHeight + arraySize * (EditorGUIUtility.singleLineHeight + Padding) + FooterHeight;
+            var height = HeaderHeight + _cumulativeHeight + FooterHeight;
             if (arraySize == 0) height += NoElementHeight;
             return height;
         }
@@ -57,7 +58,7 @@ namespace MolecularEditor
             EditorGUI.EndChangeCheck();
         }
 
-        private Rect DrawBox(Rect position, GUIContent label, bool hasElements, SerializedProperty property)
+        private static Rect DrawBox(Rect position, GUIContent label, bool hasElements, SerializedProperty property)
         {
             // Draw header
             var headerStyle = (GUIStyle)"RL Header";
@@ -93,53 +94,36 @@ namespace MolecularEditor
         
         private void DrawDictionary(Rect boxRect, SerializedProperty keysProp, SerializedProperty valuesProp, GUIContent label)
         {
-            /*// Draw header
-            var headerStyle = (GUIStyle)"RL Header";
-            headerStyle.fixedHeight = 0;
-
-            var rectBox = new Rect(position.x, position.y, position.width, HeaderHeight);
-            GUI.Box(rectBox, GUIContent.none, headerStyle);
-
-            var headerTextRect = rectBox;
-            headerTextRect.x += 5;
-            EditorGUI.LabelField(headerTextRect, label);
-            
-            // Draw background
-            var bgStyle = (GUIStyle)"RL Background";
-  
-            rectBox.y += rectBox.height;
-            rectBox.height = position.height - rectBox.height - FooterHeight;
-            if (keysProp.arraySize == 0) rectBox.height = NoElementHeight;
-            
-            GUI.Box(rectBox, GUIContent.none, bgStyle);
-            if (keysProp.arraySize == 0)
-            {
-                var noElementRect = rectBox;
-                noElementRect.x += Padding;
-                EditorGUI.LabelField(noElementRect, "No elements");
-            }
-            */
             // Draw elements
             _usedKeys ??= new List<object>();
             _usedKeys.Clear();
             
             var dictKeys = _dictionary.Keys.Cast<object>().ToList();
-            
+
+            _cumulativeHeight = 0f;
             const float handleWidth = 20f;
             for (var i = 0; i < keysProp.arraySize; i++)
             {
                 var keyProp = keysProp.GetArrayElementAtIndex(i);
                 var valueProp = valuesProp.GetArrayElementAtIndex(i);
                 //EditorGUI.GetPropertyHeight(keyProp);
-                var elementAreaRect = new Rect(boxRect.x + 1, boxRect.y + (i * ElementHeight), boxRect.width - 2, ElementHeight);
+                var keyHeight = EditorGUI.GetPropertyHeight(keyProp);
+                var valueHeight = EditorGUI.GetPropertyHeight(valueProp);
+                var maxHeight = Mathf.Max(keyHeight, valueHeight);
+
+                var elementHeight = maxHeight <= ElementHeight ? ElementHeight : maxHeight;
+                var elementAreaRect = new Rect(boxRect.x + 1, boxRect.y + _cumulativeHeight, boxRect.width - 2, elementHeight);
                 var elementRect = new Rect(
                     elementAreaRect.x + Padding + handleWidth, 
                     elementAreaRect.y, 
                     elementAreaRect.width - (2 * Padding) - handleWidth, 
                     elementAreaRect.height);
 
+                _cumulativeHeight += elementHeight;
+                
                 HandleSelection(elementAreaRect, i, keyProp);
-                if (_selectedIndex == i && Event.current.type == EventType.Repaint) ((GUIStyle)"selectionRect").Draw(elementAreaRect, false, false, false, false);
+                var style = _selectedIndex == i ? "selectionRect" : i % 2 == 0 ? "CN EntryBackEven" : "CN EntryBackOdd"; 
+                if (Event.current.type == EventType.Repaint) ((GUIStyle)style).Draw(elementAreaRect, false, false, false, false);
 
                 var isDuplicate = false;
                 
@@ -147,19 +131,21 @@ namespace MolecularEditor
                 else if (_usedKeys.Contains(dictKeys.ElementAt(i))) isDuplicate = true;
                 else _usedKeys.Add(dictKeys.ElementAt(i));
 
-                DrawDictionaryElement(elementRect, keyProp, valueProp, isDuplicate);
+                DrawDictionaryElement(elementRect, keyProp, valueProp, isDuplicate, i);
             }
+
+            _cumulativeHeight += 5f;
             
             DrawFooter(boxRect, keysProp, valuesProp);
         }
 
-        private static void DrawDictionaryElement(Rect position, SerializedProperty keyProp, SerializedProperty valueProp, bool duplicatedKey)
+        private static void DrawDictionaryElement(Rect position, SerializedProperty keyProp, SerializedProperty valueProp, bool duplicatedKey, int index)
         {
             EditorGUI.BeginChangeCheck();
 
-            var keyRect = new Rect(position.x, position.y + 2, position.width * 0.5f - Padding, position.height - 4);
+            var keyRect = new Rect(position.x, position.y + 2, position.width * 0.5f - Padding, ElementHeight - 4);
             var valueRect = new Rect(position.x + position.width * 0.5f + Padding,
-                position.y + (position.height - 18) / 2, position.width * 0.5f - Padding, 18);
+                position.y + 2, position.width * 0.5f - Padding, ElementHeight - 4);
             
             if (duplicatedKey)
             {
@@ -172,10 +158,19 @@ namespace MolecularEditor
                 EditorGUI.LabelField(duplicatedKeyRect, EditorGUIUtility.TrIconContent("d_Invalid@2x", "Duplicated key"));
             }
             else EditorGUI.LabelField(Rect.zero, "");
-            
-            EditorGUI.PropertyField(keyRect, keyProp, GUIContent.none);
-            EditorGUI.PropertyField(valueRect, valueProp, GUIContent.none);
 
+            var originalLabelWidth = EditorGUIUtility.labelWidth;
+            
+            EditorGUIUtility.labelWidth = 50;
+            if (keyProp.isExpanded) EditorGUIUtility.labelWidth = originalLabelWidth / 2;
+            EditorGUI.PropertyField(keyRect, keyProp, new GUIContent($"Key {index}"), true);
+            
+            if (!valueProp.isExpanded) EditorGUIUtility.labelWidth = 50;
+            else EditorGUIUtility.labelWidth = originalLabelWidth / 2;
+            EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"Value {index}"), true);
+            
+            EditorGUIUtility.labelWidth = originalLabelWidth;
+            
             if (!EditorGUI.EndChangeCheck()) return;
             
             Undo.RecordObject(keyProp.serializedObject.targetObject, "Dictionary Changed");
@@ -217,7 +212,7 @@ namespace MolecularEditor
             EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
         
-        private IDictionary GetDictionary(SerializedProperty property)
+        private static IDictionary GetDictionary(SerializedProperty property)
         {
             var dictField = property.serializedObject.targetObject.GetType().GetField(property.propertyPath, BindingFlags);
             if (dictField is null) return null;

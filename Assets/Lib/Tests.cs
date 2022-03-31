@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Molecular;
 using UnityEngine;
@@ -23,8 +24,10 @@ namespace MolecularLib.Testing
 
         [SerializeField] private SerializableDictionary<string, int> stringToInt;
         [SerializeField] private SerializableDictionary<HideFlags, Color> flagsToColor;
-        [SerializeField] private SerializableDictionary<string, TestArgInstantiable> argsInstantiables;
-
+        [SerializeField] private SerializableDictionary<string, TestStruct> myStructs;
+        [SerializeField] private SerializableDictionary<TestStruct, string> myStructsOpposite;
+        [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
+        public TestStruct h;
         [ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()
         {
@@ -43,5 +46,12 @@ namespace MolecularLib.Testing
             stringToInt.Add("Hello World", 234);
             stringToInt.Select(kvp => kvp.Key + ": " + kvp.Value).ToList().ForEach(Debug.Log);
         }
+    }
+
+    [Serializable]
+    public struct TestStruct
+    {
+        public int MyInt;
+        public bool MyBool;
     }
 }
