@@ -27,14 +27,37 @@ namespace Molecular
                 }
             }
             
-            Clear();
+            base.Clear();
+        }
+        
+        public new void Add(TKey key, TValue value)
+        {
+            base.Add(key, value);
+            
+            values.Add(value);
+            keys.Add(key);
+        }
+        
+        public new void Remove(TKey key)
+        {
+            base.Remove(key);
+            
+            values.RemoveAt(keys.IndexOf(key));
+            keys.Remove(key);
         }
 
+        public new void Clear() 
+        {
+            base.Clear();
+            
+            keys.Clear();
+            values.Clear();
+        }
+        
         public void OnAfterDeserialize()
         {
-            Clear();
+            base.Clear();
 
-            Debug.Log($"AfterDeserialize {keys.Count} {values.Count}");
             if (keys.Count != values.Count)
             {
                 Debug.LogWarning("The key and value array sizes are not the same");
@@ -42,7 +65,7 @@ namespace Molecular
             }
             for (var i = 0; i < keys.Count; i++)
             {
-                Add(keys[i], values[i]);
+                base.Add(keys[i], values[i]);
             }
         }
     }

@@ -11,12 +11,18 @@ namespace MolecularEditor
     {
         private const float Padding = 5f;
         private const float HeaderHeight = 25f;
+        private const float FooterHeight = 20f;
+        private const float NoElementHeight = 25f;
+        private const float ElementHeight = 22f;
         
         private static int _selectedIndex = -1;
         
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return (property.FindPropertyRelative("keys").arraySize * 22) + HeaderHeight + 20;
+            var arraySize = property.FindPropertyRelative("keys").arraySize;
+            var height = HeaderHeight + arraySize * (EditorGUIUtility.singleLineHeight + Padding) + FooterHeight;
+            if (arraySize == 0) height += NoElementHeight;
+            return height;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -29,29 +35,40 @@ namespace MolecularEditor
 
         private void DrawDictionary(Rect position, SerializedProperty keysProp, SerializedProperty valuesProp)
         {
-            var labelStyle = (GUIStyle)"RL Header";
-            labelStyle.fixedHeight = 0;
-            
+            // Draw header
+            var headerStyle = (GUIStyle)"RL Header";
+            headerStyle.fixedHeight = 0;
+
             var rectBox = new Rect(position.x, position.y, position.width, HeaderHeight);
-            GUI.Box(rectBox, GUIContent.none, labelStyle);
+            GUI.Box(rectBox, GUIContent.none, headerStyle);
 
             var headerTextRect = rectBox;
             headerTextRect.x += 5;
             EditorGUI.LabelField(headerTextRect, "Dictionary");
             
+            // Draw background
             var bgStyle = (GUIStyle)"RL Background";
   
             rectBox.y += rectBox.height;
-            rectBox.height = position.height - rectBox.height - 25;
-            GUI.Box(rectBox, GUIContent.none, bgStyle);
+            rectBox.height = position.height - rectBox.height - FooterHeight;
+            if (keysProp.arraySize == 0) rectBox.height = NoElementHeight;
             
+            GUI.Box(rectBox, GUIContent.none, bgStyle);
+            if (keysProp.arraySize == 0)
+            {
+                var noElementRect = rectBox;
+                noElementRect.x += Padding;
+                EditorGUI.LabelField(noElementRect, "No elements");
+            }
+            
+            // Draw elements
             const float handleWidth = 20f;
             for (var i = 0; i < keysProp.arraySize; i++)
             {
                 var keyProp = keysProp.GetArrayElementAtIndex(i);
                 var valueProp = valuesProp.GetArrayElementAtIndex(i);
                 //EditorGUI.GetPropertyHeight(keyProp);
-                var elementRect = new Rect(rectBox.x + Padding + handleWidth, rectBox.y + (i * 20) + 2, rectBox.width - (2 * Padding) - handleWidth, 22);
+                var elementRect = new Rect(rectBox.x + Padding + handleWidth, rectBox.y + (i * ElementHeight) + 2, rectBox.width - (2 * Padding) - handleWidth, ElementHeight);
                 DrawDictionaryElement(elementRect, keyProp, valueProp);
             }
             
@@ -63,7 +80,7 @@ namespace MolecularEditor
             const int footerSize = 60;
             var footerStyle = (GUIStyle) "RL Footer";
             
-            var footerRect = new Rect(position.width - footerSize, position.y + position.height, footerSize, footerStyle.fixedHeight);
+            var footerRect = new Rect(position.width - footerSize, position.y + position.height, footerSize, FooterHeight);
             GUI.Box(footerRect, GUIContent.none, footerStyle);
 
             var btnsRect = new Rect(footerRect.x + 5, footerRect.y, footerRect.width - 10, footerRect.height);
