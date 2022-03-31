@@ -123,6 +123,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &208706777 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 144877854337345029, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
+  m_PrefabInstance: {fileID: 144877854337345027}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b956684d322427daf0a847bcefb6825, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &315966460
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,17 +370,19 @@ MonoBehaviour:
   stringToInt:
     keys:
     - A
-    - C
     - D
-    - E
-    values: 59010000ba8500000200000004000000
+    - G
+    values: 590100000200000004000000
   flagsToColor:
-    keys: 0000000001000000ffffffff3d000000
+    keys: 00000000ffffffff
     values:
-    - {r: 0.27300116, g: 0.9245283, b: 0.25729796, a: 1}
-    - {r: 0.49094963, g: 0.27189392, b: 0.8867924, a: 1}
-    - {r: 0.25882357, g: 0.8517184, b: 0.9254902, a: 1}
-    - {r: 0.8396226, g: 0.5956891, b: 0.18614274, a: 1}
+    - {r: 0, g: 0, b: 0, a: 0}
+    - {r: 0, g: 0, b: 0, a: 0}
+  argsInstantiables:
+    keys:
+    - First
+    values:
+    - {fileID: 208706777}
 --- !u!1001 &144877854337345027
 PrefabInstance:
   m_ObjectHideFlags: 0

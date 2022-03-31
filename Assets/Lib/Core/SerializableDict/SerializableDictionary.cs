@@ -62,10 +62,8 @@ namespace Molecular
             for (var i = 0; i < keys.Count; i++)
             {
                 if (ContainsKey(keys[i]))
-                {
-                    Debug.LogWarning("The item with key " + keys[i] + " already exists, please change the key");
                     continue;
-                }
+                
                 base.Add(keys[i], values[i]);
             }
         }
