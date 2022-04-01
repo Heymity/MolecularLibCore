@@ -54,6 +54,9 @@ namespace Molecular
         {
             base.Clear();
 
+            keys ??= new List<TKey>();
+            values ??= new List<TValue>();
+            
             if (keys.Count != values.Count)
             {
                 Debug.LogWarning("The key and value array sizes are not the same");

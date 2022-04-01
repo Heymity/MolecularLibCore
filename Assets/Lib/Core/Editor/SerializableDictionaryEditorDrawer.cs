@@ -51,12 +51,19 @@ namespace MolecularEditor
             var keysProp = property.FindPropertyRelative("keys");
             var valuesProp = property.FindPropertyRelative("values");
 
+            if (keysProp is null || valuesProp is null)
+            {
+                EditorGUI.LabelField(position, $"{label.text} Error: Key or Value type isn't serializable; Use [HideInInspector] to hide this field");
+                EditorGUI.EndProperty();
+                return;
+            }
+
             var boxRect = DrawBox(position, label, keysProp.arraySize > 0, property);
             
             if (property.isExpanded)
                 DrawDictionary(boxRect, keysProp, valuesProp, label);
-
-            EditorGUI.EndChangeCheck();
+            
+            EditorGUI.EndProperty();
         }
 
         private static Rect DrawBox(Rect position, GUIContent label, bool hasElements, SerializedProperty property)

@@ -17,9 +17,9 @@ namespace MolecularLib.Testing
         [SerializeField, MinMaxRange(-30, 20)] private RangeInteger intRange;
         [SerializeField] private RangeVector2 vec2Range;
         [SerializeField] private RangeVector3 vec3Range;
-
-        [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
 */
+        [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
+
         [SerializeField] private TestArgInstantiable prefab;
 
         [SerializeField] private SerializableDictionary<string, int> stringToInt;
@@ -27,8 +27,7 @@ namespace MolecularLib.Testing
         [SerializeField] private SerializableDictionary<string, TestStruct> myStructs;
         [SerializeField] private SerializableDictionary<TestStruct, string> myStructsOpposite;
         [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
-        public TestStruct h;
-        public List<string> gh;
+
         [ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()
         {
@@ -43,7 +42,6 @@ namespace MolecularLib.Testing
 
         private void Start()
         {
-            Debug.Log(stringToInt.Count);
             stringToInt.Add("Hello World", 234);
             stringToInt.Select(kvp => kvp.Key + ": " + kvp.Value).ToList().ForEach(Debug.Log);
         }
@@ -51,6 +49,12 @@ namespace MolecularLib.Testing
 
     [Serializable]
     public struct TestStruct
+    {
+        public int MyInt;
+        public bool MyBool;
+    }
+    
+    public struct TestStruct2
     {
         public int MyInt;
         public bool MyBool;
