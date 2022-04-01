@@ -17,7 +17,20 @@ namespace MolecularLib
         public void OnAfterDeserialize()
         {
             if (string.IsNullOrEmpty(assemblyName) || string.IsNullOrEmpty(typeName)) return;
-            Type = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == assemblyName)?.GetType(typeName);
+#if UNITY_EDITOR
+            if (TypeLibrary.AllAssemblies == null || TypeLibrary.AllAssemblies.Count == 0)
+            {
+                TypeLibrary.BootstrapEditor();
+            }
+#endif
+            if (TypeLibrary.AllAssemblies != null && TypeLibrary.AllAssemblies.TryGetValue(assemblyName, out var assembly))
+            {
+                Type = assembly.GetType(typeName);
+                return;
+            }
+
+            assembly = TypeLibrary.AllAssemblies?.First().Value;
+            Type = assembly?.GetType(typeName);
         }
 
         public void OnBeforeSerialize()
@@ -30,13 +43,11 @@ namespace MolecularLib
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class TypeVariableBaseTypeAttribute : PropertyAttribute
     {
-        private readonly Type type;
-
         public TypeVariableBaseTypeAttribute(Type type)
         {
-            this.type = type;
+            Type = type;
         }
 
-        public Type Type => type;
+        public Type Type { get; }
     }
 }

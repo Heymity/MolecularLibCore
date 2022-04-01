@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace MolecularLib
@@ -10,6 +12,8 @@ namespace MolecularLib
 #if USE_TYPE_LIBRARY
         public static IEnumerable<Type> AllAssembliesTypes { get; private set; }
         public static IEnumerable<Type> AllNonUnityAssembliesTypes { get; private set; }
+        
+        public static IDictionary<string, Assembly> AllAssemblies { get; private set; }
 #else
         public static IEnumerable<Type> AllAssembliesTypes
         {
@@ -38,6 +42,11 @@ namespace MolecularLib
                 .Select(a => a.GetTypes())
                 .Aggregate(new List<Type>() as IEnumerable<Type>,(a, s) => a.Concat(s));
 
+            AllAssemblies = AllAssembliesTypes
+                .Select(t => new { t.Assembly, Name = t.Assembly.GetName().Name })
+                .Distinct()
+                .ToDictionary(a => a.Name, a => a.Assembly);
+            
             /*PlayerAssembliesTypes = CompilationPipeline
                 .GetAssemblies(AssembliesType.Player).Select(a => a.)
                 .Aggregate(new List<Type>() as IEnumerable<Type>,(a, s) => a.Concat(s));*/
@@ -52,5 +61,13 @@ namespace MolecularLib
             }
 #endif
         }
+        
+        #if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        public static void BootstrapEditor()
+        {
+            Bootstrap();
+        }
+        #endif
     }
 }

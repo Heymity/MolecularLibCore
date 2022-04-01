@@ -9,7 +9,7 @@ namespace MolecularLib.Testing
     public class Tests : MonoBehaviour
     {
         //TODO somewhere in the editor (including OnBefore and After (De)Serialize) code of these vars there is a HUGE performance hog.
-        /*[SerializeField] private Tag tagTest;
+        [SerializeField] private Tag tagTest;
 
         [SerializeField] private Range<double> doubleRange;
         [SerializeField] private Range<float> genericFloatRange;
@@ -17,7 +17,7 @@ namespace MolecularLib.Testing
         [SerializeField, MinMaxRange(-30, 20)] private RangeInteger intRange;
         [SerializeField] private RangeVector2 vec2Range;
         [SerializeField] private RangeVector3 vec3Range;
-*/
+
         [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
 
         [SerializeField] private TestArgInstantiable prefab;

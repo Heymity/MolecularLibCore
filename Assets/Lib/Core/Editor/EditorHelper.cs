@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using MolecularLib;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -208,7 +209,9 @@ namespace MolecularEditor
         {
             var types = GetTypesForPopup(baseType);
 
-            return DrawTypeField(rect, label, types, currentValue);
+            var r = DrawTypeField(rect, label, types, currentValue);
+            
+            return r;
         }
 
         public static Type TypeField(Rect rect, string label, Type currentValue, Assembly assembly)
@@ -231,20 +234,22 @@ namespace MolecularEditor
 
             return DrawTypeField(rect, label, types, currentValue);
         }
-
+        
         public static Type DrawTypeField(Rect rect, string label, List<Type> types, Type current)
         {
             var selected = types.FindIndex(t => t == current);
             if (selected <= 0) selected = 0;
 
+            if (CachedDisplayTypeNames is null || CachedDisplayTypeNames.Length == 0)
+                CachedDisplayTypeNames = types.Select(t => t.FullName?.Replace('.', '/')).ToArray();
+
             selected = EditorGUI.Popup(
                 rect,
                 label,
                 selected,
-                types.ConvertAll(t => t.FullName?.Replace('.', '/')).ToArray());
+                CachedDisplayTypeNames);
 
-            if (types.Count <= 0) return null;
-            return types[selected];
+            return types.Count <= 0 ? null : types[selected];
         }
 
         #endregion
@@ -325,19 +330,45 @@ namespace MolecularEditor
         #endregion
 
         #region General Utilities
+        
+        private static string[] CachedDisplayTypeNames { get; set; }
 
-        public static readonly List<Type> AllTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .Select(assembly => assembly.GetTypes().ToList())
-                .Aggregate((first, second) => first.Concat(second).ToList()).ToList();
+        private static List<Type> _cachedTypes;
+        public static IReadOnlyList<Type> AllTypes
+        {
+            get
+            {
+                if (_cachedTypes != null && _cachedTypes.Count > 0) return _cachedTypes;
+                
+                if (TypeLibrary.AllAssemblies == null || TypeLibrary.AllAssemblies.Count == 0)
+                {
+                    TypeLibrary.BootstrapEditor();
+                }
+                
+                _cachedTypes = TypeLibrary.AllAssemblies!.SelectMany(a => a.Value.GetTypes()).ToList();
+                return _cachedTypes;
+            }
+        }
 
-        public static List<Type> GetTypesForPopup<TBaseClass>() => AllTypes.Where(type => type.IsSubclassOf(typeof(TBaseClass))).ToList();
-        public static List<Type> GetTypesForPopup(Type baseType) => AllTypes.Where(type => type.IsSubclassOf(baseType)).ToList();
+        private static readonly Dictionary<Type, List<Type>> cachedDerivedTypes = new Dictionary<Type, List<Type>>();
+
+        public static List<Type> GetTypesForPopup<TBaseClass>() => GetTypesForPopup(typeof(TBaseClass));
+        public static List<Type> GetTypesForPopup(Type baseType)
+        {
+            if (cachedDerivedTypes.TryGetValue(baseType, out var derivedTypes))
+                return derivedTypes;
+            
+            var types = AllTypes.Where(type => type.IsSubclassOf(baseType)).ToList();
+            cachedDerivedTypes.Add(baseType, types);
+
+            return types;
+        }
 
         public static Texture2D Tex2DFromBlankColor(Color32 color)
         {
             //TODO: better way to this in TDW
             var texture = new Texture2D(Screen.width, Screen.height);
-            Color32[] pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            var pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             texture.SetPixels32(pixels);
             texture.Apply();
             return texture;
