@@ -5,6 +5,9 @@
 //
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
+//
+//     The generator code can be found here, in this github repository:
+//     https://github.com/Heymity/MolecularLibCore/tree/main/MolecularAutomaticCodeGenerator
 // </auto-generated>
 //------------------------------------------------------------------------------
 /*  Copyright 2022 Gabriel Pasquale Rodrigues Scavone

@@ -12,8 +12,8 @@ namespace MolecularLib.CodeGenerator
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 //
-//     The generator code can be fount in this github repository:
-//     
+//     The generator code can be found here, in this github repository:
+//     https://github.com/Heymity/MolecularLibCore/tree/main/MolecularAutomaticCodeGenerator
 // </auto-generated>
 //------------------------------------------------------------------------------";
 
@@ -65,17 +65,18 @@ namespace MolecularLib.CodeGenerator
         {
             var builder = new StringBuilder();
 
-            builder.Append(Boilerplate);
-            builder.AppendLine();
-            builder.Append(License);
-            builder.AppendLine();
-            builder.AppendLine();
+            builder
+                .Append(Boilerplate)
+                .AppendLine()
+                .Append(License)
+                .AppendLine()
+                .AppendLine()
             
-            builder.AddUsing();
-            builder.AppendLine();
+                .AddUsing()
+                .AppendLine()
             
-            builder.AddNamespace();
-            builder.AddClass();
+                .AddNamespace()
+                .AddClass();
             
             for (var i = 0; i <= MaxArgs; i++)
             {
@@ -83,8 +84,7 @@ namespace MolecularLib.CodeGenerator
             }
             
             //Class closing
-            builder.AppendIdentation(1);
-            builder.AppendLine("}"); 
+            builder.AppendIdentation(1).AppendLine("}"); 
             //Namespace closing
             builder.AppendLine("}");
             
@@ -95,13 +95,14 @@ namespace MolecularLib.CodeGenerator
         {
             var builder = new StringBuilder();
 
-            builder.Append(Boilerplate);
-            builder.AppendLine();
-            builder.Append(License);
-            builder.AppendLine();
-            builder.AppendLine();
+            builder
+                .Append(Boilerplate)
+                .AppendLine()
+                .Append(License)
+                .AppendLine()
+                .AppendLine()
             
-            builder.AddNamespace();
+                .AddNamespace();
 
             for (var i = 0; i <= MaxArgs; i++)
             {
@@ -125,18 +126,18 @@ namespace MolecularLib.CodeGenerator
         
         private static StringBuilder AddNamespace(this StringBuilder builder)
         {
-            builder.AppendLine($"namespace {Namespace}");
-            builder.AppendLine("{");
-            return builder;
+            return builder
+                .AppendLine($"namespace {Namespace}")
+                .AppendLine("{");
         }
         
         private static StringBuilder AddClass(this StringBuilder builder)
         {
-            builder.AppendIdentation(1);
-            builder.AppendLine($"{ClassDeclaration}");
-            builder.AppendIdentation(1);
-            builder.AppendLine("{");
-            return builder;
+            return builder
+                .AppendIdentation(1)
+                    .AppendLine($"{ClassDeclaration}")
+                .AppendIdentation(1)
+                    .AppendLine("{");
         }
 
         private static StringBuilder AddMethod(this StringBuilder builder, int paramsCount)
@@ -150,39 +151,40 @@ namespace MolecularLib.CodeGenerator
                 builder.AppendInCodeDocumentation(paramsCount);
                 
                 // public static T Instantiate<T>(T original)
-                builder.AppendIdentation(identLevel);
-                builder.Append(MethodDeclaration);
-                builder.Append("<T");
+                builder.AppendIdentation(identLevel).Append(MethodDeclaration).Append("<T");
+                
                 for (var i = 0; i < paramsCount; i++)
                 {
                     builder.Append(", ");
                     builder.Append($"{GenericArgTypeName}{i}");
                 }            
-                builder.Append('>');
-
-                builder.Append('(');
-                builder.Append(signature);
+                
+                builder.Append('>').Append('(').Append(signature);
+                
                 for (var i = 0; i < paramsCount; i++)
                 {
-                    builder.Append(", ");
-                    builder.Append($"{GenericArgTypeName}{i} {GenericArgName}{i}");
+                    builder.Append($", {GenericArgTypeName}{i} {GenericArgName}{i}");
                 }
                 builder.Append(')');
                 
                 // where T : Object, IArgsInstantiable
-                builder.Append(' ');
-                builder.Append(MethodGenericTypeBaseRestriction);
-                builder.AppendInterfaceSignature(paramsCount);
-                builder.AppendLine();
+                builder
+                    .Append(' ')
+                    .Append(MethodGenericTypeBaseRestriction)
+                    .AppendInterfaceSignature(paramsCount)
+                    .AppendLine()
                 
-                builder.AppendIdentation(identLevel);
-                builder.AppendLine("{");
+                    .AppendIdentation(identLevel)
+                    .AppendLine("{");
+                
                 identLevel++;
                 
                 // var instantiatedObj = Object.Instantiate(original);
-                builder.AppendIdentation(identLevel);
-                builder.AppendFormat("var {0} = Object.Instantiate", instanceVarName);
-                builder.Append('(');
+                builder
+                    .AppendIdentation(identLevel)
+                    .AppendFormat("var {0} = Object.Instantiate", instanceVarName)
+                    .Append('(');
+                
                 for (var i = 0; i < SignatureToParamNames[signature].Length; i++)
                 {
                     var paramName = SignatureToParamNames[signature][i];
@@ -192,38 +194,38 @@ namespace MolecularLib.CodeGenerator
                         builder.Append(", ");
                     }
                 }
-                builder.AppendLine(");");
-                builder.AppendLine();
-                builder.AppendIdentation(identLevel);
-                
-                //if (instantiatedObj is IArgsInstantiable argsInstantiable)
-                builder.AppendFormat("if ({0} is ", instanceVarName);
-                builder.AppendInterfaceSignature(paramsCount);
-                builder.AppendFormat(" {0})", asInterfaceVarName);
-                builder.AppendLine();
+                builder
+                    .AppendLine(");")
+                    .AppendLine()
+                    
+                    //if (instantiatedObj is IArgsInstantiable argsInstantiable)
+                    .AppendIdentation(identLevel).AppendFormat("if ({0} is ", instanceVarName)
+                    .AppendInterfaceSignature(paramsCount)
+                    .AppendFormat(" {0})", asInterfaceVarName)
+                    .AppendLine();
                 
                 identLevel++;
-                builder.AppendIdentation(identLevel);
-                
+
                 // argsInstantiable.Initialize();
-                builder.AppendFormat("{0}.", asInterfaceVarName);
-
-                builder.AppendInitializeMethod(paramsCount);
-                
-                builder.AppendLine();
+                builder
+                    .AppendIdentation(identLevel)
+                    .AppendFormat("{0}.", asInterfaceVarName)
+                    .AppendInitializeMethod(paramsCount)
+                    .AppendLine();
 
                 identLevel--;
-                builder.AppendIdentation(identLevel);
-                
+
                 //return instantiatedObj;
-                builder.AppendFormat("return {0};", instanceVarName);
-                builder.AppendLine();
+                builder
+                    .AppendIdentation(identLevel)
+                    .AppendFormat("return {0};", instanceVarName)
+                    .AppendLine();
                 
                 identLevel--;
-                builder.AppendIdentation(identLevel);
-                builder.AppendLine("}");
-                
-                builder.AppendLine();
+                builder
+                    .AppendIdentation(identLevel)
+                    .AppendLine("}")
+                    .AppendLine();
             }
 
             return builder;
@@ -260,12 +262,9 @@ namespace MolecularLib.CodeGenerator
 
         private static StringBuilder AppendInCodeDocumentation(this StringBuilder builder, int argsCount)
         {
-            builder.AppendIdentation(2);
-            builder.AppendLine("/// <summary>)");
-            builder.AppendIdentation(2);
-            builder.AppendLine($"/// Instantiates a Object that derives from IArgsInstantiable with {argsCount} parameters and calls the initialize function");
-            builder.AppendIdentation(2);
-            builder.AppendLine("/// </summary>");
+            builder.AppendIdentation(2).AppendLine("/// <summary>)");
+            builder.AppendIdentation(2).AppendLine($"/// Instantiates a Object that derives from IArgsInstantiable with {argsCount} parameters and calls the initialize function");
+            builder.AppendIdentation(2).AppendLine("/// </summary>");
 
             return builder;
         }
@@ -291,26 +290,22 @@ namespace MolecularLib.CodeGenerator
         private static StringBuilder AppendInterface(this StringBuilder builder, int argsCount)
         {
             // public interface IArgsInstantiable
-            builder.AppendIdentation(1);
-            builder.Append(InterfaceDeclaration);
-            builder.AppendInterfaceSignature(argsCount, true);
-            
-            // {
-            builder.AppendLine();
-            builder.AppendIdentation(1);
-            builder.AppendLine("{");
-            
-            // public void Initialize();
-            builder.AppendIdentation(2);
-            builder.Append("public void ");
-            builder.AppendInitializeMethod(argsCount, true);
-            builder.AppendIdentation(1);
-            
-            // }
-            builder.AppendLine("}");
-            builder.AppendLine();
-
-            return builder;
+            return builder
+                .AppendIdentation(1)
+                .Append(InterfaceDeclaration)
+                .AppendInterfaceSignature(argsCount, true)
+                // {
+                .AppendLine()
+                .AppendIdentation(1)
+                .AppendLine("{")
+                    // public void Initialize();
+                    .AppendIdentation(2)
+                    .Append("public void ")
+                    .AppendInitializeMethod(argsCount, true)
+                    .AppendIdentation(1)
+                // }
+                .AppendLine("}")
+                .AppendLine();
         }
         
     }
