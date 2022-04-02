@@ -20,7 +20,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Molecular
+namespace MolecularEditor
 {
     [CustomPropertyDrawer(typeof(Sprite))]
     public class SpriteEditorDrawer : PropertyDrawer

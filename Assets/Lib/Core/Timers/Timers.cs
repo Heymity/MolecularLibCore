@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Threading.Tasks;
-using Molecular;
+using MolecularLib.Helpers;
 using UnityEngine;
 
 namespace MolecularLib.Timers

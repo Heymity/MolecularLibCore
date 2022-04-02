@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Molecular
+namespace MolecularLib.Helpers
 {
     public static class PlayStatus
     {

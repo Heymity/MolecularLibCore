@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MolecularLib
+namespace MolecularLib.Helpers
 {
     public interface IRange
     {

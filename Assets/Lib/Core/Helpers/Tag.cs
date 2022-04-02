@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MolecularLib
+namespace MolecularLib.Helpers
 {
     [System.Serializable]
     public class Tag

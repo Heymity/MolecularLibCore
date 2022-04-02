@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace MolecularLib
+namespace MolecularLib.Helpers
 {
     [Serializable]
     public class TypeVariable : ISerializationCallbackReceiver

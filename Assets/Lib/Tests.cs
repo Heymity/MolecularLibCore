@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Molecular;
+using MolecularLib.Helpers;
 using UnityEngine;
 
 namespace MolecularLib.Testing
@@ -30,6 +30,8 @@ namespace MolecularLib.Testing
         [SerializeField] private SerializableDictionary<string, Sprite> stringToSprite;
         
         [SerializeField] private Sprite sprite;
+        
+        [SerializeField] private Optional<string> myOptionalString;
 
         [ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()

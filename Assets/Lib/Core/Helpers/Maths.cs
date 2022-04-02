@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MolecularLib
+namespace MolecularLib.Helpers
 {
     public static class Maths
     {
