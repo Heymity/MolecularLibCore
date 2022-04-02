@@ -3,8 +3,19 @@ using UnityEngine;
 
 namespace MolecularLib
 {
+    public interface IRange
+    {
+        void ValidateMinMaxValues();
+    }
+    
+    public interface IRange<T> : IRange
+    {
+        T Min { get; set; }
+        T Max { get; set; }
+    }
+
     [Serializable]
-    public class Range<T> where T : IComparable
+    public class Range<T> : IRange<T> where T : IComparable
     {
         [SerializeField] protected T min;
         [SerializeField] protected T max;

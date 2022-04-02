@@ -3,7 +3,6 @@ using Debug = UnityEngine.Debug;
 
 namespace MolecularInternal
 {
-    //TODO either remove this or do it properly
     public static class Logger
     {
         [Conditional("MOLECULAR_VERBOSE")]

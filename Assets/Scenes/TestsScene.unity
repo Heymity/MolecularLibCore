@@ -358,30 +358,35 @@ MonoBehaviour:
   tagTest:
     tag: Player
   doubleRange:
-    min: 0
-    max: 0
+    min: -5.54
+    max: 10.72
   genericFloatRange:
-    min: 0
-    max: 0
+    min: -13.14
+    max: 3.67
+  floatRange1:
+    min: -1.6174842
+    max: -0.5036478
+    minValuePossible: -2.08
+    maxValuePossible: 1
   floatRange:
-    min: 0
-    max: 0
+    min: -10.751492
+    max: 2.2156868
     minValuePossible: -30.6345
     maxValuePossible: 24.34634
   intRange:
-    min: 0
-    max: 0
+    min: -23
+    max: 3
     minValuePossible: -30
     maxValuePossible: 20
   vec2Range:
-    minVector2SaveData: {x: 0, y: 0}
-    maxVector2SaveData: {x: 0, y: 0}
+    minVector2SaveData: {x: -1.74, y: -2.38}
+    maxVector2SaveData: {x: 7.55, y: 4.21}
   vec3Range:
-    minVector3SaveData: {x: 0, y: 0, z: 0}
-    maxVector3SaveData: {x: 0, y: 0, z: 0}
+    minVector3SaveData: {x: -3.13, y: 6.3, z: 0}
+    maxVector3SaveData: {x: 0, y: -10.24, z: 0}
   type:
-    typeName: MolecularLib.AutoSingleton`1
-    assemblyName: Molecular.Core
+    typeName: MolecularLib.Testing.Tests
+    assemblyName: Assembly-CSharp
   prefab: {fileID: 144877854337345029, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
   stringToInt:
     keys:
