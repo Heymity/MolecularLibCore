@@ -1,0 +1,15 @@
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\bin\Debug\net6.0\MolecularAutomaticCodeGenerator.exe
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\bin\Debug\net6.0\MolecularAutomaticCodeGenerator.deps.json
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\bin\Debug\net6.0\MolecularAutomaticCodeGenerator.runtimeconfig.json
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\bin\Debug\net6.0\MolecularAutomaticCodeGenerator.dll
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\bin\Debug\net6.0\ref\MolecularAutomaticCodeGenerator.dll
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\bin\Debug\net6.0\MolecularAutomaticCodeGenerator.pdb
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.csproj.AssemblyReference.cache
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.GeneratedMSBuildEditorConfig.editorconfig
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.AssemblyInfoInputs.cache
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.AssemblyInfo.cs
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.csproj.CoreCompileInputs.cache
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.dll
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\ref\MolecularAutomaticCodeGenerator.dll
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.pdb
+D:\Unity\UnityProjects\MolecularLibCore\MolecularAutomaticCodeGenerator\obj\Debug\net6.0\MolecularAutomaticCodeGenerator.genruntimeconfig.cache
