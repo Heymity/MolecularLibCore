@@ -364,14 +364,21 @@ namespace MolecularEditor
             return types;
         }
 
-        public static Texture2D Tex2DFromBlankColor(Color32 color)
+        public static Texture2D Tex2DOfColorScreenSize(Color32 color)
         {
-            //TODO: better way to this in TDW
             var texture = new Texture2D(Screen.width, Screen.height);
             var pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
             texture.SetPixels32(pixels);
             texture.Apply();
             return texture;
+        }
+
+        public static Texture2D Tex2DOfColor(Color color)
+        {
+            var newTex = new Texture2D(1, 1);
+            newTex.SetPixel(0, 0, color);
+            newTex.Apply();
+            return newTex;
         }
         
         public static T GetSerializedValue<T>(this PropertyDrawer propertyDrawer, SerializedProperty property)
