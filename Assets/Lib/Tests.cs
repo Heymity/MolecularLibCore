@@ -27,6 +27,7 @@ namespace MolecularLib.Testing
         [SerializeField] private SerializableDictionary<string, TestStruct> myStructs;
         [SerializeField] private SerializableDictionary<TestStruct, string> myStructsOpposite;
         [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
+        [SerializeField] private SerializableDictionary<string, Sprite> stringToSprite;
         
         [SerializeField] private Sprite sprite;
 
@@ -54,11 +55,6 @@ namespace MolecularLib.Testing
     {
         public int MyInt;
         public bool MyBool;
-    }
-    
-    public struct TestStruct2
-    {
-        public int MyInt;
-        public bool MyBool;
+        public List<string> MyStringList;
     }
 }

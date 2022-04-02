@@ -1,28 +1,59 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Molecular;
 using UnityEngine;
 
 namespace MolecularLib.Timers
 {
-    //TODO Handle editor leave playmode for async and timers being used outside of playmode
     public class Timer
     {
-        #region Static Timers
+        public float StartTime { get; set; }
+        public bool Repeat { get; set; }
+        
+        public float DurationInSeconds { get; internal set; }
 
-        public class TimerReference
+        public event Action OnComplete;
+        
+        public float ElapsedSeconds => Time.time - StartTime;
+        public bool HasFinished => ElapsedSeconds >= DurationInSeconds;
+        
+        public static Timer Create(float duration, Action callback, bool repeat = false)
         {
-            public bool Repeat { get; internal set; }
-            public float StartTime { get; internal set; }
-            public int DurationInMilliseconds { get; internal set; }
-            public bool HasFinished => ElapsedMilliseconds >= DurationInMilliseconds;
-            public Action OnFinish;
-            public float ElapsedSeconds => Time.time - StartTime;
-            public int ElapsedMilliseconds => (int)ElapsedSeconds * 1000;
+            var timer = new Timer
+            {
+                StartTime = Time.time,
+                DurationInSeconds = duration,
+                Repeat = repeat
+            };
+
+            timer.OnComplete += callback;
             
-            public void StopOnNextCycle() => Repeat = false;
+            TimerManager.Current.AddTimer(timer);
+
+            return timer;
         }
+
+        public void RestartTimer()
+        {
+            StartTime = Time.time;
+   
+            if (!TimerManager.Current.HasTimer(this))
+                TimerManager.Current.AddTimer(this);
+        }
+        
+        public void StopTimer()
+        {
+            TimerManager.Current.RemoveTimer(this);
+        }
+        
+        public IEnumerator StartTimer()
+        {
+            yield return new WaitForSeconds(DurationInSeconds);
+            OnComplete?.Invoke();
+        }
+        
+        #region Static Timers
 
         /// <summary>
         /// Makes a timer using the await Task.Delay() method, not needing to create a MonoBehaviour
@@ -32,7 +63,10 @@ namespace MolecularLib.Timers
         public static async void TimerAsync(float seconds, Action callback)
         {
             await Task.Delay((int) (seconds * 1000));
-
+            
+            if (!PlayStatus.IsPlaying)
+                return;
+            
             callback?.Invoke();
         }
         
@@ -56,6 +90,9 @@ namespace MolecularLib.Timers
 
             void HandleRepeat()
             {
+                if (!PlayStatus.IsPlaying)
+                    return;
+
                 if (!reference.Repeat) return;
                 
                 reference.OnFinish?.Invoke();
@@ -65,5 +102,18 @@ namespace MolecularLib.Timers
         }
 
         #endregion
+    }
+    
+    public class TimerReference
+    {
+        public bool Repeat { get; internal set; }
+        public float StartTime { get; internal set; }
+        public int DurationInMilliseconds { get; internal set; }
+        public bool HasFinished => ElapsedMilliseconds >= DurationInMilliseconds;
+        public Action OnFinish;
+        public float ElapsedSeconds => Time.time - StartTime;
+        public int ElapsedMilliseconds => (int)ElapsedSeconds * 1000;
+            
+        public void StopOnNextCycle() => Repeat = false;
     }
 }

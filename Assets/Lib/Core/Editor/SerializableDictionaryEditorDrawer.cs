@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Molecular;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace MolecularEditor
@@ -114,7 +113,7 @@ namespace MolecularEditor
             {
                 var keyProp = keysProp.GetArrayElementAtIndex(i);
                 var valueProp = valuesProp.GetArrayElementAtIndex(i);
-                //EditorGUI.GetPropertyHeight(keyProp);
+                
                 var keyHeight = EditorGUI.GetPropertyHeight(keyProp);
                 var valueHeight = EditorGUI.GetPropertyHeight(valueProp);
                 var maxHeight = Mathf.Max(keyHeight, valueHeight);
