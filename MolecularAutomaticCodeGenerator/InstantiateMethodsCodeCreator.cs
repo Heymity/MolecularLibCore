@@ -59,7 +59,7 @@ namespace MolecularLib.CodeGenerator
 
         private const string InterfaceDeclaration = "public interface ";
         
-        private const int MaxArgs = 12;
+        private const int MaxArgs = 10;
         
         internal static string CreateMethodsCode()
         {
