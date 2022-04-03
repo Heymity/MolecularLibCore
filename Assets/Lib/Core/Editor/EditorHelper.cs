@@ -331,6 +331,10 @@ namespace MolecularEditor
 
         #region General Utilities
         
+        public const BindingFlags UnitySerializesBindingFlags = BindingFlags.Instance |
+                                                                BindingFlags.Public |
+                                                                BindingFlags.NonPublic |
+                                                                BindingFlags.DeclaredOnly;
         private static string[] CachedDisplayTypeNames { get; set; }
 
         private static List<Type> _cachedTypes;
@@ -389,6 +393,38 @@ namespace MolecularEditor
             int propertyIndex = int.Parse(property.propertyPath[property.propertyPath.Length - 2].ToString());
 
             return ((IList<T>)obj)[propertyIndex];
+        }
+        
+        private static T GetTargetValue<T>(SerializedProperty property) where T : class
+        {
+            var propertyPath = property.propertyPath;
+            var pathSegments = propertyPath.Split('.');
+
+            if (pathSegments.Length == 0)
+            {
+                Debug.LogError("Field not found by editor");
+                return null;
+            }
+            
+            var targetObjType = property.serializedObject.targetObject.GetType();
+
+            var currentSearchObjType = targetObjType;
+            object currentSearchObj = property.serializedObject.targetObject;
+            foreach (var pathSegment in pathSegments)
+            {
+                var targetField = currentSearchObjType.GetField(pathSegment, UnitySerializesBindingFlags);
+                if (targetField is null)
+                {
+                    Debug.Log(pathSegment + " field not found by editor");
+                    return null;
+                }
+                currentSearchObjType = targetField.FieldType;
+                
+                currentSearchObj = targetField.GetValue(currentSearchObj);
+            }
+        
+            var dict = currentSearchObj as T;
+            return dict;
         }
 
         /// <summary>

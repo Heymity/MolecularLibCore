@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,11 @@ namespace MolecularEditor
         private const float FooterHeight = 20f;
         private const float NoElementHeight = 25f;
         private const float ElementHeight = 22f;
-
-        private const BindingFlags BindingFlags = System.Reflection.BindingFlags.Instance |
-                                                  System.Reflection.BindingFlags.Public |
-                                                  System.Reflection.BindingFlags.NonPublic |
-                                                  System.Reflection.BindingFlags.DeclaredOnly;
-       
+        
         private int _selectedIndex = -1;
         private float _cumulativeHeight;
         private bool _dontCheckForNewSelection;
         
-        private IDictionary _dictionary;
         private List<object> _usedKeys;
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -43,10 +38,12 @@ namespace MolecularEditor
         {
             EditorGUI.BeginProperty(position, label, property);
 
+            EditorGUI.BeginChangeCheck();
+            
+            property.serializedObject.Update();
+            
             _dontCheckForNewSelection = false;
-            
-            _dictionary = GetDictionary(property);
-            
+        
             var keysProp = property.FindPropertyRelative("keys");
             var valuesProp = property.FindPropertyRelative("values");
 
@@ -62,6 +59,9 @@ namespace MolecularEditor
             if (property.isExpanded)
                 DrawDictionary(boxRect, keysProp, valuesProp, label);
             
+            if (EditorGUI.EndChangeCheck())
+                property.serializedObject.ApplyModifiedProperties();
+            
             EditorGUI.EndProperty();
         }
 
@@ -76,6 +76,7 @@ namespace MolecularEditor
 
             var headerTextRect = rectBox;
             headerTextRect.x += 18;
+            headerTextRect.width -= 18;
             property.isExpanded = EditorGUI.BeginFoldoutHeaderGroup(headerTextRect, property.isExpanded, label, EditorStyles.foldout);
             EditorGUI.EndFoldoutHeaderGroup();
             
@@ -105,8 +106,6 @@ namespace MolecularEditor
             _usedKeys ??= new List<object>();
             _usedKeys.Clear();
             
-            var dictKeys = _dictionary.Keys.Cast<object>().ToList();
-
             _cumulativeHeight = 0f;
             const float handleWidth = 0; //= 10f;
             for (var i = 0; i < keysProp.arraySize; i++)
@@ -138,9 +137,36 @@ namespace MolecularEditor
                 
                 var isDuplicate = false;
                 
-                if (i >= dictKeys.Count) isDuplicate = true;
-                else if (_usedKeys.Contains(dictKeys.ElementAt(i))) isDuplicate = true;
-                else _usedKeys.Add(dictKeys.ElementAt(i));
+                /**if (Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform)
+                {
+                    var dragObject = DragAndDrop.objectReferences.FirstOrDefault();
+                    if (dragObject != null)
+                    {
+                        var dragKey = dragObject.GetType().GetProperty("Key").GetValue(dragObject, null);
+                        if (dragKey != null && !dictKeys.Contains(dragKey))
+                        {
+                            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                            if (Event.current.type == EventType.DragPerform)
+                            {
+                                DragAndDrop.AcceptDrag();
+                                var dragValue = dragObject.GetType().GetProperty("Value").GetValue(dragObject, null);
+                                _dictionary.Add(dragKey, dragValue);
+                                _usedKeys.Add(dragKey);
+                                keysProp.arraySize++;
+                                valuesProp.arraySize++;
+                                keysProp.GetArrayElementAtIndex(keysProp.arraySize - 1).objectReferenceValue = dragKey;
+                                valuesProp.GetArrayElementAtIndex(valuesProp.arraySize - 1).objectReferenceValue = dragValue;
+                                Event.current.Use();
+                            }
+                        }
+                    }
+                }*/
+
+                var keyObj = GetKeyValue(keyProp);
+                
+               // Debug.Log($"{i} | {_usedKeys.Aggregate("", (s, o) => s + $"{o}, ")} | {dictKeys.ElementAt(i)} | {keyObj} | {keyProp.propertyPath}");                
+                if (_usedKeys.Contains(keyObj)) isDuplicate = true;
+                else _usedKeys.Add(keyObj);
 
                 DrawDictionaryElement(elementRect, keyProp, valueProp, isDuplicate, i);
             }
@@ -222,13 +248,46 @@ namespace MolecularEditor
             EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
         
-        private static IDictionary GetDictionary(SerializedProperty property)
+        private static object GetKeyValue(SerializedProperty property)
         {
-            var dictField = property.serializedObject.targetObject.GetType().GetField(property.propertyPath, BindingFlags);
-            if (dictField is null) return null;
-            var dictAsObj = dictField.GetValue(property.serializedObject.targetObject);
-            var dict = dictAsObj as IDictionary;
-            return dict;
+            var propertyPath = property.propertyPath;
+            var pathSegments = propertyPath.Split('.');
+
+            if (pathSegments.Length == 0)
+            {
+                Debug.LogError("Dictionary field not found by editor");
+                return null;
+            }
+            
+            var targetObjType = property.serializedObject.targetObject.GetType();
+
+            var currentSearchObjType = targetObjType;
+            object currentSearchObj = property.serializedObject.targetObject;
+            for (var index = 0; index < pathSegments.Length; index++)
+            {
+                var pathSegment = pathSegments[index];
+
+                if (pathSegment == "Array" && index == pathSegments.Length - 2)
+                {
+                    var dataSegment = pathSegments[index + 1];
+                    var arrayIndex = int.Parse(dataSegment.Split('[', ']')[1]);
+                    
+                    return (currentSearchObj as IList)?.Cast<object>().ElementAt(arrayIndex);
+                }
+
+                var targetField = currentSearchObjType.GetField(pathSegment, EditorHelper.UnitySerializesBindingFlags);
+                if (targetField is null)
+                {
+                    Debug.Log(pathSegment + " field not found by editor");
+                    return null;
+                }
+
+                currentSearchObjType = targetField.FieldType;
+
+                currentSearchObj = targetField.GetValue(currentSearchObj);
+            }
+
+            return currentSearchObj;
         }
     }
 }

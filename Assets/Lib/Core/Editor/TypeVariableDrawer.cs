@@ -72,8 +72,9 @@ namespace MolecularEditor
             _lastTypeName = typeName;
 
             if (!TypeLibrary.AllAssemblies!.TryGetValue(assemblyName, out var assembly))
-                return TypeLibrary.AllAssemblies.FirstOrDefault().Value.GetType(typeName) ??
-                       TypeLibrary.AllAssemblies.FirstOrDefault().Value.GetTypes().FirstOrDefault();
+                return !string.IsNullOrEmpty(typeName) ? 
+                    (TypeLibrary.AllAssemblies.FirstOrDefault().Value.GetType(typeName) ?? TypeLibrary.AllAssemblies.FirstOrDefault().Value.GetTypes().FirstOrDefault()) 
+                    : TypeLibrary.AllAssemblies.FirstOrDefault().Value.GetTypes().FirstOrDefault();
             
             _cachedAssembly = assembly;
             _cachedType = assembly.GetType(typeName);

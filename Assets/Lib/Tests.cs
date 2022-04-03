@@ -8,6 +8,7 @@ namespace MolecularLib.Testing
 {
     public class Tests : MonoBehaviour
     {
+        [SerializeField] private Sprite sprite; 
         [SerializeField] private Tag tagTest;
 
         [SerializeField] private Range<double> doubleRange;
@@ -21,7 +22,9 @@ namespace MolecularLib.Testing
         [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
 
         [SerializeField] private TestArgInstantiable prefab;
+        
 
+        //BUG in serializableDict
         [SerializeField] private SerializableDictionary<string, int> stringToInt;
         [SerializeField] private SerializableDictionary<HideFlags, Color> flagsToColor;
         [SerializeField] private SerializableDictionary<string, TestStruct> myStructs;
@@ -29,9 +32,11 @@ namespace MolecularLib.Testing
         [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
         [SerializeField] private SerializableDictionary<string, Sprite> stringToSprite;
         
-        [SerializeField] private Sprite sprite;
         
         [SerializeField] private Optional<string> myOptionalString;
+        [SerializeField] private Optional<List<string>> myList;
+        [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
+        //[SerializeField] private Optional<Range> myOptionalRange;
 
         [ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()

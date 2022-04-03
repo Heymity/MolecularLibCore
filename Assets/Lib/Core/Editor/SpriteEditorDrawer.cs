@@ -33,17 +33,23 @@ namespace MolecularEditor
         
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return property.isExpanded ? EditorGUIUtility.singleLineHeight + _spriteDisplaySize + 8f : EditorGUIUtility.singleLineHeight;
+            return property.isExpanded
+                ? EditorGUIUtility.singleLineHeight + _spriteDisplaySize + 8f
+                : EditorGUIUtility.singleLineHeight;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            property.serializedObject.Update();
+            EditorGUI.BeginProperty(position, label, property);
             EditorGUI.BeginChangeCheck();
-
-            var sp = property.objectReferenceValue as Sprite;
-            if (sp is null)
+            
+            if (!(property.objectReferenceValue is Sprite sp))
             {
+                property.isExpanded = false;
                 EditorGUI.ObjectField(position, property, label);
+                property.serializedObject.ApplyModifiedProperties();
+                EditorGUI.EndProperty();
                 return;
             }
             
@@ -61,9 +67,11 @@ namespace MolecularEditor
             {
                 HandleExpandedArea(position, tex, sp, property);
             }
-
+            
             if (EditorGUI.EndChangeCheck())
                 property.serializedObject.ApplyModifiedProperties();
+
+            EditorGUI.EndProperty();
         }
 
         private static Rect DoFoldoutLabel(Rect position, SerializedProperty property, GUIContent label)

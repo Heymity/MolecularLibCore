@@ -355,163 +355,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 674d1503a5156754d9c548d0b5dc8ac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprite: {fileID: 0}
   tagTest:
     tag: Player
   doubleRange:
-    min: -5.54
-    max: 10.72
+    min: 0
+    max: 0
   genericFloatRange:
-    min: -7
-    max: 2
+    min: 0
+    max: 0
   floatRange1:
-    min: -1.3451362
-    max: -0.03072524
-    minValuePossible: -2.13
+    min: 0
+    max: 0
+    minValuePossible: -1
     maxValuePossible: 1
   floatRange:
-    min: -15.402439
-    max: -2.4352608
+    min: 0
+    max: 0
     minValuePossible: -30.6345
     maxValuePossible: 24.34634
   intRange:
-    min: -22
-    max: 4
+    min: 0
+    max: 0
     minValuePossible: -30
     maxValuePossible: 20
   vec2Range:
-    minVector2SaveData: {x: -1.74, y: -2.38}
-    maxVector2SaveData: {x: 7.55, y: 4.21}
+    minVector2SaveData: {x: 0, y: 0}
+    maxVector2SaveData: {x: 0, y: 0}
   vec3Range:
-    minVector3SaveData: {x: -3.13, y: 6.3, z: 0}
-    maxVector3SaveData: {x: 0, y: -10.24, z: 0}
+    minVector3SaveData: {x: 0, y: 0, z: 0}
+    maxVector3SaveData: {x: 0, y: 0, z: 0}
   type:
     typeName: MolecularLib.TestArgInstantiable
     assemblyName: Molecular.Core
-  prefab: {fileID: 144877854337345029, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
+  prefab: {fileID: 0}
   stringToInt:
-    keys:
-    - A
-    - B
-    - C
-    values: 590100000200000004000000
+    keys: []
+    values: 
   flagsToColor:
-    keys: 00000000ffffffff37000000
-    values:
-    - {r: 0.3676081, g: 0.9056604, b: 0.33748665, a: 1}
-    - {r: 0.6271787, g: 0.3485226, b: 0.8301887, a: 0}
-    - {r: 0.7830189, g: 0.4781338, b: 0.19575472, a: 0}
+    keys: 
+    values: []
   myStructs:
-    keys:
-    - A
-    - B
-    - C
-    - D
-    values:
-    - MyInt: 4
-      MyBool: 1
-      MyStringList: []
-    - MyInt: -6
-      MyBool: 1
-      MyStringList: []
-    - MyInt: 156
-      MyBool: 1
-      MyStringList: []
-    - MyInt: -3467
-      MyBool: 1
-      MyStringList: []
+    keys: []
+    values: []
   myStructsOpposite:
-    keys:
-    - MyInt: 260
-      MyBool: 1
-      MyStringList: []
-    - MyInt: 192
-      MyBool: 1
-      MyStringList:
-      - 3
-      - 56
-    values:
-    - Good moarning
-    - Hello
+    keys: []
+    values: []
   myStructsBoth:
-    keys:
-    - MyInt: -107
-      MyBool: 0
-      MyStringList: []
-    - MyInt: -107
-      MyBool: 1
-      MyStringList: []
-    values:
-    - MyInt: 155
-      MyBool: 1
-      MyStringList: []
-    - MyInt: -114
-      MyBool: 1
-      MyStringList: []
+    keys: []
+    values: []
   stringToSprite:
-    keys:
-    - 1
-    - 2
-    values:
-    - {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-    - {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+    keys: []
+    values: []
   myOptionalString:
-    value: Hello, I am optional!
+    value: ASd
     useValue: 0
---- !u!1001 &144877854337345027
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2011403409572284507, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_Name
-      value: InstantiateTest
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 362.07776
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 213.3028
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 39.84487
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9122668282623907291, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 96b1c7fa5c56f444ca90f7f4fb8ac756, type: 3}
+  myList:
+    value: []
+    useValue: 0
+  myOptionalDictionary:
+    value:
+      keys:
+      - 
+      values:
+      - 
+    useValue: 1
