@@ -200,9 +200,7 @@ namespace MolecularEditor
         
         public static Type TypeField<TBaseClass>(Rect rect, string label, Type currentValue)
         {
-            var types = GetTypesForPopup<TBaseClass>();
-
-            return DrawTypeField(rect, label, types, currentValue);
+            return TypeField(rect, label, currentValue, typeof(TBaseClass));
         }
 
         public static Type TypeField(Rect rect, string label, Type currentValue, Type baseType)
@@ -210,10 +208,12 @@ namespace MolecularEditor
             var types = GetTypesForPopup(baseType);
 
             var r = DrawTypeField(rect, label, types, currentValue);
+            if (r != currentValue) GUI.changed = true;
             
             return r;
         }
 
+        /* These require a different optimization and caching approach to be useful
         public static Type TypeField(Rect rect, string label, Type currentValue, Assembly assembly)
         {
             var types = assembly.GetTypes().ToList();
@@ -233,7 +233,7 @@ namespace MolecularEditor
             var types = assembly.GetTypes().Where(type => type.IsSubclassOf(baseType)).ToList();
 
             return DrawTypeField(rect, label, types, currentValue);
-        }
+        }*/
         
         public static Type DrawTypeField(Rect rect, string label, List<Type> types, Type current)
         {
@@ -362,7 +362,7 @@ namespace MolecularEditor
             if (cachedDerivedTypes.TryGetValue(baseType, out var derivedTypes))
                 return derivedTypes;
             
-            var types = AllTypes.Where(type => type.IsSubclassOf(baseType)).ToList();
+            var types = AllTypes.Where(baseType.IsAssignableFrom).Where(t => t != baseType).ToList();
             cachedDerivedTypes.Add(baseType, types);
 
             return types;

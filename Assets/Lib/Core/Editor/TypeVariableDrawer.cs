@@ -13,12 +13,12 @@ namespace MolecularEditor
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            property.serializedObject.Update();
+            EditorGUI.BeginProperty(position, label, property);
             
+            EditorGUI.BeginChangeCheck();
+
             var typeNameProp = property.FindPropertyRelative("typeName");
             var assemblyNameProp = property.FindPropertyRelative("assemblyName");
-
-            EditorGUI.BeginChangeCheck();
             
             var type = GetType(assemblyNameProp.stringValue, typeNameProp.stringValue);
             
@@ -37,12 +37,17 @@ namespace MolecularEditor
 
             assemblyNameProp.stringValue = selectedType.Assembly.GetName().Name;
             typeNameProp.stringValue = selectedType.FullName;
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(property.serializedObject.targetObject, "TypeVariable changed");
+
+                property.serializedObject.ApplyModifiedProperties();
+
+                EditorUtility.SetDirty(property.serializedObject.targetObject);
+            }
             
-            if (!EditorGUI.EndChangeCheck()) return;
-
-            property.serializedObject.ApplyModifiedProperties();
-
-            EditorUtility.SetDirty(property.serializedObject.targetObject);
+            EditorGUI.EndProperty();
         }
 
         private Assembly _cachedAssembly;
