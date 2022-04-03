@@ -73,11 +73,7 @@ namespace MolecularEditor
 
         private static IRange GetRange(SerializedProperty property)
         {
-            var rangeField = property.serializedObject.targetObject.GetType().GetField(property.propertyPath, BindingFlags);
-            if (rangeField is null) return null;
-            var rangeAsObj = rangeField.GetValue(property.serializedObject.targetObject);
-            var range = rangeAsObj as IRange;
-            return range;
+            return EditorHelper.GetTargetValue<IRange>(property);
         }
     }
 
@@ -142,11 +138,7 @@ namespace MolecularEditor
         
         private static RangeVector3 GetRange(SerializedProperty property)
         {
-            var rangeField = property.serializedObject.targetObject.GetType().GetField(property.propertyPath, RangeEditorDrawer.BindingFlags);
-            if (rangeField is null) return null;
-            var rangeAsObj = rangeField.GetValue(property.serializedObject.targetObject);
-            var range = rangeAsObj as RangeVector3;
-            return range;
+            return EditorHelper.GetTargetValue<RangeVector3>(property);
         }
     }
     
@@ -211,11 +203,7 @@ namespace MolecularEditor
         
         private static RangeVector2 GetRange(SerializedProperty property)
         {
-            var rangeField = property.serializedObject.targetObject.GetType().GetField(property.propertyPath, RangeEditorDrawer.BindingFlags);
-            if (rangeField is null) return null;
-            var rangeAsObj = rangeField.GetValue(property.serializedObject.targetObject);
-            var range = rangeAsObj as RangeVector2;
-            return range;
+            return EditorHelper.GetTargetValue<RangeVector2>(property);
         }
     }
 

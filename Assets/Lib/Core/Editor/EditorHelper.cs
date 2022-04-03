@@ -395,7 +395,7 @@ namespace MolecularEditor
             return ((IList<T>)obj)[propertyIndex];
         }
         
-        private static T GetTargetValue<T>(SerializedProperty property) where T : class
+        public static T GetTargetValue<T>(SerializedProperty property) where T : class
         {
             var propertyPath = property.propertyPath;
             var pathSegments = propertyPath.Split('.');

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MolecularLib.Helpers;
 using UnityEngine;
 
@@ -21,10 +20,6 @@ namespace MolecularLib.Testing
 
         [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
 
-        [SerializeField] private TestArgInstantiable prefab;
-        
-
-        //BUG in serializableDict
         [SerializeField] private SerializableDictionary<string, int> stringToInt;
         [SerializeField] private SerializableDictionary<HideFlags, Color> flagsToColor;
         [SerializeField] private SerializableDictionary<string, TestStruct> myStructs;
@@ -38,7 +33,7 @@ namespace MolecularLib.Testing
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
         //[SerializeField] private Optional<Range> myOptionalRange;
 
-        [ContextMenu("Test1ArgInstantiate")]
+        /*[ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()
         {
             Molecular.Instantiate(prefab, false);
@@ -54,7 +49,7 @@ namespace MolecularLib.Testing
         {
             stringToInt.Add("Hello World", 234);
             stringToInt.Select(kvp => kvp.Key + ": " + kvp.Value).ToList().ForEach(Debug.Log);
-        }
+        }*/
     }
 
     [Serializable]

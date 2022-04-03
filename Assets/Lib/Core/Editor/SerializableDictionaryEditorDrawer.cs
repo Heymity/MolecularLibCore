@@ -128,6 +128,13 @@ namespace MolecularEditor
                 _cumulativeHeight += elementHeight;
                 
                 HandleSelection(elementAreaRect, i, keyProp);
+                
+                var isDuplicate = false;
+
+                var keyObj = GetKeyValue(keyProp);
+                if (_usedKeys.Contains(keyObj)) isDuplicate = true;
+                else _usedKeys.Add(keyObj);
+                
                 var style = _selectedIndex == i ? "selectionRect" : i % 2 == 0 ? "CN EntryBackEven" : "CN EntryBackOdd"; 
                 if (Event.current.type == EventType.Repaint) ((GUIStyle)style).Draw(elementAreaRect, false, false, false, false);
 
@@ -135,39 +142,6 @@ namespace MolecularEditor
                 //var dragHandleRect = new Rect(elementAreaRect.x + Padding, elementAreaRect.y + elementAreaRect.height / 2 - dragHandleStyle.fixedHeight / 2.5f, handleWidth, elementAreaRect.height);
                 //if (Event.current.type == EventType.Repaint) dragHandleStyle.Draw(dragHandleRect, false, false, false, false);
                 
-                var isDuplicate = false;
-                
-                /**if (Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform)
-                {
-                    var dragObject = DragAndDrop.objectReferences.FirstOrDefault();
-                    if (dragObject != null)
-                    {
-                        var dragKey = dragObject.GetType().GetProperty("Key").GetValue(dragObject, null);
-                        if (dragKey != null && !dictKeys.Contains(dragKey))
-                        {
-                            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-                            if (Event.current.type == EventType.DragPerform)
-                            {
-                                DragAndDrop.AcceptDrag();
-                                var dragValue = dragObject.GetType().GetProperty("Value").GetValue(dragObject, null);
-                                _dictionary.Add(dragKey, dragValue);
-                                _usedKeys.Add(dragKey);
-                                keysProp.arraySize++;
-                                valuesProp.arraySize++;
-                                keysProp.GetArrayElementAtIndex(keysProp.arraySize - 1).objectReferenceValue = dragKey;
-                                valuesProp.GetArrayElementAtIndex(valuesProp.arraySize - 1).objectReferenceValue = dragValue;
-                                Event.current.Use();
-                            }
-                        }
-                    }
-                }*/
-
-                var keyObj = GetKeyValue(keyProp);
-                
-               // Debug.Log($"{i} | {_usedKeys.Aggregate("", (s, o) => s + $"{o}, ")} | {dictKeys.ElementAt(i)} | {keyObj} | {keyProp.propertyPath}");                
-                if (_usedKeys.Contains(keyObj)) isDuplicate = true;
-                else _usedKeys.Add(keyObj);
-
                 DrawDictionaryElement(elementRect, keyProp, valueProp, isDuplicate, i);
             }
 
