@@ -1,6 +1,6 @@
 {
     "name": "Molecular.Core",
-    "rootNamespace": "Molecular",
+    "rootNamespace": "MolecularLib",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

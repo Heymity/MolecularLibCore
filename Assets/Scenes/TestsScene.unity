@@ -310,7 +310,6 @@ GameObject:
   - component: {fileID: 1481557776}
   - component: {fileID: 1481557775}
   - component: {fileID: 1481557777}
-  - component: {fileID: 1481557778}
   m_Layer: 0
   m_Name: Test
   m_TagString: Untagged
@@ -366,18 +365,18 @@ MonoBehaviour:
     min: -17.06
     max: 3.07
   floatRange1:
-    min: -0.2893082
-    max: 0.2955975
+    min: -0.5068309
+    max: 0.07807481
     minValuePossible: -1
     maxValuePossible: 1
   floatRange:
-    min: -9.68216
-    max: -2.074748
+    min: -8.5194235
+    max: -0.91201115
     minValuePossible: -30.6345
     maxValuePossible: 24.34634
   intRange:
-    min: 0
-    max: 0
+    min: -9
+    max: -3
     minValuePossible: -30
     maxValuePossible: 20
   vec2Range:
@@ -387,8 +386,8 @@ MonoBehaviour:
     minVector3SaveData: {x: 4.43, y: 6.68, z: -5.51}
     maxVector3SaveData: {x: 10.42, y: 6.68, z: -10.75}
   type:
-    typeName: 
-    assemblyName: 
+    typeName: UnityEngine.Networking.Match.NetworkMatch
+    assemblyName: UnityEngine.UNETModule
   stringToInt:
     keys:
     - A
@@ -423,77 +422,3 @@ MonoBehaviour:
       values:
       - 
     useValue: 1
---- !u!114 &1481557778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1481557774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 674d1503a5156754d9c548d0b5dc8ac6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprite: {fileID: 0}
-  tagTest:
-    tag: Untagged
-  doubleRange:
-    min: 0
-    max: 0
-  genericFloatRange:
-    min: 0
-    max: 0
-  floatRange1:
-    min: 0
-    max: 0
-    minValuePossible: -1
-    maxValuePossible: 1
-  floatRange:
-    min: 0
-    max: 0
-    minValuePossible: -1
-    maxValuePossible: 1
-  intRange:
-    min: 0
-    max: 0
-    minValuePossible: -1
-    maxValuePossible: 1
-  vec2Range:
-    minVector2SaveData: {x: 0, y: 0}
-    maxVector2SaveData: {x: 0, y: 0}
-  vec3Range:
-    minVector3SaveData: {x: 0, y: 0, z: 0}
-    maxVector3SaveData: {x: 0, y: 0, z: 0}
-  type:
-    typeName: 
-    assemblyName: 
-  stringToInt:
-    keys: []
-    values: 
-  flagsToColor:
-    keys: 
-    values: []
-  myStructs:
-    keys: []
-    values: []
-  myStructsOpposite:
-    keys: []
-    values: []
-  myStructsBoth:
-    keys: []
-    values: []
-  stringToSprite:
-    keys: []
-    values: []
-  myOptionalString:
-    value: 
-    useValue: 0
-  myList:
-    value: []
-    useValue: 0
-  myOptionalDictionary:
-    value:
-      keys: []
-      values: []
-    useValue: 0
