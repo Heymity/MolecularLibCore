@@ -330,11 +330,11 @@ namespace MolecularEditor
         #endregion
 
         #region General Utilities
-        
+
         public const BindingFlags UnitySerializesBindingFlags = BindingFlags.Instance |
                                                                 BindingFlags.Public |
                                                                 BindingFlags.NonPublic |
-                                                                BindingFlags.DeclaredOnly;
+                                                                BindingFlags.FlattenHierarchy;
         private static string[] CachedDisplayTypeNames { get; set; }
 
         private static List<Type> _cachedTypes;
@@ -372,6 +372,15 @@ namespace MolecularEditor
         {
             var texture = new Texture2D(Screen.width, Screen.height);
             var pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return texture;
+        }
+        
+        public static Texture2D Tex2DOfColorAndSize(Color32 color, int width, int height)
+        {
+            var texture = new Texture2D(width, height);
+            var pixels = Enumerable.Repeat(color, width * height).ToArray();
             texture.SetPixels32(pixels);
             texture.Apply();
             return texture;

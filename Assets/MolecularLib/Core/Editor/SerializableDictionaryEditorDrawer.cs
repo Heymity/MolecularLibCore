@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using MolecularLib;
 using UnityEditor;
 using UnityEngine;
+using Logger = MolecularInternal.Logger;
 
 namespace MolecularEditor
 {
-    [CustomPropertyDrawer(typeof(SerializableDictionary<,>))]
+    [CustomPropertyDrawer(typeof(SerializableDictionary<,>), true)]
     public class SerializableDictionaryEditorDrawer : PropertyDrawer
     {
         private const float Padding = 6f;
@@ -239,20 +241,28 @@ namespace MolecularEditor
             object currentSearchObj = property.serializedObject.targetObject;
             for (var index = 0; index < pathSegments.Length; index++)
             {
+                FieldInfo targetField = null;
                 var pathSegment = pathSegments[index];
-
-                if (pathSegment == "Array" && index == pathSegments.Length - 2)
+                while (targetField is null && currentSearchObjType.BaseType != null)
                 {
-                    var dataSegment = pathSegments[index + 1];
-                    var arrayIndex = int.Parse(dataSegment.Split('[', ']')[1]);
-                    
-                    return (currentSearchObj as IList)?.Cast<object>().ElementAt(arrayIndex);
+                    if (pathSegment == "Array" && index == pathSegments.Length - 2)
+                    {
+                        var dataSegment = pathSegments[index + 1];
+                        var arrayIndex = int.Parse(dataSegment.Split('[', ']')[1]);
+
+                        return (currentSearchObj as IList)?.Cast<object>().ElementAt(arrayIndex);
+                    }
+
+                    targetField = currentSearchObjType.GetField(pathSegment, EditorHelper.UnitySerializesBindingFlags);
+
+                    if (targetField is null && currentSearchObjType.BaseType != null)
+                        currentSearchObjType = currentSearchObjType.BaseType;
                 }
 
-                var targetField = currentSearchObjType.GetField(pathSegment, EditorHelper.UnitySerializesBindingFlags);
                 if (targetField is null)
                 {
-                    Debug.Log(pathSegment + " field not found by editor");
+                    Debug.LogWarning(pathSegment + " field not found by editor");
+                    Logger.MolecularVerbose($"[DEBUG] CurrentSearchObject: {currentSearchObj} | pathSegment: {pathSegment} | propertyPath: {propertyPath}");
                     return null;
                 }
 
