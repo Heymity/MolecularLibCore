@@ -238,17 +238,20 @@ namespace MolecularLib.Helpers
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class MinMaxRangeAttribute : PropertyAttribute
     {
-        private readonly float min;
-        private readonly float max;
-
         public MinMaxRangeAttribute(float min, float max)
         {
-            this.min = min;
-            this.max = max;
+            Min = min;
+            Max = max;
         }
 
-        public float Max => max;
+        public float Max { get; }
 
-        public float Min => min;
+        public float Min { get; }
+    }
+
+    public static class RangeExtensionMethods
+    {
+        public static float Random(this Range<float> range) => (range as Range)?.Random() ?? throw new NullReferenceException();
+        public static float Random(this Range<int> range) => (range as RangeInteger)?.Random() ?? throw new NullReferenceException();
     }
 }
