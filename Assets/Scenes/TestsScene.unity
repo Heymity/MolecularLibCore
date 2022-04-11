@@ -365,20 +365,14 @@ MonoBehaviour:
     min: -17.06
     max: 3.07
   floatRange1:
-    min: -0.5068309
-    max: 0.07807481
-    minValuePossible: -1
-    maxValuePossible: 1
+    min: -1
+    max: -0.5
   floatRange:
-    min: -8.5194235
-    max: -0.91201115
-    minValuePossible: -30.6345
-    maxValuePossible: 24.34634
+    min: -14.013622
+    max: -0.022314072
   intRange:
-    min: -9
-    max: -3
-    minValuePossible: -30
-    maxValuePossible: 20
+    min: -11
+    max: 10
   vec2Range:
     minVector2SaveData: {x: -9.06, y: -5.89}
     maxVector2SaveData: {x: -9.06, y: -5.89}

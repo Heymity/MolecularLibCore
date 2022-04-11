@@ -42,9 +42,11 @@ namespace MolecularEditor
             position = EditorGUI.PrefixLabel(position, EditorGUI.BeginProperty(position, label, property));
             EditorGUI.BeginChangeCheck();
 
-            ShowMinMax();
+            ShowNormalMinMax(position, property);
             _range.ValidateMinMaxValues();
 
+            EditorGUIUtility.labelWidth = prevLabelWidth;
+            
             EditorGUI.EndProperty();
             
             if (EditorGUI.EndChangeCheck())
@@ -53,22 +55,23 @@ namespace MolecularEditor
 
                 property.serializedObject.ApplyModifiedProperties();
             }
+        }
+        
+        internal static void ShowNormalMinMax(Rect position, SerializedProperty property)
+        {
+            var fieldPos = new Rect(position.x, position.y, (position.width / 2f) - 5f, EditorGUIUtility.singleLineHeight + 2f);
 
-            void ShowMinMax()
-            {
-                var fieldPos = new Rect(position.x, position.y, (position.width / 2f) - 5f, EditorGUIUtility.singleLineHeight + 2f);
-
-                var minProp = property.FindPropertyRelative("min");
-                var maxProp = property.FindPropertyRelative("max");
+            var minProp = property.FindPropertyRelative("min");
+            var maxProp = property.FindPropertyRelative("max");
                 
-                EditorGUIUtility.labelWidth = 30f;
+            var prevLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 30f;
                 
-                EditorGUI.PropertyField(fieldPos, minProp, new GUIContent("Min"));
-                fieldPos.x += fieldPos.width + 5f;
-                EditorGUI.PropertyField(fieldPos, maxProp, new GUIContent("Max"));
+            EditorGUI.PropertyField(fieldPos, minProp, new GUIContent("Min"));
+            fieldPos.x += fieldPos.width + 5f;
+            EditorGUI.PropertyField(fieldPos, maxProp, new GUIContent("Max"));
                 
-                EditorGUIUtility.labelWidth = prevLabelWidth;
-            }
+            EditorGUIUtility.labelWidth = prevLabelWidth;
         }
 
         private static IRange GetRange(SerializedProperty property)
@@ -212,7 +215,7 @@ namespace MolecularEditor
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return property.isExpanded ? 2 * (EditorGUIUtility.singleLineHeight + 8f) : EditorGUIUtility.singleLineHeight + 8f;
+            return EditorGUIUtility.singleLineHeight + 8f;
         }
 
         private const float LabelWidth = 100f;
@@ -230,39 +233,34 @@ namespace MolecularEditor
             position.y += 4;
             position.height = EditorGUIUtility.singleLineHeight + 2f;
 
-            var orgX = position.x;
-            var orgWidth = position.width;
-
             EditorGUI.BeginChangeCheck();
             property.serializedObject.Update();
 
             var range = this.GetSerializedValue<Range>(property);
             
             var attrs = fieldInfo.GetCustomAttributes<MinMaxRangeAttribute>().ToList();
-            var foldoutPos = new Rect(position.x + 12f, position.y, LabelWidth, position.height);
             var newLabel = EditorGUI.BeginProperty(position, label, property);
-            if (!attrs.Any())
-                property.isExpanded = EditorGUI.Foldout(foldoutPos, property.isExpanded, label);
-            else
+            EditorGUI.PrefixLabel(position, newLabel);
+
+            var hasMinMaxRangeDefined = attrs.Any();
+            var maxLimit = 1f;
+            var minLimit = -1f;
+            if (hasMinMaxRangeDefined)
             {
-                EditorGUI.PrefixLabel(position, newLabel);
-                range.MaxValuePossible = attrs.FirstOrDefault()?.Max ?? 1;
-                range.MinValuePossible = attrs.FirstOrDefault()?.Min ?? -1;
-                property.isExpanded = false;
+                maxLimit = attrs.FirstOrDefault()?.Max ?? 1;
+                minLimit = attrs.FirstOrDefault()?.Min ?? -1;
             }
+            
             position.x += LabelWidth;
             position.width -= LabelWidth + 4;
             
-            if (property.isExpanded)
-            {
-                ShowReduced();
-                position.y += position.height + 4f;
-                position.x = orgX;
-                position.width = orgWidth;
-                ShowMinMax();
-            }
+            if (hasMinMaxRangeDefined)
+                ShowMinMaxRange();
             else
-                ShowReduced();
+                RangeEditorDrawer.ShowNormalMinMax(position, property);
+
+            if (range.Min < minLimit) range.Min = minLimit;
+            if (range.Max > maxLimit) range.Max = maxLimit;
 
             EditorGUI.EndProperty();
             EditorGUIUtility.labelWidth = prevLabelWidth;
@@ -270,25 +268,11 @@ namespace MolecularEditor
             if (EditorGUI.EndChangeCheck())
             {
                 EditorUtility.SetDirty(property.serializedObject.targetObject);
-                range.ValidateMinMaxValues(); 
                 property.serializedObject.ApplyModifiedProperties();
+                range.ValidateMinMaxValues(); 
             }
-            
-            void ShowMinMax()
-            {
-                EditorGUIUtility.labelWidth = 80f;
-                
-                var fieldPos = new Rect(position.x, position.y, (position.width / 2f) - 10f, EditorGUIUtility.singleLineHeight + 2f);
 
-                range.MinValuePossible = EditorGUI.FloatField(fieldPos, "Min Limit", range.MinValuePossible);
-
-                fieldPos.x += fieldPos.width + 5f;
-                range.MaxValuePossible = EditorGUI.FloatField(fieldPos, "Max Limit", range.MaxValuePossible);
-
-                EditorGUIUtility.labelWidth = prevLabelWidth;
-            }
-            
-            void ShowReduced()
+            void ShowMinMaxRange()
             {
                 EditorGUIUtility.labelWidth = 30f;
                 
@@ -303,10 +287,7 @@ namespace MolecularEditor
                 var min = range.Min;
                 var max = range.Max;
 
-                if (max > range.MaxValuePossible) range.MaxValuePossible = range.Max;
-                if (min < range.MinValuePossible) range.MinValuePossible = range.Min;
-
-                EditorGUI.MinMaxSlider(minMaxSliderPos, ref min, ref max, range.MinValuePossible, range.MaxValuePossible);
+                EditorGUI.MinMaxSlider(minMaxSliderPos, ref min, ref max, minLimit, maxLimit);
 
                 if (Math.Abs(range.Min - min) > 0.00000000000000001f)
                     range.Min = min;
@@ -348,30 +329,28 @@ namespace MolecularEditor
             var range = this.GetSerializedValue<RangeInteger>(property);
             
             var attrs = fieldInfo.GetCustomAttributes<MinMaxRangeAttribute>().ToList();
-            var foldoutPos = new Rect(position.x + 12f, position.y, LabelWidth, position.height);
             var newLabel = EditorGUI.BeginProperty(position, label, property);
-            if (!attrs.Any())
-                property.isExpanded = EditorGUI.Foldout(foldoutPos, property.isExpanded, label);
-            else
+            EditorGUI.PrefixLabel(position, newLabel);
+
+            var hasMinMaxRangeDefined = attrs.Any();
+            var maxLimit = 1;
+            var minLimit = -1;
+            if (hasMinMaxRangeDefined)
             {
-                EditorGUI.PrefixLabel(position, newLabel);
-                range.MaxValuePossible = Mathf.RoundToInt(attrs.FirstOrDefault()?.Max ?? 1);
-                range.MinValuePossible = Mathf.RoundToInt(attrs.FirstOrDefault()?.Min ?? -1);
-                property.isExpanded = false;
+                maxLimit = Mathf.RoundToInt(attrs.FirstOrDefault()?.Max ?? 1);
+                minLimit = Mathf.RoundToInt(attrs.FirstOrDefault()?.Min ?? -1);
             }
+            
             position.x += LabelWidth;
             position.width -= LabelWidth + 4;
             
-            if (property.isExpanded)
-            {
-                ShowReduced();
-                position.y += position.height + 4f;
-                position.x = orgX;
-                position.width = orgWidth;
-                ShowMinMax();
-            }
+            if (hasMinMaxRangeDefined)
+                ShowMinMaxRange();
             else
-                ShowReduced();
+                RangeEditorDrawer.ShowNormalMinMax(position, property);
+
+            if (range.Min < minLimit) range.Min = minLimit;
+            if (range.Max > maxLimit) range.Max = maxLimit;
 
             EditorGUI.EndProperty();
             EditorGUIUtility.labelWidth = prevLabelWidth;
@@ -385,21 +364,7 @@ namespace MolecularEditor
 
             property.serializedObject.ApplyModifiedProperties();
 
-            void ShowMinMax()
-            {
-                EditorGUIUtility.labelWidth = 80f;
-
-                var fieldPos = new Rect(position.x, position.y, (position.width / 2f) - 10f, EditorGUIUtility.singleLineHeight + 2f);
-
-                range.MinValuePossible = EditorGUI.IntField(fieldPos, "Min Limit", range.MinValuePossible);
-
-                fieldPos.x += fieldPos.width + 5f;
-                range.MaxValuePossible = EditorGUI.IntField(fieldPos, "Max Limit", range.MaxValuePossible);
-                
-                EditorGUIUtility.labelWidth = prevLabelWidth;
-            }
-
-            void ShowReduced()
+            void ShowMinMaxRange()
             {
                 EditorGUIUtility.labelWidth = 30f;
                 
@@ -414,10 +379,7 @@ namespace MolecularEditor
                 float min = range.Min;
                 float max = range.Max;
 
-                if (max > range.MaxValuePossible) range.MaxValuePossible = range.Max;
-                if (min < range.MinValuePossible) range.MinValuePossible = range.Min;
-
-                EditorGUI.MinMaxSlider(minMaxSliderPos, ref min, ref max, range.MinValuePossible, range.MaxValuePossible);
+                EditorGUI.MinMaxSlider(minMaxSliderPos, ref min, ref max, minLimit, maxLimit);
 
                 if (Math.Abs(range.Min - min) > 0.00000000000000001f) 
                     range.Min = Mathf.RoundToInt(min);

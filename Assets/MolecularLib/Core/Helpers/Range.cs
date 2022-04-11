@@ -68,14 +68,8 @@ namespace MolecularLib.Helpers
     [Serializable]
     public class Range : Range<float>
     {
-        [SerializeField] private float minValuePossible = -1;
-        [SerializeField] private float maxValuePossible = 1;
-
         public float MidPoint => (Min + Max) / 2f;
-
-        public float MinValuePossible { get => minValuePossible; set => minValuePossible = value; }
-        public float MaxValuePossible { get => maxValuePossible; set => maxValuePossible = value; }
-
+        
         public float Lerp(float t) => Mathf.Lerp(Min, Max, t);
         public float LerpUnclamped(float t) => Mathf.LerpUnclamped(Min, Max, t);
         public float InverseLerp(float value) => Mathf.InverseLerp(Min, Max, value);
@@ -85,28 +79,12 @@ namespace MolecularLib.Helpers
         /// </summary>
         /// <returns>A Random float between the Min and Max variables in this range</returns>
         public float Random() => UnityEngine.Random.Range(Min, Max);
-
-        public override void ValidateMinMaxValues()
-        {
-            base.ValidateMinMaxValues();
-
-            if (minValuePossible > maxValuePossible) minValuePossible = maxValuePossible;
-
-            if (Min < minValuePossible) Min = minValuePossible;
-            if (Max > maxValuePossible) Max = maxValuePossible;
-        }
     }
 
     [Serializable]
     public class RangeInteger : Range<int>
     {
-        [SerializeField] private int minValuePossible = -1;
-        [SerializeField] private int maxValuePossible = 1;
-
         public int MidPoint => Mathf.RoundToInt((Min + Max) / 2f);
-
-        public int MinValuePossible { get => minValuePossible; set => minValuePossible = value; }
-        public int MaxValuePossible { get => maxValuePossible; set => maxValuePossible = value; }
 
         public int Lerp(float t) => Mathf.RoundToInt(Mathf.Lerp(Min, Max, t));
         public int LerpUnclamped(float t) => Mathf.RoundToInt(Mathf.LerpUnclamped(Min, Max, t));
@@ -117,16 +95,6 @@ namespace MolecularLib.Helpers
         /// </summary>
         /// <returns>A Random int between the Min and Max variables in this range. Doesn't include the Max.</returns>
         public int Random() => UnityEngine.Random.Range(Min, Max);
-
-        public override void ValidateMinMaxValues()
-        {
-            base.ValidateMinMaxValues();
-
-            if (minValuePossible > maxValuePossible) minValuePossible = maxValuePossible;
-
-            if (Min < minValuePossible) Min = minValuePossible;
-            if (Max > maxValuePossible) Max = maxValuePossible;
-        }
     }
 
     [Serializable]

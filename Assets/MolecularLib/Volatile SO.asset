@@ -14,19 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runtimeValue:
     myBehaviour: {fileID: 0}
-    myInt: -217
-    myFloat: 115.42
-    myList: []
+    myInt: 218
+    myFloat: 4.87
+    myList:
+    - aergr
+    - asd
+    - asdfsdgsfd
+    - ert
     myOptionalDictionary:
       value:
-        keys: 
-        values: []
-      useValue: 0
-    myScriptableObject: {fileID: 0}
+        keys: ee0000001b050000
+        values:
+        - A
+        - B
+      useValue: 1
+    myScriptableObject: {fileID: 11400000}
   editorSavedValue:
     myBehaviour: {fileID: 0}
-    myInt: 325
-    myFloat: -4.2
+    myInt: 218
+    myFloat: 4.87
     myList:
     - aergr
     - asd
