@@ -34,24 +34,6 @@ namespace MolecularLib.Testing
         //TODO Fix this: [SerializeField] private Optional<Range> myOptionalRange;
         [Space]
         [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
-
-        /*[ContextMenu("Test1ArgInstantiate")]
-        private void Test1ArgInstantiate()
-        {
-            Molecular.Instantiate(prefab, false);
-        }
-        
-        [ContextMenu("Test4ArgInstantiate")]
-        private void Test4ArgInstantiate()
-        {
-            Molecular.Instantiate(prefab, 4.5f, 3, "Hi I am a string", gameObject);
-        }
-
-        private void Start()
-        {
-            stringToInt.Add("Hello World", 234);
-            stringToInt.Select(kvp => kvp.Key + ": " + kvp.Value).ToList().ForEach(Debug.Log);
-        }*/
     }
 
     [Serializable]
@@ -78,6 +60,7 @@ namespace MolecularLib.Testing
     public class B : Base
     {
         public Range bClassRange;
+        public int bClassInt;
     }
 
     [Serializable]

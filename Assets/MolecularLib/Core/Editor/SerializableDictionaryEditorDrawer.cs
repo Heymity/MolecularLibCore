@@ -51,7 +51,7 @@ namespace MolecularEditor
 
             if (keysProp is null || valuesProp is null)
             {
-                EditorGUI.LabelField(position, $"{label.text} Error: Key or Value type isn't serializable; Use [HideInInspector] to hide this field");
+                EditorGUI.LabelField(position, $"{label.text} Error: Key or DeserializedValue type isn't serializable; Use [HideInInspector] to hide this field");
                 EditorGUI.EndProperty();
                 return;
             }
@@ -179,7 +179,7 @@ namespace MolecularEditor
             
             if (!valueProp.isExpanded) EditorGUIUtility.labelWidth = 55;
             else EditorGUIUtility.labelWidth = originalLabelWidth / 2;
-            EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"Value {index}"), true);
+            EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"DeserializedValue {index}"), true);
             
             EditorGUIUtility.labelWidth = originalLabelWidth;
             

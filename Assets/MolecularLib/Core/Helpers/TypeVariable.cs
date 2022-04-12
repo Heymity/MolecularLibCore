@@ -38,6 +38,9 @@ namespace MolecularLib.Helpers
             typeName = Type?.FullName;
             assemblyName = Type?.Assembly.GetName().Name;
         }
+
+        public static implicit operator Type(TypeVariable typeVariable) => typeVariable.Type;
+        public static implicit operator TypeVariable(Type type) => new TypeVariable { Type = type };
     }
 
     [Serializable]

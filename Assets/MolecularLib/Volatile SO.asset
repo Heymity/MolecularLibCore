@@ -28,7 +28,7 @@ MonoBehaviour:
         - A
         - B
       useValue: 1
-    myScriptableObject: {fileID: 11400000}
+    myScriptableObject: {fileID: 0}
   editorSavedValue:
     myBehaviour: {fileID: 0}
     myInt: 218
@@ -45,4 +45,4 @@ MonoBehaviour:
         - A
         - B
       useValue: 1
-    myScriptableObject: {fileID: 11400000}
+    myScriptableObject: {fileID: 0}

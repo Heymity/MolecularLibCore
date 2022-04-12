@@ -104,12 +104,12 @@ namespace MolecularEditor
             EditorGUILayout.EndVertical();
         }
         
-        public static void AutoTypeFieldInfo(Rect rect, FieldInfo fi, object targetObj, string label = null)
+       public static void AutoTypeFieldInfo(Rect rect, FieldInfo fi, object targetObj, string label = null)
         {
             var field = fi.GetValue(targetObj);
             label ??= fi.Name;
 
-            fi.SetValue(targetObj, AutoTypeField(ref rect, field, label));
+            fi.SetValue(targetObj, AutoTypeField(rect, fi.FieldType, field, label));
         }
 
         public static void AutoTypePropertyInfo(Rect rect, PropertyInfo pi, object targetObj, string label = null)
@@ -118,53 +118,37 @@ namespace MolecularEditor
             label ??= pi.Name;
 
             // some properties dont have the set method, to be refactored
-            pi.SetValue(targetObj, AutoTypeField(ref rect, field, label));
+            pi.SetValue(targetObj, AutoTypeField(rect, pi.PropertyType, field, label));
         }
 
-        public static object AutoTypeField(ref Rect rect, object value, string labelStr = null)
+        public static object AutoTypeField(Rect rect, Type valueType, object value, string labelStr = null)
         {
             var label = GUIContent.none;
             if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
-            
-            switch (value)
-            {
-                case int i:
-                    return EditorGUI.IntField(rect, label, i);
-                case float f:
-                    return EditorGUI.FloatField(rect, label, f);
-                case double d:
-                    return EditorGUI.DoubleField(rect, label, d);
-                case bool b:
-                    return EditorGUI.Toggle(rect, label, b);
-                case string s:
-                    return EditorGUI.TextField(rect, label, s);
-                case Vector3 vector3:
-                    return EditorGUI.Vector3Field(rect, label, vector3);
-                case Vector3Int vector3Int:
-                    return EditorGUI.Vector3IntField(rect, label, vector3Int);
-                case Vector2 vector2:
-                    return EditorGUI.Vector2Field(rect, label, vector2);
-                case Vector2Int vector2Int:
-                    return EditorGUI.Vector2IntField(rect, label, vector2Int);
-                default:
-                {
-                    if (value.GetType().IsEnum)
-                        return EditorGUI.EnumPopup(rect, label, (Enum)Enum.Parse(value.GetType(), value.ToString()));
 
-                    if (value.GetType().IsSubclassOf(typeof(Object)))
-                        return EditorGUI.ObjectField(rect, label, value as Object, value.GetType(), true);
+            if (valueType == typeof(int)) return EditorGUI.IntField(rect, label, value is int i ? i : 0);
+            if (valueType == typeof(float)) return EditorGUI.FloatField(rect, label, value is float i ? i : 0);
+            if (valueType == typeof(double)) return EditorGUI.DoubleField(rect, label, value is double i ? i : 0);
+            if (valueType == typeof(bool)) return EditorGUI.Toggle(rect, label, value is bool i && i);
+            if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value is string i ? i : "");
+            if (valueType == typeof(Vector3)) return EditorGUI.Vector3Field(rect, label, value is Vector3 vec3 ? vec3 : Vector3.zero);
+            if (valueType == typeof(Vector3Int)) return EditorGUI.Vector3IntField(rect, label, value is Vector3Int vec3Int ? vec3Int : Vector3Int.zero);
+            if (valueType == typeof(Vector2)) return EditorGUI.Vector2Field(rect, label, value is Vector2 vec2 ? vec2 : Vector2.zero);
+            if (valueType == typeof(Vector2Int)) return EditorGUI.Vector2IntField(rect, label, value is Vector2Int vec2Int ? vec2Int : Vector2Int.zero);
 
-                    if (value.GetType() == typeof(object))
-                        return null;
+            if (valueType.IsEnum)
+                return EditorGUI.EnumPopup(rect, label, (Enum) Enum.Parse(value.GetType(), value.ToString()));
 
-                    EditorGUI.LabelField(rect, label, value.ToString());
-                    break;
-                }
-            }
+            if (valueType.IsSubclassOf(typeof(Object)))
+                return EditorGUI.ObjectField(rect, label, value as Object, value.GetType(), true);
+
+            if (valueType == typeof(object))
+                return null;
+
+            EditorGUI.LabelField(rect, label, new GUIContent(value?.ToString() ?? $"{valueType.Name} has null value and is not supported"));
 
             return value;
         }
-
         public static readonly Dictionary<string, (Func<Rect, string, object, object> drawer, Type type)> ObjectTypes = new Dictionary<string, (Func<Rect, string, object, object> drawer, Type type)>
         {
             { "Bool", ((rect, label, value) => EditorGUI.Toggle(rect, label, value is bool v && v), typeof(bool)) }, 

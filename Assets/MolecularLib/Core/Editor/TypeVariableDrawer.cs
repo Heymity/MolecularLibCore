@@ -38,7 +38,7 @@ namespace MolecularEditor
             }
             else
             {
-                selectedType = EditorHelper.TypeField<MonoBehaviour>(position, label.text, type, true);
+                selectedType = EditorHelper.TypeField<object>(position, label.text, type, true);
             }
 
             assemblyNameProp.stringValue = selectedType.Assembly.GetName().Name;

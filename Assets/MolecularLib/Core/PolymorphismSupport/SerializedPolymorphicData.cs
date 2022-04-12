@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MolecularLib.PolymorphismSupport
 {
     [Serializable]
-    public class SerializedPolymorphicData : ISerializationCallbackReceiver
+    public class SerializedPolymorphicData
     {
-        public List<SerializedPolymorphicField> Fields { get; private set; }
-        [SerializeField] private string serializedData;
+        public List<SerializedPolymorphicField> fields;
 
-        public void OnBeforeSerialize()
+        public SerializedPolymorphicData()
         {
-            serializedData = JsonUtility.ToJson(Fields);
-        }
-
-        public void OnAfterDeserialize()
-        {
-            Fields = JsonUtility.FromJson<List<SerializedPolymorphicField>>(serializedData);
+            fields = new List<SerializedPolymorphicField>();
         }
     }
 }

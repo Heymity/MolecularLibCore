@@ -425,7 +425,37 @@ MonoBehaviour:
     useValue: 1
   myPolymorphicVariable:
     selectedPolymorphicType:
-      typeName: MolecularLib.Testing.B
+      typeName: MolecularLib.Testing.C
       assemblyName: Assembly-CSharp
     polymorphicData:
-      serializedData: 
+      fields:
+      - fieldName: cClassFloat
+        fieldType:
+          typeName: System.Single
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <float>8.79</float>'
+      - fieldName: bClassRange
+        fieldType:
+          typeName: MolecularLib.Helpers.Range
+          assemblyName: Molecular.Core
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <Range
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:nil="true" />'
+      - fieldName: bClassInt
+        fieldType:
+          typeName: System.Int32
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <int>379</int>'
+      - fieldName: myBaseString
+        fieldType:
+          typeName: System.String
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <string>Hey</string>'
