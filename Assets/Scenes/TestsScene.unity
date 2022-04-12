@@ -359,20 +359,20 @@ MonoBehaviour:
   tagTest:
     tag: Player
   doubleRange:
-    min: -8.24
-    max: 2.81
+    min: -6.47
+    max: 22.14
   genericFloatRange:
-    min: -17.06
-    max: 3.07
+    min: -75.38
+    max: -75.38
   floatRange1:
     min: -1
-    max: -0.5
+    max: 1
   floatRange:
-    min: -14.013622
-    max: -0.022314072
+    min: -13.197883
+    max: 0.79342556
   intRange:
-    min: -11
-    max: 10
+    min: -26
+    max: -5
   vec2Range:
     minVector2SaveData: {x: -9.06, y: -5.89}
     maxVector2SaveData: {x: -9.06, y: -5.89}
@@ -380,20 +380,25 @@ MonoBehaviour:
     minVector3SaveData: {x: 4.43, y: 6.68, z: -5.51}
     maxVector3SaveData: {x: 10.42, y: 6.68, z: -10.75}
   type:
-    typeName: UnityEngine.Networking.Match.NetworkMatch
-    assemblyName: UnityEngine.UNETModule
+    typeName: MolecularLib.Timers.TimerManager
+    assemblyName: Molecular.Core
   stringToInt:
     keys:
     - A
     - V
     - D
-    values: 5300000061ffffff2d010000
+    - FG
+    values: 5300000061ffffff2d010000ba010000
   flagsToColor:
     keys: 
     values: []
   myStructs:
-    keys: []
-    values: []
+    keys:
+    - 
+    values:
+    - MyInt: 0
+      MyBool: 0
+      MyStringList: []
   myStructsOpposite:
     keys: []
     values: []
@@ -401,8 +406,10 @@ MonoBehaviour:
     keys: []
     values: []
   stringToSprite:
-    keys: []
-    values: []
+    keys:
+    - 
+    values:
+    - {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   myOptionalString:
     value: ASd
     useValue: 0
@@ -416,3 +423,9 @@ MonoBehaviour:
       values:
       - 
     useValue: 1
+  myPolymorphicVariable:
+    selectedPolymorphicType:
+      typeName: MolecularLib.Testing.B
+      assemblyName: Assembly-CSharp
+    polymorphicData:
+      serializedData: 

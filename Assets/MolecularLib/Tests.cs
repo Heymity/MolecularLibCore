@@ -10,7 +10,7 @@ namespace MolecularLib.Testing
     {
         [SerializeField] private Sprite sprite; 
         [SerializeField] private Tag tagTest;
-
+        [Space]
         [SerializeField] private Range<double> doubleRange;
         [SerializeField] private Range<float> genericFloatRange;
         [SerializeField] private Range floatRange1;
@@ -18,22 +18,21 @@ namespace MolecularLib.Testing
         [SerializeField, MinMaxRange(-30, 20)] private RangeInteger intRange;
         [SerializeField] private RangeVector2 vec2Range;
         [SerializeField] private RangeVector3 vec3Range;
-
+        [Space]
         [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
-
+        [Space]
         [SerializeField] private SerializableDictionary<string, int> stringToInt;
         [SerializeField] private SerializableDictionary<HideFlags, Color> flagsToColor;
         [SerializeField] private SerializableDictionary<string, TestStruct> myStructs;
         [SerializeField] private SerializableDictionary<TestStruct, string> myStructsOpposite;
         [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
         [SerializeField] private SerializableDictionary<string, Sprite> stringToSprite;
-        
-        
+        [Space]
         [SerializeField] private Optional<string> myOptionalString;
         [SerializeField] private Optional<List<string>> myList;
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
         //TODO Fix this: [SerializeField] private Optional<Range> myOptionalRange;
-        
+        [Space]
         [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
 
         /*[ContextMenu("Test1ArgInstantiate")]

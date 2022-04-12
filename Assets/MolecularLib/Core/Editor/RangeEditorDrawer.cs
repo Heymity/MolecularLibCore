@@ -259,8 +259,8 @@ namespace MolecularEditor
             else
                 RangeEditorDrawer.ShowNormalMinMax(position, property);
 
-            if (range.Min < minLimit) range.Min = minLimit;
-            if (range.Max > maxLimit) range.Max = maxLimit;
+            if (hasMinMaxRangeDefined && range.Min < minLimit) range.Min = minLimit;
+            if (hasMinMaxRangeDefined && range.Max > maxLimit) range.Max = maxLimit;
 
             EditorGUI.EndProperty();
             EditorGUIUtility.labelWidth = prevLabelWidth;
@@ -319,9 +319,6 @@ namespace MolecularEditor
             position.width -= 4;
             position.y += 4;
             position.height = EditorGUIUtility.singleLineHeight + 2f;
-
-            var orgX = position.x;
-            var orgWidth = position.width;
             
             EditorGUI.BeginChangeCheck();
             property.serializedObject.Update();
@@ -349,8 +346,8 @@ namespace MolecularEditor
             else
                 RangeEditorDrawer.ShowNormalMinMax(position, property);
 
-            if (range.Min < minLimit) range.Min = minLimit;
-            if (range.Max > maxLimit) range.Max = maxLimit;
+            if (hasMinMaxRangeDefined && range.Min < minLimit) range.Min = minLimit;
+            if (hasMinMaxRangeDefined && range.Max > maxLimit) range.Max = maxLimit;
 
             EditorGUI.EndProperty();
             EditorGUIUtility.labelWidth = prevLabelWidth;
