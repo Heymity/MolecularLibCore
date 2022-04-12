@@ -27,8 +27,6 @@ namespace MolecularLib.PolymorphismSupport
 
         public void OnAfterDeserialize()
         {
-            //Debug.Log($"SerializedValue: {serializedValue}");
-            
             try
             {
                 var serializer = new XmlSerializer(fieldType.Type);
@@ -39,8 +37,6 @@ namespace MolecularLib.PolymorphismSupport
             {
                 DeserializedValue = null;
             }
-            
-            //Debug.Log($"Deserialized {fieldName} to {DeserializedValue}");
         }
     }
 }

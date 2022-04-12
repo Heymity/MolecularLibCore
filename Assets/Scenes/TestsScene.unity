@@ -435,7 +435,7 @@ MonoBehaviour:
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <float>8.79</float>'
+          <float>7.81</float>'
       - fieldName: bClassRange
         fieldType:
           typeName: MolecularLib.Helpers.Range
@@ -451,7 +451,7 @@ MonoBehaviour:
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <int>379</int>'
+          <int>-66</int>'
       - fieldName: myBaseString
         fieldType:
           typeName: System.String
