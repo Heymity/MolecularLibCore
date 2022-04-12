@@ -40,6 +40,12 @@ namespace MolecularLib.Helpers
         }
     }
 
+    [Serializable]
+    public class TypeVariable<TBase> : TypeVariable
+    {
+        
+    }
+
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class TypeVariableBaseTypeAttribute : PropertyAttribute
     {

@@ -198,14 +198,14 @@ namespace MolecularEditor
             return value;
         }       
         
-        public static Type TypeField<TBaseClass>(Rect rect, string label, Type currentValue)
+        public static Type TypeField<TBaseClass>(Rect rect, string label, Type currentValue, bool showBaseType)
         {
-            return TypeField(rect, label, currentValue, typeof(TBaseClass));
+            return TypeField(rect, label, currentValue, typeof(TBaseClass), showBaseType);
         }
 
-        public static Type TypeField(Rect rect, string label, Type currentValue, Type baseType)
+        public static Type TypeField(Rect rect, string label, Type currentValue, Type baseType, bool showBaseType)
         {
-            var types = GetTypesForPopup(baseType);
+            var types = GetTypesForPopup(baseType, showBaseType);
 
             var r = DrawTypeField(rect, label, types, currentValue);
             if (r != currentValue) GUI.changed = true;
@@ -240,14 +240,13 @@ namespace MolecularEditor
             var selected = types.FindIndex(t => t == current);
             if (selected <= 0) selected = 0;
 
-            if (CachedDisplayTypeNames is null || CachedDisplayTypeNames.Length == 0)
-                CachedDisplayTypeNames = types.Select(t => t.FullName?.Replace('.', '/')).ToArray();
+            var popupNames = types.Select(t => t.FullName?.Replace('.', '/')).ToArray();
 
             selected = EditorGUI.Popup(
                 rect,
                 label,
                 selected,
-                CachedDisplayTypeNames);
+                popupNames);
 
             return types.Count <= 0 ? null : types[selected];
         }
@@ -335,7 +334,6 @@ namespace MolecularEditor
                                                                 BindingFlags.Public |
                                                                 BindingFlags.NonPublic |
                                                                 BindingFlags.FlattenHierarchy;
-        private static string[] CachedDisplayTypeNames { get; set; }
 
         private static List<Type> _cachedTypes;
         public static IReadOnlyList<Type> AllTypes
@@ -354,16 +352,16 @@ namespace MolecularEditor
             }
         }
 
-        private static readonly Dictionary<Type, List<Type>> cachedDerivedTypes = new Dictionary<Type, List<Type>>();
+        private static readonly Dictionary<string, List<Type>> cachedDerivedTypes = new Dictionary<string, List<Type>>();
 
-        public static List<Type> GetTypesForPopup<TBaseClass>() => GetTypesForPopup(typeof(TBaseClass));
-        public static List<Type> GetTypesForPopup(Type baseType)
+        public static List<Type> GetTypesForPopup<TBaseClass>(bool showBaseType) => GetTypesForPopup(typeof(TBaseClass), showBaseType);
+        public static List<Type> GetTypesForPopup(Type baseType, bool showBaseType)
         {
-            if (cachedDerivedTypes.TryGetValue(baseType, out var derivedTypes))
+            if (cachedDerivedTypes.TryGetValue(baseType.ToString(), out var derivedTypes))
                 return derivedTypes;
             
-            var types = AllTypes.Where(baseType.IsAssignableFrom).Where(t => t != baseType).ToList();
-            cachedDerivedTypes.Add(baseType, types);
+            var types = AllTypes.Where(baseType.IsAssignableFrom).Where(t => showBaseType || t != baseType).ToList();
+            cachedDerivedTypes.Add(baseType.ToString(), types);
 
             return types;
         }

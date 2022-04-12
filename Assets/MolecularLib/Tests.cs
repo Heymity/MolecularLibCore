@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MolecularLib.Helpers;
+using MolecularLib.PolymorphismSupport;
 using UnityEngine;
 
 namespace MolecularLib.Testing
@@ -31,7 +32,9 @@ namespace MolecularLib.Testing
         [SerializeField] private Optional<string> myOptionalString;
         [SerializeField] private Optional<List<string>> myList;
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
-        //[SerializeField] private Optional<Range> myOptionalRange;
+        //TODO Fix this: [SerializeField] private Optional<Range> myOptionalRange;
+        
+        [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
 
         /*[ContextMenu("Test1ArgInstantiate")]
         private void Test1ArgInstantiate()
@@ -58,5 +61,29 @@ namespace MolecularLib.Testing
         public int MyInt;
         public bool MyBool;
         public List<string> MyStringList;
+    }
+
+    [Serializable]
+    public class Base
+    {
+        public string myBaseString;
+    }
+
+    [Serializable]
+    public class A : Base
+    {
+        public int aClassInt;
+    }
+
+    [Serializable]
+    public class B : Base
+    {
+        public Range bClassRange;
+    }
+
+    [Serializable]
+    public class C : B
+    {
+        public float cClassFloat;
     }
 }

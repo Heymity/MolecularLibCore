@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MolecularEditor
 {
-    [CustomPropertyDrawer(typeof(TypeVariable))]
+    [CustomPropertyDrawer(typeof(TypeVariable), true)]
     public class TypeVariableDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -28,11 +28,17 @@ namespace MolecularEditor
             {
                 var baseType = (typeAtt.FirstOrDefault() as TypeVariableBaseTypeAttribute)?.Type;
 
-                selectedType = EditorHelper.TypeField(position, label.text, type, baseType);
+                selectedType = EditorHelper.TypeField(position, label.text, type, baseType, true);
+            }
+            else if (fieldInfo.FieldType.IsGenericType && fieldInfo.FieldType.BaseType == typeof(TypeVariable) && fieldInfo.FieldType.GetGenericTypeDefinition().ToString().Contains("TBase"))
+            {
+                var baseType = fieldInfo.FieldType.GetGenericArguments()[0];
+
+                selectedType = EditorHelper.TypeField(position, label.text, type, baseType, true);
             }
             else
             {
-                selectedType = EditorHelper.TypeField<MonoBehaviour>(position, label.text, type);
+                selectedType = EditorHelper.TypeField<MonoBehaviour>(position, label.text, type, true);
             }
 
             assemblyNameProp.stringValue = selectedType.Assembly.GetName().Name;
