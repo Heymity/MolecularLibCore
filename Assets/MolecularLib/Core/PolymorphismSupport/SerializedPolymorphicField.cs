@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using MolecularLib.Helpers;
+using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace MolecularLib.PolymorphismSupport
 {
@@ -18,9 +21,15 @@ namespace MolecularLib.PolymorphismSupport
 
         public void OnBeforeSerialize()
         {
+            if (DeserializedValue is null) return;
+            
+            var valueToSerialize = DeserializedValue;
+
+            fieldType.Type = valueToSerialize.GetType();
+            
             var serializer = new XmlSerializer(fieldType.Type);
             using var writer = new StringWriter();
-            serializer.Serialize(writer, DeserializedValue);
+            serializer.Serialize(writer, valueToSerialize!);
             
             serializedValue = writer.ToString();
         }
@@ -29,9 +38,17 @@ namespace MolecularLib.PolymorphismSupport
         {
             try
             {
+                if (string.IsNullOrEmpty(serializedValue))
+                {
+                    DeserializedValue = null;
+                    return;
+                }
+                
                 var serializer = new XmlSerializer(fieldType.Type);
                 using var reader = new StringReader(serializedValue);
-                DeserializedValue = serializer.Deserialize(reader);
+                var deserialized = serializer.Deserialize(reader);
+
+                DeserializedValue = deserialized;
             }
             catch (ArgumentNullException)
             {

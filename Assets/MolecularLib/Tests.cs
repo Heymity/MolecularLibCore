@@ -32,10 +32,10 @@ namespace MolecularLib.Testing
         [SerializeField] private Optional<List<string>> myList;
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
         //TODO Fix this: [SerializeField] private Optional<Range> myOptionalRange;
-        [Space]
+        //[Space]
         [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
 
-        [ContextMenu("Test Polymorphic Variable")]
+        /*[ContextMenu("Test Polymorphic Variable")]
         private void TestPoly()
         {
             if (myPolymorphicVariable.As<A>(out var asA))
@@ -48,7 +48,7 @@ namespace MolecularLib.Testing
                 Debug.Log($"As Base | myBaseString: {myPolymorphicVariable.Value.myBaseString}");
             
             myPolymorphicVariable.Value.myBaseString = "Hey, I changed it!";
-        }
+        }*/
     }
 
     [Serializable]
@@ -74,7 +74,7 @@ namespace MolecularLib.Testing
     [Serializable]
     public class B : Base
     {
-        public Range bClassRange;
+        //public Range bClassRange;
         public int bClassInt;
     }
 
@@ -82,5 +82,6 @@ namespace MolecularLib.Testing
     public class C : B
     {
         public float cClassFloat;
+        public TestVolatileScriptableObject cClassScriptableObject;
     }
 }

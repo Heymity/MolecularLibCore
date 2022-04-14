@@ -137,10 +137,10 @@ namespace MolecularEditor
             if (valueType == typeof(Vector2Int)) return EditorGUI.Vector2IntField(rect, label, value is Vector2Int vec2Int ? vec2Int : Vector2Int.zero);
 
             if (valueType.IsEnum)
-                return EditorGUI.EnumPopup(rect, label, (Enum) Enum.Parse(value.GetType(), value.ToString()));
+                return EditorGUI.EnumPopup(rect, label, (Enum) Enum.Parse(valueType, value?.ToString() ?? ""));
 
             if (valueType.IsSubclassOf(typeof(Object)))
-                return EditorGUI.ObjectField(rect, label, value as Object, value.GetType(), true);
+                return EditorGUI.ObjectField(rect, label, value as Object, valueType, true);
 
             if (valueType == typeof(object))
                 return null;

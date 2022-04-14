@@ -1,18 +1,28 @@
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using UnityEngine;
 
 namespace MolecularLib.Helpers
 {
-    [Serializable]
+    [Serializable, DataContract]
     public class TypeVariable : ISerializationCallbackReceiver
     {
-        [SerializeField] private string typeName;
-        [SerializeField] private string assemblyName;
+        [SerializeField, DataMember] private string typeName;
+        [SerializeField, DataMember] private string assemblyName;
 
-        private Type _type;
+        [XmlIgnore] private Type _type;
 
-        public Type Type { get => _type; set => _type = value; }
+        [XmlIgnore] public Type Type 
+        {
+            get 
+            { 
+                if (_type is null) OnAfterDeserialize();
+                    return _type;
+            }
+            set => _type = value; 
+        }
 
         public void OnAfterDeserialize()
         {

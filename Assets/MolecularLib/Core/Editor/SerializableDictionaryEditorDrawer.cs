@@ -179,7 +179,7 @@ namespace MolecularEditor
             
             if (!valueProp.isExpanded) EditorGUIUtility.labelWidth = 55;
             else EditorGUIUtility.labelWidth = originalLabelWidth / 2;
-            EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"DeserializedValue {index}"), true);
+            EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"Value {index}"), true);
             
             EditorGUIUtility.labelWidth = originalLabelWidth;
             
