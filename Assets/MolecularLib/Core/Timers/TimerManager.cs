@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,16 +9,16 @@ namespace MolecularLib.Timers
     {
         private readonly List<Timer> _timers = new List<Timer>();
 
-        private void Start()
+        private void Awake()
         {
-            //hideFlags = HideFlags.HideAndDontSave;
+            hideFlags = HideFlags.HideAndDontSave;
         }
 
         internal void AddTimer(Timer timer)
         {
             _timers.Add(timer);
 
-            StartCoroutine(timer.StartTimer());
+            StartCoroutine(timer.TimerCoroutine);
             
             timer.OnComplete += () =>
             {
@@ -38,7 +39,7 @@ namespace MolecularLib.Timers
         
         public void RemoveTimer(Timer timer)
         {
-            StopCoroutine(timer.StartTimer());
+            StopCoroutine(timer.TimerCoroutine);
             _timers.Remove(timer);
         }
     }

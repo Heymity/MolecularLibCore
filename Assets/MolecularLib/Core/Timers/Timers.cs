@@ -18,6 +18,8 @@ namespace MolecularLib.Timers
         public float ElapsedSeconds => Time.time - StartTime;
         public bool HasFinished => ElapsedSeconds >= DurationInSeconds;
         
+        public IEnumerator TimerCoroutine { get; set; }
+        
         public static Timer Create(float duration, Action callback, bool repeat = false)
         {
             var timer = new Timer
@@ -28,7 +30,8 @@ namespace MolecularLib.Timers
             };
 
             timer.OnComplete += callback;
-            
+
+            timer.TimerCoroutine = timer.StartTimer();
             TimerManager.Current.AddTimer(timer);
 
             return timer;
@@ -45,6 +48,11 @@ namespace MolecularLib.Timers
         public void StopTimer()
         {
             TimerManager.Current.RemoveTimer(this);
+        }
+
+        public void ResumeTimer()
+        {
+            TimerManager.Current.AddTimer(this);
         }
         
         public IEnumerator StartTimer()
