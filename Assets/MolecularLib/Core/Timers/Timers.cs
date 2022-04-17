@@ -40,6 +40,7 @@ namespace MolecularLib.Timers
         public void RestartTimer()
         {
             StartTime = Time.time;
+            TimerCoroutine = StartTimer();
    
             if (!TimerManager.Current.HasTimer(this))
                 TimerManager.Current.AddTimer(this);
@@ -52,6 +53,7 @@ namespace MolecularLib.Timers
 
         public void ResumeTimer()
         {
+            TimerCoroutine = StartTimer();
             TimerManager.Current.AddTimer(this);
         }
         
