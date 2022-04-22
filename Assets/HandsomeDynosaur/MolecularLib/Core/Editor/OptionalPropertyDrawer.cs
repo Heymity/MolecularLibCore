@@ -19,6 +19,8 @@ namespace MolecularLib
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            var valueLabel = label.text;
+            
             EditorGUI.BeginProperty(position, label, property);
             property.serializedObject.Update();
             EditorGUI.BeginChangeCheck();
@@ -32,7 +34,7 @@ namespace MolecularLib
                 height = EditorGUI.GetPropertyHeight(valueProperty)
             };
 
-            EditorGUI.PropertyField(valueRect, valueProperty, label);
+            EditorGUI.PropertyField(valueRect, valueProperty, new GUIContent(valueLabel));
             EditorGUI.EndDisabledGroup();
 
             var useValueRect = new Rect(valueRect.xMax + 3f, position.y, ToggleSize, EditorGUIUtility.singleLineHeight);

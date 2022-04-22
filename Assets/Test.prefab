@@ -141,29 +141,10 @@ MonoBehaviour:
     useValue: 1
   myPolymorphicVariable:
     selectedPolymorphicType:
-      typeName: MolecularLib.Testing.C
-      assemblyName: Assembly-CSharp
+      typeName: MolecularLib.Testing.Base
+      assemblyName: Molecular.Core
     polymorphicData:
       fields:
-      - fieldName: cClassFloat
-        fieldType:
-          typeName: System.Single
-          assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <float>0.24</float>'
-      - fieldName: cClassScriptableObject
-        fieldType:
-          typeName: MolecularLib.Testing.TestVolatileScriptableObject
-          assemblyName: Assembly-CSharp
-        serializedValue: 
-      - fieldName: bClassInt
-        fieldType:
-          typeName: System.Int32
-          assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <int>345</int>'
       - fieldName: myBaseString
         fieldType:
           typeName: System.String
