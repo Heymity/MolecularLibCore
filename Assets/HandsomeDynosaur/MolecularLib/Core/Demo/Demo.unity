@@ -1158,7 +1158,7 @@ MonoBehaviour:
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <float>4.32</float>'
+          <float>4.87</float>'
       - fieldName: bClassInt
         fieldType:
           typeName: System.Int32
@@ -1216,7 +1216,7 @@ RectTransform:
   m_GameObject: {fileID: 737512357}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 681974668}
   - {fileID: 38372098}
@@ -1226,7 +1226,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 407, y: -72}
+  m_AnchoredPosition: {x: 481, y: -67}
   m_SizeDelta: {x: 435.73, y: 185.73}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &737512359
@@ -1680,7 +1680,7 @@ RectTransform:
   m_GameObject: {fileID: 1204733058}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 394904719}
   - {fileID: 1635601831}
@@ -1693,8 +1693,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -342, y: -98.98999}
-  m_SizeDelta: {x: 410, y: 278.23}
+  m_AnchoredPosition: {x: -332, y: -80.737}
+  m_SizeDelta: {x: 410, y: 226.08}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1204733060
 MonoBehaviour:
@@ -1933,7 +1933,7 @@ RectTransform:
   m_GameObject: {fileID: 1322689978}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 116922235}
   - {fileID: 171368623}
@@ -1944,7 +1944,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 676, y: -59}
+  m_AnchoredPosition: {x: 809, y: -53}
   m_SizeDelta: {x: 409.82, y: 142.92}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1322689980
@@ -2580,7 +2580,7 @@ GameObject:
   - component: {fileID: 1703827093}
   - component: {fileID: 1703827092}
   m_Layer: 5
-  m_Name: Args (1)
+  m_Name: Note
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3042,10 +3042,10 @@ RectTransform:
   m_Father: {fileID: 1204733059}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.03, y: -78.71}
-  m_SizeDelta: {x: 378.06, y: 93.43}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 201.97, y: -217.70999}
+  m_SizeDelta: {x: 378.06, y: 93.42999}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2135322908
 MonoBehaviour:

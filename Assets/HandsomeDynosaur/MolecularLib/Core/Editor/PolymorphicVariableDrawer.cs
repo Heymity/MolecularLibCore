@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using MolecularEditor;
 using MolecularLib.Helpers;
 using MolecularLib.PolymorphismSupport;
@@ -71,6 +72,8 @@ namespace MolecularLib.Core.Editor
             {
                 SetSerializedPolymorphicData(editProps, targetObj);
                 property.serializedObject.ApplyModifiedProperties();
+
+                UpdateInstance(targetObj);
                 
                 EditorUtility.SetDirty(property.serializedObject.targetObject);
             }
@@ -150,15 +153,31 @@ namespace MolecularLib.Core.Editor
             return serializedData;
         }
 
+        private MethodInfo _cachedOnAfterDeserializeMethod;
+        private FieldInfo _cachedPolymorphicDataField;
+        private Type _cachedFieldType;
         private void SetSerializedPolymorphicData(SerializedPolymorphicData newData, object targetObj)
         {
-            var polymorphicDataField = fieldInfo.FieldType.GetField("polymorphicData", EditorHelper.UnitySerializesBindingFlags);
-            if (polymorphicDataField is null)
+            _cachedFieldType ??= fieldInfo.FieldType;
+            _cachedPolymorphicDataField ??= _cachedFieldType.GetField("polymorphicData", EditorHelper.UnitySerializesBindingFlags);
+            if (_cachedPolymorphicDataField is null)
                 throw new Exception("Could not find the polymorphicData field in the PolymorphicVariable class");
-
+            
             //Debug.Log($"[REFLECTION SAVING] (Before) Current value {(polymorphicDataField.GetValue(targetObj) as SerializedPolymorphicData).fields[0].serializedValue}");
-            polymorphicDataField.SetValue(targetObj, newData);
+            _cachedPolymorphicDataField.SetValue(targetObj, newData);
             //Debug.Log($"[REFLECTION SAVING] (After) Current value {(polymorphicDataField.GetValue(targetObj) as SerializedPolymorphicData).fields[0].serializedValue}");
+        }
+
+        private void UpdateInstance(object targetObj)
+        {
+            _cachedFieldType ??= fieldInfo.FieldType;
+            _cachedOnAfterDeserializeMethod ??= _cachedFieldType.GetMethod("OnAfterDeserialize", EditorHelper.UnitySerializesBindingFlags);
+            
+            if (_cachedOnAfterDeserializeMethod is null)
+                throw new Exception("Could not find the polymorphicData method for updating the values");
+            
+            _cachedOnAfterDeserializeMethod?.Invoke(targetObj, null);
+
         }
     }
 }
