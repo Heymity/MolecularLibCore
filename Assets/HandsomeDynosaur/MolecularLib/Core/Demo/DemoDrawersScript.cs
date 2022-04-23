@@ -5,7 +5,7 @@ using MolecularLib.PolymorphismSupport;
 using MolecularLib.Testing;
 using UnityEngine;
 
-namespace MolecularLib
+namespace MolecularLib.Demo
 {
     public class DemoDrawersScript : MonoBehaviour
     {
@@ -36,9 +36,12 @@ namespace MolecularLib
         [SerializeField] private Optional<string> myOptionalString;
         [SerializeField] private Optional<List<string>> myList;
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
+        //TODO Fix this: [SerializeField] private Optional<Range> myOptionalRange;
         [Space] 
         [Header("Polymorphic variable examples")] 
         [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
+
+        public PolymorphicVariable<Base> PolymorphicVariable => myPolymorphicVariable;
 
         [ContextMenu("Test Polymorphic Variable")]
         public void TestPoly()

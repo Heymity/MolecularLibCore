@@ -80,6 +80,17 @@ namespace MolecularLib.Timers
             callback?.Invoke();
         }
         
+        private static async void TimerAsyncReference(TimerReference timerReference, Action repeatCallback)
+        {
+            await Task.Delay(timerReference.DurationInMilliseconds);
+            
+            if (!PlayStatus.IsPlaying)
+                return;
+            
+            timerReference.OnFinish?.Invoke();
+            repeatCallback?.Invoke();
+        }
+
         /// <summary>
         /// Makes a timer using the await Task.Delay() method, not needing to create a MonoBehaviour and returning a TimerReference, allowing to get the elapsed time, the Start Time, to make repeatable timers and reassign the callback
         /// </summary>
@@ -94,7 +105,7 @@ namespace MolecularLib.Timers
                 Repeat = repeat
             };
 
-            TimerAsync(seconds, !reference.Repeat ? reference.OnFinish : HandleRepeat);
+            TimerAsyncReference(reference, !reference.Repeat ? reference.OnFinish : HandleRepeat);
             
             return reference;
 
