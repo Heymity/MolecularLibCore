@@ -291,6 +291,95 @@ namespace MolecularLib.Helpers
     }
     
     [Serializable]
+    public class RangeVector3Int : Range<(int x, int y, int z)>, ISerializationCallbackReceiver
+    {
+        [SerializeField] private Vector3Int minVector2SaveData;
+        [SerializeField] private Vector3Int maxVector2SaveData;
+
+        public new Vector3Int Min
+        {
+            get => ToVec3(base.Min);
+            set => base.Min = FromVec3(value);
+        }
+
+        public new Vector3Int Max
+        {
+            get => ToVec3(base.Max);
+            set => base.Max = FromVec3(value);
+        }
+
+        public float InverseLerp(Vector3Int value) => Mathf.Clamp01(Maths.InvLerp(Min, Max, value));
+        public float InverseLerpUnclamped(Vector3Int value) => Maths.InvLerp(Min, Max, value);
+
+        public Vector3Int Random() =>
+            new Vector3Int(UnityEngine.Random.Range(Min.x, Max.x), UnityEngine.Random.Range(Min.y, Max.y), UnityEngine.Random.Range(Min.z, Max.z));
+
+        public bool IsInRange(Vector3Int vec3) => Maths.IsAllGreaterThan(Min, vec3) && Maths.IsAllSmallerThan(Max, vec3);
+
+        public BoundsInt GetBoundingIntBox()
+        {
+            var center = new Vector3Int((Max.x - Min.x) / 2 + Min.x, (Max.y - Min.y) / 2 + Min.y, (Max.z - Min.z) / 2 + Min.z);
+            var size = new Vector3Int(Max.x - Min.x, Max.y - Min.y, Max.z - Min.z);
+
+            return new BoundsInt(center, size);
+        }
+        
+        public Bounds GetBoundingBox()
+        {
+            var center = new Vector3((Max.x - Min.x) / 2 + Min.x, (Max.y - Min.y) / 2 + Min.y, (Max.z - Min.z) / 2 + Min.z);
+            var size = new Vector3(Max.x - Min.x, Max.y - Min.y, Max.z - Min.z);
+
+            return new Bounds(center, size);
+        }
+
+        public Vector3Int Clamp(Vector3Int vec3)
+        {
+            if (vec3.x < Min.x) vec3.x = Min.x;
+            if (vec3.y < Min.y) vec3.y = Min.y;
+            if (vec3.z < Min.z) vec3.z = Min.z;
+
+            if (vec3.x > Max.x) vec3.x = Max.x;
+            if (vec3.y > Max.y) vec3.y = Max.y;
+            if (vec3.z > Max.z) vec3.z = Max.z;
+
+            return vec3;
+        }
+
+        public Vector3Int ClampCeil(Vector3Int vec3)
+        {
+            if (vec3.x > Max.x) vec3.x = Max.x;
+            if (vec3.y > Max.y) vec3.y = Max.y;
+            if (vec3.z > Max.z) vec3.z = Max.z;
+
+            return vec3;
+        }
+
+        public Vector3Int ClampFloor(Vector3Int vec3)
+        {
+            if (vec3.x < Min.x) vec3.x = Min.x;
+            if (vec3.y < Min.y) vec3.y = Min.y;
+            if (vec3.z < Min.z) vec3.z = Min.z;
+
+            return vec3;
+        }
+
+        public static Vector3Int ToVec3((int x, int y, int z) vec3Tup) => new Vector3Int(vec3Tup.x, vec3Tup.y, vec3Tup.z);
+        public static (int x, int y, int z) FromVec3(Vector3Int vec3) => (vec3.x, vec3.y, vec3.z);
+
+        public void OnBeforeSerialize()
+        {
+            minVector2SaveData = Min;
+            maxVector2SaveData = Max;
+        }
+
+        public void OnAfterDeserialize()
+        {
+            Min = minVector2SaveData;
+            Max = maxVector2SaveData;
+        }
+    }
+    
+    [Serializable]
     public class RangeVector2Int : Range<(int x, int y)>, ISerializationCallbackReceiver
     {
         [SerializeField] private Vector2Int minVector2SaveData;
@@ -316,6 +405,14 @@ namespace MolecularLib.Helpers
 
         public bool IsInRange(Vector2Int vec2) => Maths.IsAllGreaterThan(Min, vec2) && Maths.IsAllSmallerThan(Max, vec2);
 
+        public BoundsInt GetBoundingIntBox()
+        {
+            var center = new Vector3Int((Max.x - Min.x) / 2 + Min.x, (Max.y - Min.y) / 2 + Min.y, 0);
+            var size = new Vector3Int(Max.x - Min.x, Max.y - Min.y, 0);
+
+            return new BoundsInt(center, size);
+        }
+        
         public Bounds GetBoundingBox()
         {
             var center = new Vector3((Max.x - Min.x) / 2 + Min.x, (Max.y - Min.y) / 2 + Min.y);

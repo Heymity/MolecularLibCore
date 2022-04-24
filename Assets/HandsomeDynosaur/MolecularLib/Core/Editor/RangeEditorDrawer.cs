@@ -225,10 +225,10 @@ namespace MolecularEditor
         }
     }
     
-    [CustomPropertyDrawer(typeof(RangeVector2Int), true)]
-    public class RangeVector2IntDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(RangeVector3Int), true)]
+    public class RangeVector3IntDrawer : PropertyDrawer
     {
-        private RangeVector2Int _range;
+        private RangeVector3Int _range;
         
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
@@ -276,9 +276,74 @@ namespace MolecularEditor
                 
                 EditorGUIUtility.labelWidth = 30f;
 
-                _range.Min = EditorGUI.Vector2IntField(fieldPos, new GUIContent("Min"), minVec3);
+                _range.Min = EditorGUI.Vector3IntField(fieldPos, new GUIContent("Min"), minVec3);
                 fieldPos.x += fieldPos.width + 5f;
-                _range.Max = EditorGUI.Vector2IntField(fieldPos, new GUIContent("Max"), maxVec3);
+                _range.Max = EditorGUI.Vector3IntField(fieldPos, new GUIContent("Max"), maxVec3);
+                
+                EditorGUIUtility.labelWidth = prevLabelWidth;
+            }
+        }
+        
+        private RangeVector3Int GetRange(SerializedProperty property)
+        {
+            return this.GetTargetValue<RangeVector3Int>(property);
+        }
+    }
+    
+    [CustomPropertyDrawer(typeof(RangeVector2Int), true)]
+    public class RangeVector2IntDrawer : PropertyDrawer
+    {
+        private RangeVector2Int _range;
+        
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUIUtility.singleLineHeight + 8f;
+        }
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            _range = GetRange(property);
+            
+            // Draw background box
+            var prevLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 100f;
+
+            GUI.Box(position, GUIContent.none, EditorStyles.helpBox);
+
+            position.x += 4;
+            position.width -= 4;
+            position.y += 4;
+            position.height += 4;
+
+            property.serializedObject.Update();
+
+            position = EditorGUI.PrefixLabel(position, EditorGUI.BeginProperty(position, label, property));
+            EditorGUI.BeginChangeCheck();
+
+            ShowMinMax();
+            _range.ValidateMinMaxValues();
+
+            EditorGUI.EndProperty();
+            
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(property.serializedObject.targetObject);
+
+                property.serializedObject.ApplyModifiedProperties();
+            }
+
+            void ShowMinMax()
+            {
+                var fieldPos = new Rect(position.x, position.y, (position.width / 2f) - 5f, EditorGUIUtility.singleLineHeight + 2f);
+
+                var minVec2 = _range.Min;
+                var maxVec2 = _range.Max;
+                
+                EditorGUIUtility.labelWidth = 30f;
+
+                _range.Min = EditorGUI.Vector2IntField(fieldPos, new GUIContent("Min"), minVec2);
+                fieldPos.x += fieldPos.width + 5f;
+                _range.Max = EditorGUI.Vector2IntField(fieldPos, new GUIContent("Max"), maxVec2);
                 
                 EditorGUIUtility.labelWidth = prevLabelWidth;
             }

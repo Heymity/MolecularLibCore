@@ -393,6 +393,8 @@ namespace MolecularEditor
  
         public static T GetTargetValue<T>(this PropertyDrawer propertyDrawer, SerializedProperty property) where T : class
         {
+            Debug.Log(property.propertyPath);
+            
             var obj = propertyDrawer.fieldInfo.GetValue(property.serializedObject.targetObject);
 
             if (obj.IsGenericList())

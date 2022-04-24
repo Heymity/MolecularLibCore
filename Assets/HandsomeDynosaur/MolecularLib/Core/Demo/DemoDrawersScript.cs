@@ -32,11 +32,14 @@ namespace MolecularLib.Demo
         [Header("Range variables and editor drawers")] 
         [SerializeField] private Range<double> doubleRange;
         [SerializeField] private Range<float> genericFloatRange;
-        [SerializeField] private Range floatRange1;
-        [SerializeField, MinMaxRange(-30.6345f, 24.34634f)] private Range floatRange;
-        [SerializeField, MinMaxRange(-30, 20)] private RangeInteger intRange;
+        [SerializeField] private Range floatRange;
+        [SerializeField] private Range intRange;
+        [SerializeField, MinMaxRange(-30.6345f, 24.34634f)] private Range minMaxFloatRange;
+        [SerializeField, MinMaxRange(-30, 20)] private RangeInteger minMaxIntRange;
         [SerializeField] private RangeVector2 vec2Range;
         [SerializeField] private RangeVector3 vec3Range;
+        [SerializeField] private RangeVector2Int vec2IntRange;
+        [SerializeField] private RangeVector3Int vec3IntRange;
         [Space] 
         [Header("Serializable Dictionary examples")] 
         [SerializeField] private SerializableDictionary<string, int> stringToInt;
@@ -51,7 +54,7 @@ namespace MolecularLib.Demo
         [SerializeField] private Optional<string> myOptionalString;
         [SerializeField] private Optional<List<string>> myList;
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
-        //TODO Fix this: [SerializeField] private Optional<Range> myOptionalRange;
+        [SerializeField] private Optional<Range> myOptionalRange;
         [Space] 
         [Header("Polymorphic variable examples")] 
         [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
