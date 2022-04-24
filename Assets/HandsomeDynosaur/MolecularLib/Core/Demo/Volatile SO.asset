@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Volatile SO
   m_EditorClassIdentifier: 
   runtimeValue:
+    myString: 'Hello, this is a volatile scriptable object: the values edited in
+      play mode DO NOT remain when leaving play mode. Go ahed and test it! Enter
+      play mode, edit some values, leave play mode, and compare the values you changed
+      with what you have now!'
     myBehaviour: {fileID: 0}
     myInt: 218
     myFloat: 4.87
@@ -23,13 +27,19 @@ MonoBehaviour:
     - ert
     myOptionalDictionary:
       value:
-        keys: ee0000001b050000
+        keys: 765edf011b0000002a000000ffffff7f
         values:
-        - A
-        - B
+        - 10000000 times Pi
+        - 10 timer e
+        - The meaning of life
+        - Int32 max value (2^31 - 1)
       useValue: 1
     myScriptableObject: {fileID: 0}
   editorSavedValue:
+    myString: 'Hello, this is a volatile scriptable object: the values edited in
+      play mode DO NOT remain when leaving play mode. Go ahed and test it! Enter
+      play mode, edit some values, leave play mode, and compare the values you changed
+      with what you have now!'
     myBehaviour: {fileID: 0}
     myInt: 218
     myFloat: 4.87
@@ -40,9 +50,11 @@ MonoBehaviour:
     - ert
     myOptionalDictionary:
       value:
-        keys: ee0000001b050000
+        keys: 765edf011b0000002a000000ffffff7f
         values:
-        - A
-        - B
+        - 10000000 times Pi
+        - 10 timer e
+        - The meaning of life
+        - Int32 max value (2^31 - 1)
       useValue: 1
     myScriptableObject: {fileID: 0}

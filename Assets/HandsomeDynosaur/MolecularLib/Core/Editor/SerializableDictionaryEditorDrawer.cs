@@ -1,13 +1,25 @@
-using System;
+/*  Copyright 2022 Gabriel Pasquale Rodrigues Scavone
+*
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using MolecularLib;
 using UnityEditor;
 using UnityEngine;
-using Logger = MolecularInternal.Logger;
 
 namespace MolecularEditor
 {
@@ -224,54 +236,26 @@ namespace MolecularEditor
             EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
         
-        private static object GetKeyValue(SerializedProperty property)
+        private object GetKeyValue(SerializedProperty property)
         {
-            var propertyPath = property.propertyPath;
-            var pathSegments = propertyPath.Split('.');
+            var keysField = fieldInfo.FieldType.GetField("keys", EditorHelper.UnitySerializesBindingFlags);
+            var targetDictionary = fieldInfo.GetValue(property.serializedObject.targetObject);
 
-            if (pathSegments.Length == 0)
+            if (keysField is null)
             {
-                Debug.LogError("Dictionary field not found by editor");
+                Debug.LogError($"{fieldInfo.Name} is not a serialized dictionary");
                 return null;
             }
             
-            var targetObjType = property.serializedObject.targetObject.GetType();
+            var keys = keysField.GetValue(targetDictionary);
 
-            var currentSearchObjType = targetObjType;
-            object currentSearchObj = property.serializedObject.targetObject;
-            for (var index = 0; index < pathSegments.Length; index++)
-            {
-                FieldInfo targetField = null;
-                var pathSegment = pathSegments[index];
-                while (targetField is null && currentSearchObjType.BaseType != null)
-                {
-                    if (pathSegment == "Array" && index == pathSegments.Length - 2)
-                    {
-                        var dataSegment = pathSegments[index + 1];
-                        var arrayIndex = int.Parse(dataSegment.Split('[', ']')[1]);
-
-                        return (currentSearchObj as IList)?.Cast<object>().ElementAt(arrayIndex);
-                    }
-
-                    targetField = currentSearchObjType.GetField(pathSegment, EditorHelper.UnitySerializesBindingFlags);
-
-                    if (targetField is null && currentSearchObjType.BaseType != null)
-                        currentSearchObjType = currentSearchObjType.BaseType;
-                }
-
-                if (targetField is null)
-                {
-                    Debug.LogWarning(pathSegment + " field not found by editor");
-                    Logger.MolecularVerbose($"[DEBUG] CurrentSearchObject: {currentSearchObj} | pathSegment: {pathSegment} | propertyPath: {propertyPath}");
-                    return null;
-                }
-
-                currentSearchObjType = targetField.FieldType;
-
-                currentSearchObj = targetField.GetValue(currentSearchObj);
-            }
-
-            return currentSearchObj;
+            var propertyPath = property.propertyPath;
+            var pathSegments = propertyPath.Split('.').ToList();
+            
+            var dataSegment = pathSegments[pathSegments.FindIndex(i => i == "Array") + 1];
+            var arrayIndex = int.Parse(dataSegment.Split('[', ']')[1]);
+            
+            return (keys as IList)?.Cast<object>().ElementAt(arrayIndex);
         }
     }
 }

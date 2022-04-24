@@ -1,3 +1,18 @@
+/*  Copyright 2022 Gabriel Pasquale Rodrigues Scavone
+*
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+*/
+
 using System;
 using System.Linq;
 using System.Reflection;
@@ -74,9 +89,9 @@ namespace MolecularEditor
             EditorGUIUtility.labelWidth = prevLabelWidth;
         }
 
-        private static IRange GetRange(SerializedProperty property)
+        private IRange GetRange(SerializedProperty property)
         {
-            return EditorHelper.GetTargetValue<IRange>(property);
+            return this.GetTargetValue<IRange>(property);
         }
     }
 
@@ -139,9 +154,9 @@ namespace MolecularEditor
             }
         }
         
-        private static RangeVector3 GetRange(SerializedProperty property)
+        private RangeVector3 GetRange(SerializedProperty property)
         {
-            return EditorHelper.GetTargetValue<RangeVector3>(property);
+            return this.GetTargetValue<RangeVector3>(property);
         }
     }
     
@@ -204,9 +219,9 @@ namespace MolecularEditor
             }
         }
         
-        private static RangeVector2 GetRange(SerializedProperty property)
+        private RangeVector2 GetRange(SerializedProperty property)
         {
-            return EditorHelper.GetTargetValue<RangeVector2>(property);
+            return this.GetTargetValue<RangeVector2>(property);
         }
     }
     
@@ -269,9 +284,9 @@ namespace MolecularEditor
             }
         }
         
-        private static RangeVector2Int GetRange(SerializedProperty property)
+        private RangeVector2Int GetRange(SerializedProperty property)
         {
-            return EditorHelper.GetTargetValue<RangeVector2Int>(property);
+            return this.GetTargetValue<RangeVector2Int>(property);
         }
     }
 
@@ -300,7 +315,7 @@ namespace MolecularEditor
 
             EditorGUI.BeginChangeCheck();
 
-            var range = this.GetSerializedValue<Range>(property);
+            var range = this.GetTargetValue<Range>(property);
             
             var attrs = fieldInfo.GetCustomAttributes<MinMaxRangeAttribute>().ToList();
             var newLabel = EditorGUI.BeginProperty(position, label, property);
@@ -387,7 +402,7 @@ namespace MolecularEditor
             EditorGUI.BeginChangeCheck();
             property.serializedObject.Update();
 
-            var range = this.GetSerializedValue<RangeInteger>(property);
+            var range = this.GetTargetValue<RangeInteger>(property);
             
             var attrs = fieldInfo.GetCustomAttributes<MinMaxRangeAttribute>().ToList();
             var newLabel = EditorGUI.BeginProperty(position, label, property);

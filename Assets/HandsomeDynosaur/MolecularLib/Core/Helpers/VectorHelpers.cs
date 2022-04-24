@@ -1,3 +1,18 @@
+/*  Copyright 2022 Gabriel Pasquale Rodrigues Scavone
+*
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+*/
+
 using System;
 using UnityEngine;
 
@@ -283,6 +298,54 @@ namespace MolecularLib.Helpers
         /// <param name="vec4">the non integer vector4</param>
         /// <returns>The rounded to int vector3</returns>
         public static Vector3Int ToVec3Int(this Vector4 vec4) => new Vector3Int(Mathf.RoundToInt(vec4.x), Mathf.RoundToInt(vec4.y), Mathf.RoundToInt(vec4.z));
+
+        #endregion
+        #region ToVec2
+
+        /// <summary>
+        /// Creates a new Vector2 using the values from the provided Vector2Int
+        /// </summary>
+        /// <param name="vec">The Vector2Int to provide the x and y values</param>
+        /// <returns>A new Vector2 with the x and y values from the provided vector</returns>
+        public static Vector2 ToVec2(this Vector2Int vec) => new Vector2(vec.x, vec.y);
+        /// <summary>
+        /// Creates a new Vector2 using the values from the provided Vector3Int
+        /// </summary>
+        /// <param name="vec">The Vector3Int to provide the x and y values</param>
+        /// <returns>A new Vector2 with the x and y values from the provided vector</returns>
+        public static Vector2 ToVec2(this Vector3Int vec) => new Vector2(vec.x, vec.y);
+
+        #endregion
+        #region ToVec3
+
+        /// <summary>
+        /// Creates a new Vector3 using the values from the provided Vector2Int
+        /// </summary>
+        /// <param name="vec">The Vector2Int to provide the x and y values</param>
+        /// <returns>A new Vector3 using the x and y values from the provided vector with z equals 0</returns>
+        public static Vector3 ToVec3(this Vector2Int vec) => new Vector3(vec.x, vec.y, 0);
+        /// <summary>
+        /// Creates a new Vector3 using the values from the provided Vector3Int
+        /// </summary>
+        /// <param name="vec">The Vector3Int to provide the x, y and z values</param>
+        /// <returns>A new Vector3 using the x, y and z values from the provided vector</returns>
+        public static Vector3 ToVec3(this Vector3Int vec) => new Vector3(vec.x, vec.y, vec.z);
+
+        #endregion
+        #region ToVec4
+
+        /// <summary>
+        /// Creates a new Vector4 using the values from the provided Vector2Int
+        /// </summary>
+        /// <param name="vec">The Vector2Int to provide the x and y values</param>
+        /// <returns>A new Vector4 using the x and y values from the provided vector with z and w equals to 0</returns>
+        public static Vector4 ToVec4(this Vector2Int vec) => new Vector4(vec.x, vec.y, 0, 0);
+        /// <summary>
+        /// Creates a new Vector4 using the values from the provided Vector2Int
+        /// </summary>
+        /// <param name="vec">The Vector3Int to provide the x, y and z values</param>
+        /// <returns>A new Vector4 using the x, y and z values from the provided vector with w equals to 0</returns>
+        public static Vector4 ToVec4(this Vector3Int vec) => new Vector4(vec.x, vec.y, vec.z, 0);
 
         #endregion
         #region WithoutX
