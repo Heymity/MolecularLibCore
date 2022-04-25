@@ -24,6 +24,11 @@ namespace MolecularLib.Helpers
         public static readonly Color DarkTextColor = NormalizeToColor(16, 16, 16);
         public static readonly Color LightTextColor = NormalizeToColor(201, 201, 201);
 
+        public static Color32 ToColor32(this Color color)
+        {
+            return new Color32((byte) (color.r * 255), (byte) (color.g * 255), (byte) (color.b * 255), (byte) (color.a * 255));
+        }
+        
         /// <summary>
         /// Gets a totally random color
         /// </summary>
@@ -73,11 +78,18 @@ namespace MolecularLib.Helpers
         /// </summary>
         /// <param name="background">The background color</param>
         /// <returns>Either DarkTextColor or LightTextColor, depending on the luminance</returns>
-        public static Color GetTextColorFromBackground(Color background)
-        {
-            var luminance = (0.299 * background.r + 0.587 * background.g + 0.114 * background.b);
+        public static Color GetTextColorFromBackground(Color background) => TextColorShouldBeDark(background) ? DarkTextColor : LightTextColor;
 
-            return luminance > 0.5 ? DarkTextColor : LightTextColor;
+        /// <summary>
+        /// Gets whether the text color should be dark or light based on the background color luminance, calculated by (0.299 * background.r + 0.587 * background.g + 0.114 * background.b)
+        /// </summary>
+        /// <param name="backgroundColor">The background color</param>
+        /// <returns>True if the text color should be dark, false if should be light</returns>
+        public static bool TextColorShouldBeDark(Color backgroundColor)
+        {
+            var luminance = (0.299 * backgroundColor.r + 0.587 * backgroundColor.g + 0.114 * backgroundColor.b);
+
+            return luminance > 0.5;
         }
 
         /// <summary>
@@ -164,6 +176,14 @@ namespace MolecularLib.Helpers
         /// <returns>Either DarkTextColor or LightTextColor, depending on the luminance</returns>
         public static Color TextForegroundColor(this Color backgroundColor) =>
             GetTextColorFromBackground(backgroundColor);
+        
+        /// <summary>
+        /// Gets whether the text color should be dark or light based on the background color luminance, calculated by (0.299 * background.r + 0.587 * background.g + 0.114 * background.b)
+        /// </summary>
+        /// <param name="backgroundColor">The background color</param>
+        /// <returns>True if the text color should be dark, false if should be light</returns>
+        public static bool TextForegroundColorShouldBeDark(this Color backgroundColor) =>
+            TextColorShouldBeDark(backgroundColor);
 
         /// <summary>
         /// Creates a new color with all the same values, except in the R channel, which will have the provided value

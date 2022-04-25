@@ -13,10 +13,7 @@
 *  limitations under the License.
 */
 
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using MolecularLib;
 using UnityEditor;
 using UnityEngine;
@@ -53,9 +50,7 @@ namespace MolecularEditor
             EditorGUI.BeginProperty(position, label, property);
 
             EditorGUI.BeginChangeCheck();
-            
-            property.serializedObject.Update();
-            
+
             _dontCheckForNewSelection = false;
         
             var keysProp = property.FindPropertyRelative("keys");
@@ -72,10 +67,15 @@ namespace MolecularEditor
             
             if (property.isExpanded)
                 DrawDictionary(boxRect, keysProp, valuesProp, label);
-            
+
             if (EditorGUI.EndChangeCheck())
+            {
                 property.serializedObject.ApplyModifiedProperties();
-            
+                
+                Undo.RecordObject(property.serializedObject.targetObject, "Dictionary Changed");
+                EditorUtility.SetDirty(property.serializedObject.targetObject);
+            }
+
             EditorGUI.EndProperty();
         }
 
@@ -125,6 +125,7 @@ namespace MolecularEditor
             for (var i = 0; i < keysProp.arraySize; i++)
             {
                 var keyProp = keysProp.GetArrayElementAtIndex(i);
+               
                 var valueProp = valuesProp.GetArrayElementAtIndex(i);
                 
                 var keyHeight = EditorGUI.GetPropertyHeight(keyProp);
@@ -155,10 +156,9 @@ namespace MolecularEditor
                 //var dragHandleStyle = (GUIStyle)"RL DragHandle";
                 //var dragHandleRect = new Rect(elementAreaRect.x + Padding, elementAreaRect.y + elementAreaRect.height / 2 - dragHandleStyle.fixedHeight / 2.5f, handleWidth, elementAreaRect.height);
                 //if (Event.current.type == EventType.Repaint) dragHandleStyle.Draw(dragHandleRect, false, false, false, false);
-                
+               
                 DrawDictionaryElement(elementRect, keyProp, valueProp, isDuplicate, i);
             }
-
             _cumulativeHeight += 5f;
             
             DrawFooter(boxRect, keysProp, valuesProp);
@@ -185,21 +185,24 @@ namespace MolecularEditor
 
             var originalLabelWidth = EditorGUIUtility.labelWidth;
             
+            EditorGUI.BeginChangeCheck();
             EditorGUIUtility.labelWidth = 50;
             if (keyProp.isExpanded) EditorGUIUtility.labelWidth = originalLabelWidth / 2;
             EditorGUI.PropertyField(keyRect, keyProp, new GUIContent($"Key {index}"), true);
             
+            // Even though this line seems arbitrary and useless, it somehow is needed to fix a problem of int and string keys not updating properly, the problem is probably caused by something else in the code, but I couldn't find what.
+            if (EditorGUI.EndChangeCheck()) keyProp.serializedObject.ApplyModifiedProperties();
+            
+            EditorGUI.BeginChangeCheck();
             if (!valueProp.isExpanded) EditorGUIUtility.labelWidth = 55;
             else EditorGUIUtility.labelWidth = originalLabelWidth / 2;
             EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"Value {index}"), true);
+
+            // Even though this line seems arbitrary and useless, it somehow is needed to fix a problem of int and string values not updating properly, the problem is probably caused by something else in the code, but I couldn't find what.
+            if (EditorGUI.EndChangeCheck()) valueProp.serializedObject.ApplyModifiedProperties();
             
             EditorGUIUtility.labelWidth = originalLabelWidth;
-            
-            if (!EditorGUI.EndChangeCheck()) return;
-            
-            Undo.RecordObject(keyProp.serializedObject.targetObject, "Dictionary Changed");
-            EditorUtility.SetDirty(keyProp.serializedObject.targetObject);
-        }
+          }
 
         private void DrawFooter(Rect position, SerializedProperty keysProp, SerializedProperty valuesProp)
         {
@@ -236,26 +239,9 @@ namespace MolecularEditor
             EditorUtility.SetDirty(property.serializedObject.targetObject);
         }
         
-        private object GetKeyValue(SerializedProperty property)
+        private static object GetKeyValue(SerializedProperty property)
         {
-            var keysField = fieldInfo.FieldType.GetField("keys", EditorHelper.UnitySerializesBindingFlags);
-            var targetDictionary = fieldInfo.GetValue(property.serializedObject.targetObject);
-
-            if (keysField is null)
-            {
-                Debug.LogError($"{fieldInfo.Name} is not a serialized dictionary");
-                return null;
-            }
-            
-            var keys = keysField.GetValue(targetDictionary);
-
-            var propertyPath = property.propertyPath;
-            var pathSegments = propertyPath.Split('.').ToList();
-            
-            var dataSegment = pathSegments[pathSegments.FindIndex(i => i == "Array") + 1];
-            var arrayIndex = int.Parse(dataSegment.Split('[', ']')[1]);
-            
-            return (keys as IList)?.Cast<object>().ElementAt(arrayIndex);
+            return EditorHelper.GetTargetValue<object>(property);
         }
     }
 }

@@ -1066,27 +1066,36 @@ MonoBehaviour:
   genericFloatRange:
     min: -19.33
     max: 7.17
-  floatRange1:
-    min: 13.99
-    max: 65.74
   floatRange:
     min: -3.9155493
     max: 9.952022
   intRange:
     min: -12
     max: 12
+  minMaxFloatRange:
+    min: -19.5
+    max: 7.127
+  minMaxIntRange:
+    min: -11
+    max: 5
   vec2Range:
     minVector2SaveData: {x: -2.49, y: 0.91}
     maxVector2SaveData: {x: 3.48, y: 3.26}
   vec3Range:
     minVector3SaveData: {x: -8.16, y: -3.63, z: 8.19}
     maxVector3SaveData: {x: -7.42, y: 12.61, z: 19.93}
+  vec2IntRange:
+    minVector2SaveData: {x: -44, y: -7}
+    maxVector2SaveData: {x: -31, y: -19}
+  vec3IntRange:
+    minVector2SaveData: {x: -15, y: 77, z: -25}
+    maxVector2SaveData: {x: -9, y: 110, z: 2}
   stringToInt:
     keys:
     - A
     - B
     - C
-    values: ea0000003500000030520100
+    values: 49020000e0ffffff437a0000
   flagsToColor:
     keys: ffffffff3d000000
     values:
@@ -1094,7 +1103,7 @@ MonoBehaviour:
     - {r: 0, g: 0.93292975, b: 1, a: 1}
   myStructs:
     keys:
-    - Fasdsd
+    - fghmugy
     values:
     - MyInt: 56
       MyBool: 1
@@ -1110,8 +1119,8 @@ MonoBehaviour:
       MyBool: 0
       MyStringList: []
     values:
-    - 745thfdg
-    - dfgh56
+    - afd34fjk
+    - dfgnn
   myStructsBoth:
     keys:
     - MyInt: -78
@@ -1124,11 +1133,11 @@ MonoBehaviour:
       - fd
   stringToSprite:
     keys:
-    - 
-    - 
+    - Background
+    - Knob
     values:
     - {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-    - {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+    - {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   myOptionalString:
     value: Hello, thanks for donwloading this package!
     useValue: 1
@@ -1145,6 +1154,11 @@ MonoBehaviour:
       values:
       - A utilities package for Unity
       - A wonderfull package still in development
+    useValue: 0
+  myOptionalRange:
+    value:
+      min: -6.75
+      max: 7.54
     useValue: 0
   myPolymorphicVariable:
     selectedPolymorphicType:

@@ -47,7 +47,6 @@ namespace MolecularLib.Demo
         [SerializeField] private SerializableDictionary<string, TestStruct> myStructs;
         [SerializeField] private SerializableDictionary<TestStruct, string> myStructsOpposite;
         [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
-        //TODO this is not working
         [SerializeField] private SerializableDictionary<string, Sprite> stringToSprite;
         [Space] 
         [Header("Optional variable examples")] 

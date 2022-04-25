@@ -89,9 +89,9 @@ namespace MolecularEditor
             EditorGUIUtility.labelWidth = prevLabelWidth;
         }
 
-        private IRange GetRange(SerializedProperty property)
+        private static IRange GetRange(SerializedProperty property)
         {
-            return this.GetTargetValue<IRange>(property);
+            return EditorHelper.GetTargetValue<IRange>(property);
         }
     }
 
@@ -154,9 +154,9 @@ namespace MolecularEditor
             }
         }
         
-        private RangeVector3 GetRange(SerializedProperty property)
+        private static RangeVector3 GetRange(SerializedProperty property)
         {
-            return this.GetTargetValue<RangeVector3>(property);
+            return EditorHelper.GetTargetValue<RangeVector3>(property);
         }
     }
     
@@ -219,9 +219,9 @@ namespace MolecularEditor
             }
         }
         
-        private RangeVector2 GetRange(SerializedProperty property)
+        private static RangeVector2 GetRange(SerializedProperty property)
         {
-            return this.GetTargetValue<RangeVector2>(property);
+            return EditorHelper.GetTargetValue<RangeVector2>(property);
         }
     }
     
@@ -284,9 +284,9 @@ namespace MolecularEditor
             }
         }
         
-        private RangeVector3Int GetRange(SerializedProperty property)
+        private static RangeVector3Int GetRange(SerializedProperty property)
         {
-            return this.GetTargetValue<RangeVector3Int>(property);
+            return EditorHelper.GetTargetValue<RangeVector3Int>(property);
         }
     }
     
@@ -349,9 +349,9 @@ namespace MolecularEditor
             }
         }
         
-        private RangeVector2Int GetRange(SerializedProperty property)
+        private static RangeVector2Int GetRange(SerializedProperty property)
         {
-            return this.GetTargetValue<RangeVector2Int>(property);
+            return EditorHelper.GetTargetValue<RangeVector2Int>(property);
         }
     }
 
@@ -380,7 +380,7 @@ namespace MolecularEditor
 
             EditorGUI.BeginChangeCheck();
 
-            var range = this.GetTargetValue<Range>(property);
+            var range = EditorHelper.GetTargetValue<Range>(property);
             
             var attrs = fieldInfo.GetCustomAttributes<MinMaxRangeAttribute>().ToList();
             var newLabel = EditorGUI.BeginProperty(position, label, property);
@@ -467,7 +467,7 @@ namespace MolecularEditor
             EditorGUI.BeginChangeCheck();
             property.serializedObject.Update();
 
-            var range = this.GetTargetValue<RangeInteger>(property);
+            var range = EditorHelper.GetTargetValue<RangeInteger>(property);
             
             var attrs = fieldInfo.GetCustomAttributes<MinMaxRangeAttribute>().ToList();
             var newLabel = EditorGUI.BeginProperty(position, label, property);

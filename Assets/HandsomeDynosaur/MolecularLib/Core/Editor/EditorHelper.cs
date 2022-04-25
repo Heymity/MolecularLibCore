@@ -14,11 +14,13 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using MolecularLib;
+using MolecularLib.Helpers;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -365,15 +367,8 @@ namespace MolecularEditor
             return types;
         }
 
-        public static Texture2D Tex2DOfColorScreenSize(Color32 color)
-        {
-            var texture = new Texture2D(Screen.width, Screen.height);
-            var pixels = Enumerable.Repeat(color, Screen.width * Screen.height).ToArray();
-            texture.SetPixels32(pixels);
-            texture.Apply();
-            return texture;
-        }
-        
+        public static Texture2D Tex2DOfColorScreenSize(Color32 color) => Tex2DOfColorAndSize(color, Screen.width, Screen.height);
+
         public static Texture2D Tex2DOfColorAndSize(Color32 color, int width, int height)
         {
             var texture = new Texture2D(width, height);
@@ -382,6 +377,10 @@ namespace MolecularEditor
             texture.Apply();
             return texture;
         }
+        
+        public static Texture2D Tex2DOfColorScreenSize(Color color) => Tex2DOfColorScreenSize(color.ToColor32());
+
+        public static Texture2D Tex2DOfColorAndSize(Color color, int width, int height) => Tex2DOfColorAndSize(color.ToColor32(), width, height);
 
         public static Texture2D Tex2DOfColor(Color color)
         {
@@ -391,28 +390,43 @@ namespace MolecularEditor
             return newTex;
         }
  
-        public static T GetTargetValue<T>(this PropertyDrawer propertyDrawer, SerializedProperty property) where T : class
+        public static T GetTargetValue<T>(SerializedProperty property)
         {
-            Debug.Log(property.propertyPath);
+            var propertyPath = property.propertyPath;
+            var pathSegments = propertyPath.Split('.');
             
-            var obj = propertyDrawer.fieldInfo.GetValue(property.serializedObject.targetObject);
+            object currentSearchObj = property.serializedObject.targetObject;
+            var currentSearchObjType = currentSearchObj.GetType();
 
-            if (obj.IsGenericList())
+            for (var i = 0; i < pathSegments.Length; i++)
             {
-                var propertyIndex = int.Parse(property.propertyPath[property.propertyPath.Length - 2].ToString());
+                var pathSegment = pathSegments[i];
                 
-                return ((IList<T>)obj)[propertyIndex];
+                if (pathSegment == "Array" && i < pathSegments.Length - 1 && pathSegments[i + 1].Split('[')[0] == "data")
+                {
+                    var arrayIndex = int.Parse(pathSegments[i + 1].Split('[', ']')[1]);
+                    
+                    currentSearchObj = ((IList)currentSearchObj)[arrayIndex];
+                    currentSearchObjType = currentSearchObj.GetType();
+                    
+                    // Skip the data[] part of the path
+                    i++;
+                    continue;
+                }
+
+                var fieldInfo = currentSearchObjType.GetField(pathSegment, UnitySerializesBindingFlags);
+
+                if (fieldInfo == null)
+                {
+                    Debug.LogError($"Field {pathSegment} not found on {currentSearchObjType}");
+                    return default;
+                }
+
+                currentSearchObj = fieldInfo.GetValue(currentSearchObj);
+                currentSearchObjType = currentSearchObj.GetType();
             }
 
-            if (obj.GetType().IsArray)
-            {
-                var pathSegments = property.propertyPath.Split('.').ToList();
-                var propertyIndex = int.Parse(pathSegments[pathSegments.FindIndex(i => i == "Array") + 1].Split('[', ']')[1].ToString());
-                
-                return ((T[])obj)[propertyIndex];
-            }
-
-            return (T) obj;
+            return (T)currentSearchObj;
         }
 
         internal static bool IsGenericList(this object o)
@@ -421,15 +435,15 @@ namespace MolecularEditor
             return oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>);
         }
 
-        public static Color GetColorFromString(string value, byte minRGBvalue = 0, byte maxRGBvalue = 255)
+        public static Color GetColorFromString(string value, byte minRGBValue = 0, byte maxRGBValue = 255)
         {
             var divider = value.Length >= 3 ? Mathf.CeilToInt(value.Length / 3f) : 0;
 
-            var span = maxRGBvalue - minRGBvalue;
+            var span = maxRGBValue - minRGBValue;
 
-            var r = Mathf.Abs(value.Substring(0, divider).GetHashCode() % span) + minRGBvalue;
-            var g = Mathf.Abs(value.Substring(divider, divider).GetHashCode() % span) + minRGBvalue;
-            var b = Mathf.Abs(value.Substring(2 * divider).GetHashCode() % span) + minRGBvalue;
+            var r = Mathf.Abs(value.Substring(0, divider).GetHashCode() % span) + minRGBValue;
+            var g = Mathf.Abs(value.Substring(divider, divider).GetHashCode() % span) + minRGBValue;
+            var b = Mathf.Abs(value.Substring(2 * divider).GetHashCode() % span) + minRGBValue;
 
             return new Color(r / 255f, g / 255f, b / 255f);
 
@@ -437,11 +451,13 @@ namespace MolecularEditor
 
         public static readonly Color DarkTextColor = NormalizeToColor(16, 16, 16);
         public static readonly Color LightTextColor = NormalizeToColor(201, 201, 201);
-        public static Color GetTextColorFromBackground(Color background)
-        {
-            var luminance = (0.299 * background.r + 0.587 * background.g + 0.114 * background.b);
+        public static Color GetTextColorFromBackground(Color background) => TextColorShouldBeDark(background) ? DarkTextColor : LightTextColor;
 
-            return luminance > 0.5 ? DarkTextColor : LightTextColor;
+        public static bool TextColorShouldBeDark(Color backgroundColor)
+        {
+            var luminance = (0.299 * backgroundColor.r + 0.587 * backgroundColor.g + 0.114 * backgroundColor.b);
+
+            return luminance > 0.5;
         }
 
         public static Color NormalizeToColor(byte r, byte g, byte b, byte a = 255) => new Color(r / 255f, g / 255f, b / 255f, a / 255f);
