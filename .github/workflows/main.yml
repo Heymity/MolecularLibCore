@@ -28,7 +28,7 @@ jobs:
         # uses: game-ci/unity-test-runner@d95f760d49621753209829b206793e6d5c7b86bd
         uses: game-ci/unity-test-runner@v2.0.2
         with:
-          projectPath: ./
+          projectPath: /
           # Version of unity to use for testing the project. Use "auto" to get from your ProjectSettings/ProjectVersion.txt
           unityVersion: auto
           # The type of tests to be run by the test runner.
