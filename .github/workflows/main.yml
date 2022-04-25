@@ -30,26 +30,12 @@ jobs:
         with:
           # Version of unity to use for testing the project. Use "auto" to get from your ProjectSettings/ProjectVersion.txt
           unityVersion: auto
-          # Specific docker image that should be used for testing the project
-          customImage: ''
-          # Path to the Unity project to be tested.
-          projectPath: ''
-          # Extra parameters to configure the Unity editor run.
-          customParameters: ''
           # The type of tests to be run by the test runner.
           testMode: all
           # Optional coverage parameters for the -coverageOptions argument.
           coverageOptions: generateAdditionalMetrics;generateHtmlReport;generateBadgeReport
           # Path where test artifacts should be stored.
           artifactsPath: artifacts
-          # Initialises Docker using the host network.
-          useHostNetwork: ''
-          # SSH Agent path to forward to the container.
-          sshAgent: ''
-          # GitHub Private Access Token (PAT) to pull from GitHub.
-          gitPrivateToken: ''
-          # Token to authorize access to the GitHub REST API. If provided, a check run will be created with the test results.
-          githubToken: ''
           # Name for the check run that is created when a github token is provided.
           checkName: Test Results
 
