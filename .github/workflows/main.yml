@@ -19,7 +19,11 @@ jobs:
   run-tests:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    strategy:
+          fail-fast: false
+          matrix:
+            projectPath:
+              - ./
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Runs a single command using the runners shell
@@ -28,7 +32,7 @@ jobs:
         # uses: game-ci/unity-test-runner@d95f760d49621753209829b206793e6d5c7b86bd
         uses: game-ci/unity-test-runner@v2.0.2
         with:
-          projectPath: ''
+          projectPath: ${{ matrix.projectPath }}
           # Version of unity to use for testing the project. Use "auto" to get from your ProjectSettings/ProjectVersion.txt
           unityVersion: auto
           # The type of tests to be run by the test runner.
