@@ -122,24 +122,24 @@ namespace MolecularEditor
             EditorGUILayout.EndVertical();
         }
         
-       public static void AutoTypeFieldInfo(Rect rect, FieldInfo fi, object targetObj, string label = null)
+       public static void AutoTypeFieldInfo(ref Rect rect, FieldInfo fi, object targetObj, string label = null)
         {
             var field = fi.GetValue(targetObj);
             label ??= fi.Name;
 
-            fi.SetValue(targetObj, AutoTypeField(rect, fi.FieldType, field, label));
+            fi.SetValue(targetObj, AutoTypeField(ref rect, fi.FieldType, field, label));
         }
 
-        public static void AutoTypePropertyInfo(Rect rect, PropertyInfo pi, object targetObj, string label = null)
+        public static void AutoTypePropertyInfo(ref Rect rect, PropertyInfo pi, object targetObj, string label = null)
         {
             var field = pi.GetValue(targetObj);
             label ??= pi.Name;
 
             // some properties dont have the set method, to be refactored
-            pi.SetValue(targetObj, AutoTypeField(rect, pi.PropertyType, field, label));
+            pi.SetValue(targetObj, AutoTypeField(ref rect, pi.PropertyType, field, label));
         }
 
-        public static object AutoTypeField(Rect rect, Type valueType, object value, string labelStr = null)
+        public static object AutoTypeField(ref Rect rect, Type valueType, object value, string labelStr = null)
         {
             var label = GUIContent.none;
             if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
@@ -185,50 +185,44 @@ namespace MolecularEditor
 
             if (valueType.GetCustomAttribute<SerializableAttribute>() != null)
             {
+                /*
+                To support user defined types we need this weird code below
+                Basically, we could just use normal reflections to get the fields and than draw them, but that would 
+                ignore custom property drawers.
+                To use them, we need a serializedProperty, which we dont have, that's the whole purpose of this function.
+                So what this code does is that it creates a runtime type deriving from ScriptableObject with only one field,
+                the value. Than a instance of this scriptable object is created and the value is assigned to it.
+                Now, all we do is create a new SerializedObject from this scriptable object, and call PropertyField on its property.
+                This works for all types marked with the Serializable attribute. The reason this is not the whole method is that it
+                is considerably slower than just converting the value and calling the EditorGUI.TYPEField(...) like it is done above.
+                */
+                
                 value ??= Activator.CreateInstance(valueType);
                 
-                var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("SerializableObject"), AssemblyBuilderAccess.Run);
-                var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObject");
-                var typeBuilder = moduleBuilder.DefineType("AutoTypeFieldRuntimeSerializableObject", TypeAttributes.Public, typeof(Object));
+                var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
+                var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
+                var typeBuilder = moduleBuilder.DefineType($"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? GUID.Generate().ToString()}", TypeAttributes.Public, typeof(ScriptableObject));
                 
-                var typeDefinedFields = valueType.GetFields(UnitySerializesBindingFlags)
-                    .Where(f => f.IsPublic || f.GetCustomAttribute<SerializeField>() != null).ToArray();
-                var typeDefinedFieldsTypes = typeDefinedFields.Select(f => f.FieldType).ToArray();
-               
-                var constructor = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, typeDefinedFieldsTypes);
-                var constructorIl = constructor.GetILGenerator();
-
-                constructorIl.Emit(OpCodes.Ldarg_0);
-                var superConstructor = typeof(Object).GetConstructor(Type.EmptyTypes);
-                constructorIl.Emit(OpCodes.Call, superConstructor);
-
-                for (var i = 0; i < typeDefinedFields.Length; i++)
-                {
-                    var typeDefinedField = typeDefinedFields[i];
-                    constructorIl.Emit(OpCodes.Ldarg_0);
-                    constructorIl.Emit(OpCodes.Ldarg, i + 1);
-                    
-                    var fieldBuilder = typeBuilder.DefineField(typeDefinedField.Name, typeDefinedField.FieldType,
-                        FieldAttributes.Public);
-                    
-                    constructorIl.Emit(OpCodes.Stfld, fieldBuilder);
-                }
-
-                constructorIl.Emit(OpCodes.Ret);
-
-                Debug.Log($"{constructor}");
+                typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
+                
                 var dynamicType = typeBuilder.CreateType();
 
-                Debug.Log($"{dynamicType.FullName}");
+                var so = ScriptableObject.CreateInstance(dynamicType);
+                so.hideFlags = HideFlags.DontSaveInEditor;
+  
+                var valueField = dynamicType.GetField("value");
+                valueField.SetValue(so, value);
 
-                var dynamicTypeObj = Activator.CreateInstance(dynamicType, typeDefinedFields.Select(f => f.GetValue(value)).ToArray());
-                
-                Debug.Log($"{dynamicTypeObj}");
-                
-                /*var serializedObject = new SerializedObject(dynamicTypeObj);
+                var serializedObject = new SerializedObject(so);
                 var property = serializedObject.GetIterator();
-                property.Next(true);
-                return EditorGUI.PropertyField(rect, property, label, true);*/
+                
+                property.NextVisible(true); // Move to first property
+                property.NextVisible(true); // Skip m_Script
+             
+                rect.height = EditorGUI.GetPropertyHeight(property);
+                EditorGUI.PropertyField(rect, property, label,true);
+
+                return valueField.GetValue(so);
             }
 
             EditorGUI.LabelField(rect, label, new GUIContent(value?.ToString() ?? $"{valueType.Name} has null value and is not supported"));

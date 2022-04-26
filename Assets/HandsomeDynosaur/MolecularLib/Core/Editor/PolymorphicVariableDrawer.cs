@@ -65,22 +65,21 @@ namespace MolecularLib.Core.Editor
             _cumulativeFieldsHeight = 0;
             if (property.isExpanded)
             {
-                EditorGUI.indentLevel++;
-                
                 var fieldRect = position;
+                fieldRect.x += 15;
+                fieldRect.width -= 15;
                 fieldRect.height = EditorGUIUtility.singleLineHeight;
                 foreach (var prop in editProps.fields)
                 {
                     fieldRect.y += fieldRect.height + 2;
                     _cumulativeFieldsHeight += fieldRect.height + 2;
+                    fieldRect.height = EditorGUIUtility.singleLineHeight;
                     
-                    prop.DeserializedValue = EditorHelper.AutoTypeField(fieldRect, prop.fieldType, prop.DeserializedValue,
+                    prop.DeserializedValue = EditorHelper.AutoTypeField(ref fieldRect, prop.fieldType, prop.DeserializedValue,
                         ObjectNames.NicifyVariableName(prop.fieldName));
                     
                     prop.OnBeforeSerialize();
                 }
-
-                EditorGUI.indentLevel--;
             }
 
             if (EditorGUI.EndChangeCheck())

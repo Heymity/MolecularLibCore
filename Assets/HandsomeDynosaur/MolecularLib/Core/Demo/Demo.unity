@@ -1172,7 +1172,14 @@ MonoBehaviour:
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <float>4.87</float>'
+          <float>4.91</float>'
+      - fieldName: bClassRange
+        fieldType:
+          typeName: MolecularLib.Helpers.Range
+          assemblyName: Molecular.Core
+        serializedValue: "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<Range xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"
+          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Min>-4.61</Min>\r\n 
+          <Max>47.85</Max>\r\n</Range>"
       - fieldName: bClassInt
         fieldType:
           typeName: System.Int32
