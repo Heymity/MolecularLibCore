@@ -24,6 +24,11 @@ namespace MolecularLib.Helpers
         [SerializeField] private T value;
         [SerializeField] private bool useValue;
 
+        public Optional()
+        {
+            useValue = false;
+        }
+        
         public Optional(T value, bool useValue)
         {
             Value = value;

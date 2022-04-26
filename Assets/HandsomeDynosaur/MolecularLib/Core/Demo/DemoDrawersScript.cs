@@ -66,7 +66,7 @@ namespace MolecularLib.Demo
             if (myPolymorphicVariable.As<A>(out var asA))
                 Debug.Log($"As A | aClassInt: {asA.aClassInt}");
             else if (myPolymorphicVariable.As<B>(out var asB))
-                Debug.Log($"As B | bClassInt: {asB.bClassInt}");
+                Debug.Log($"As B | bClassInt: {asB.bClassInt} | bClassRange: {asB.bClassRange.Min} - {asB.bClassRange.Max}");
             else if (myPolymorphicVariable.As<C>(out var asC))
                 Debug.Log($"As C | cClassFloat: {asC.cClassFloat}");
             else
@@ -107,6 +107,6 @@ namespace MolecularLib.Demo
     public class C : B
     {
         public float cClassFloat;
-        //public TestVolatileScriptableObject cClassScriptableObject;
+        // Types derived from UnityEngine.Object aren't working yet, but in future versions it will; public TestVolatileScriptableObject cClassScriptableObject;
     }
 }

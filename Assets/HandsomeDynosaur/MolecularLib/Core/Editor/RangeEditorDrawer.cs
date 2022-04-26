@@ -66,9 +66,10 @@ namespace MolecularEditor
             
             if (EditorGUI.EndChangeCheck())
             {
-                EditorUtility.SetDirty(property.serializedObject.targetObject);
-
                 property.serializedObject.ApplyModifiedProperties();
+                
+                Undo.RecordObject(property.serializedObject.targetObject, "Range Changed");
+                EditorUtility.SetDirty(property.serializedObject.targetObject);
             }
         }
         
@@ -132,9 +133,9 @@ namespace MolecularEditor
             
             if (EditorGUI.EndChangeCheck())
             {
-                EditorUtility.SetDirty(property.serializedObject.targetObject);
-
                 property.serializedObject.ApplyModifiedProperties();
+               
+                EditorUtility.SetDirty(property.serializedObject.targetObject);
             }
 
             void ShowMinMax()

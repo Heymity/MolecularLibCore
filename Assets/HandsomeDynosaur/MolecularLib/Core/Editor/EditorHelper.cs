@@ -122,7 +122,7 @@ namespace MolecularEditor
             EditorGUILayout.EndVertical();
         }
         
-       public static void AutoTypeFieldInfo(ref Rect rect, FieldInfo fi, object targetObj, string label = null)
+        public static void AutoTypeFieldInfo(ref Rect rect, FieldInfo fi, object targetObj, string label = null)
         {
             var field = fi.GetValue(targetObj);
             label ??= fi.Name;
@@ -163,7 +163,7 @@ namespace MolecularEditor
             if (valueType == typeof(LayerMask)) return EditorGUI.LayerField(rect, label, value is LayerMask layerMask ? layerMask : (LayerMask)0);
             if (valueType == typeof(AnimationCurve)) return EditorGUI.CurveField(rect, label, value is AnimationCurve curve ? curve : AnimationCurve.Linear(0, 0, 1, 1));
             if (valueType == typeof(Gradient)) return EditorGUI.GradientField(rect, label, value is Gradient gradient ? gradient : new Gradient());
-
+            
             if (valueType == typeof(Quaternion))
             {
                 var quaternion = value is Quaternion qua ? qua : Quaternion.identity;
@@ -179,10 +179,7 @@ namespace MolecularEditor
 
             if (valueType.IsSubclassOf(typeof(Object)))
                 return EditorGUI.ObjectField(rect, label, value as Object, valueType, true);
-
-            if (valueType == typeof(object))
-                return null;
-
+            
             if (valueType.GetCustomAttribute<SerializableAttribute>() != null)
             {
                 /*
@@ -199,36 +196,84 @@ namespace MolecularEditor
                 
                 value ??= Activator.CreateInstance(valueType);
                 
-                var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
-                var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
-                var typeBuilder = moduleBuilder.DefineType($"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? GUID.Generate().ToString()}", TypeAttributes.Public, typeof(ScriptableObject));
-                
-                typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
-                
-                var dynamicType = typeBuilder.CreateType();
+                var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
 
-                var so = ScriptableObject.CreateInstance(dynamicType);
-                so.hideFlags = HideFlags.DontSaveInEditor;
-  
-                var valueField = dynamicType.GetField("value");
-                valueField.SetValue(so, value);
+                SerializedObject serializedObject;
+                ScriptableObject so = null;
+                if (!cachedRuntimeTypesForAutoTypeField.TryGetValue(runtimeTypeName, out var dynamicType))
+                {
+                    var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+                        new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
+                    var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
+                    var typeBuilder = moduleBuilder.DefineType(runtimeTypeName, TypeAttributes.Public,
+                        typeof(ScriptableObject));
 
-                var serializedObject = new SerializedObject(so);
+                    typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
+
+                    dynamicType = typeBuilder.CreateType();
+                    
+                    cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);
+                    
+                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType);
+                    
+                    if (cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out _))
+                        cachedRuntimeSOsForAutoTypeField[runtimeTypeName] = serializedObject;
+                    else
+                        cachedRuntimeSOsForAutoTypeField.Add(runtimeTypeName, serializedObject);
+                }
+                
+                if (!cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out serializedObject))
+                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType);
+
+                if (so == null) so = GetScriptableObject(runtimeTypeName, dynamicType);
+                
                 var property = serializedObject.GetIterator();
                 
                 property.NextVisible(true); // Move to first property
                 property.NextVisible(true); // Skip m_Script
-             
+                
                 rect.height = EditorGUI.GetPropertyHeight(property);
                 EditorGUI.PropertyField(rect, property, label,true);
 
+                var valueField = dynamicType.GetField("value");
                 return valueField.GetValue(so);
             }
 
-            EditorGUI.LabelField(rect, label, new GUIContent(value?.ToString() ?? $"{valueType.Name} has null value and is not supported"));
+            EditorGUI.LabelField(rect, label, new GUIContent(value?.ToString() ?? $"The provided value of type {valueType.Name} is null and is not supported"));
 
             return value;
+
+            (SerializedObject serializedObject, ScriptableObject so) GetSerializedObjectAndScriptableObject(string runtimeTypeName, Type dynamicType)
+            {
+                var so = GetScriptableObject(runtimeTypeName, dynamicType);
+                    
+                var valueField = dynamicType.GetField("value");
+                valueField.SetValue(so, value);
+
+                return (new SerializedObject(so), so);
+            }
+
+            ScriptableObject GetScriptableObject(string runtimeTypeName, Type dynamicType)
+            {
+                if (cachedRuntimeScriptableObjectsForAutoTypeField.TryGetValue(runtimeTypeName,
+                        out var scriptableObject))
+                    return scriptableObject;
+                
+                scriptableObject = ScriptableObject.CreateInstance(dynamicType);
+                scriptableObject.hideFlags = HideFlags.DontSave;
+                
+                cachedRuntimeScriptableObjectsForAutoTypeField.Add(runtimeTypeName, scriptableObject);
+
+                return scriptableObject;
+            }
         }
+        private static readonly Dictionary<string, Type> cachedRuntimeTypesForAutoTypeField =
+            new SerializableDictionary<string, Type>();
+        private static readonly Dictionary<string, SerializedObject> cachedRuntimeSOsForAutoTypeField =
+            new SerializableDictionary<string, SerializedObject>();
+        private static readonly Dictionary<string, ScriptableObject> cachedRuntimeScriptableObjectsForAutoTypeField =
+            new SerializableDictionary<string, ScriptableObject>();
+
         public static readonly Dictionary<string, (Func<Rect, string, object, object> drawer, Type type)> ObjectTypes = new Dictionary<string, (Func<Rect, string, object, object> drawer, Type type)>
         {
             { "Bool", ((rect, label, value) => EditorGUI.Toggle(rect, label, value is bool v && v), typeof(bool)) }, 
@@ -476,60 +521,21 @@ namespace MolecularEditor
             return oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>);
         }
 
-        public static Color GetColorFromString(string value, byte minRGBValue = 0, byte maxRGBValue = 255)
-        {
-            var divider = value.Length >= 3 ? Mathf.CeilToInt(value.Length / 3f) : 0;
-
-            var span = maxRGBValue - minRGBValue;
-
-            var r = Mathf.Abs(value.Substring(0, divider).GetHashCode() % span) + minRGBValue;
-            var g = Mathf.Abs(value.Substring(divider, divider).GetHashCode() % span) + minRGBValue;
-            var b = Mathf.Abs(value.Substring(2 * divider).GetHashCode() % span) + minRGBValue;
-
-            return new Color(r / 255f, g / 255f, b / 255f);
-
-        }
+        public static Color GetColorFromString(string value, byte minRGBValue = 0, byte maxRGBValue = 255) => ColorHelper.FromString(value, minRGBValue, maxRGBValue);
 
         public static readonly Color DarkTextColor = NormalizeToColor(16, 16, 16);
         public static readonly Color LightTextColor = NormalizeToColor(201, 201, 201);
         public static Color GetTextColorFromBackground(Color background) => TextColorShouldBeDark(background) ? DarkTextColor : LightTextColor;
 
-        public static bool TextColorShouldBeDark(Color backgroundColor)
-        {
-            var luminance = (0.299 * backgroundColor.r + 0.587 * backgroundColor.g + 0.114 * backgroundColor.b);
+        public static bool TextColorShouldBeDark(Color backgroundColor) => backgroundColor.TextForegroundColorShouldBeDark();
 
-            return luminance > 0.5;
-        }
-
-        public static Color NormalizeToColor(byte r, byte g, byte b, byte a = 255) => new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+        public static Color NormalizeToColor(byte r, byte g, byte b, byte a = 255) => ColorHelper.NormalizeToColor(r, g, b, a);
 
         public static Color HexColor(string hex)
         {
-            if (hex[0] == '#') hex = hex.Substring(1);
-
-            byte r = 0;
-            byte g = 0;
-            byte b = 0;
-            byte a = 255;
-            if (hex.Length >= 6)
-            {
-                r = (byte)int.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
-                g = (byte)int.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
-                b = (byte)int.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
-                if (hex.Length == 8) a = (byte)int.Parse(hex.Substring(6, 2), NumberStyles.HexNumber);
-            }
-            else if (hex.Length >= 3)
-            {
-                r = (byte)int.Parse(hex.Substring(0, 1) + hex.Substring(0, 1), NumberStyles.HexNumber);
-                g = (byte)int.Parse(hex.Substring(1, 1) + hex.Substring(1, 1), NumberStyles.HexNumber);
-                b = (byte)int.Parse(hex.Substring(2, 1) + hex.Substring(2, 1), NumberStyles.HexNumber);
-                if (hex.Length == 4)
-                    a = (byte)int.Parse(hex.Substring(3, 1) + hex.Substring(3, 1), NumberStyles.HexNumber);
-            }
-
-            return NormalizeToColor(r, g, b, a);
+            return ColorHelper.FromHex(hex);
         }
-
+        
         #endregion
     }
 }

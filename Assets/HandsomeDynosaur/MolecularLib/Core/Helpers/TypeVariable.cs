@@ -39,6 +39,11 @@ namespace MolecularLib.Helpers
             set => _type = value; 
         }
 
+        public TypeVariable()
+        {
+            _type = null;
+        }
+        
         public void OnAfterDeserialize()
         {
             if (string.IsNullOrEmpty(assemblyName) || string.IsNullOrEmpty(typeName)) return;

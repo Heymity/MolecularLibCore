@@ -47,11 +47,15 @@ namespace MolecularLib.PolymorphismSupport
 
         public void OnBeforeSerialize()
         {
-            
+            if (typeof(UnityEngine.Object).IsAssignableFrom(typeof(TBase)))
+                throw new Exception("PolymorphicVariable<TBase> cannot be used with UnityEngine.Object types");
         }
 
         public void OnAfterDeserialize()
         {
+            if (typeof(UnityEngine.Object).IsAssignableFrom(typeof(TBase)))
+                throw new Exception("PolymorphicVariable<TBase> cannot be used with UnityEngine.Object types");
+            
             Value = Activator.CreateInstance(selectedPolymorphicType.Type) as TBase;
             
             Value = polymorphicData.SetValuesTo(Value, selectedPolymorphicType.Type);

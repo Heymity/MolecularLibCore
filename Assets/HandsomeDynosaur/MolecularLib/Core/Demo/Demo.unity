@@ -1079,10 +1079,10 @@ MonoBehaviour:
     min: -11
     max: 5
   vec2Range:
-    minVector2SaveData: {x: -2.49, y: 0.91}
+    minVector2SaveData: {x: -7.7, y: 0.91}
     maxVector2SaveData: {x: 3.48, y: 3.26}
   vec3Range:
-    minVector3SaveData: {x: -8.16, y: -3.63, z: 8.19}
+    minVector3SaveData: {x: -33.6, y: -1.46, z: 8.19}
     maxVector3SaveData: {x: -7.42, y: 12.61, z: 19.93}
   vec2IntRange:
     minVector2SaveData: {x: -44, y: -7}
@@ -1172,21 +1172,21 @@ MonoBehaviour:
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <float>4.91</float>'
+          <float>-25.2</float>'
       - fieldName: bClassRange
         fieldType:
           typeName: MolecularLib.Helpers.Range
           assemblyName: Molecular.Core
         serializedValue: "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<Range xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"
-          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Min>-4.61</Min>\r\n 
-          <Max>47.85</Max>\r\n</Range>"
+          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Min>-158.74</Min>\r\n 
+          <Max>376</Max>\r\n</Range>"
       - fieldName: bClassInt
         fieldType:
           typeName: System.Int32
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <int>-169</int>'
+          <int>56</int>'
       - fieldName: myBaseString
         fieldType:
           typeName: System.String

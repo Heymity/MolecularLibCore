@@ -89,6 +89,7 @@ namespace MolecularLib.Core.Editor
 
                 UpdateInstance(targetObj);
                 
+                Undo.RecordObject(property.serializedObject.targetObject, "Polymorphic Variable Changed");
                 EditorUtility.SetDirty(property.serializedObject.targetObject);
             }
             EditorGUI.EndProperty();

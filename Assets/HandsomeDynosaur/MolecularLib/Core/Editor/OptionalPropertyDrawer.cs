@@ -56,8 +56,13 @@ namespace MolecularLib
             EditorGUI.PropertyField(useValueRect, useValueProperty, GUIContent.none);
 
             if (EditorGUI.EndChangeCheck())
+            {
                 property.serializedObject.ApplyModifiedProperties();
-            
+                
+                Undo.RecordObject(property.serializedObject.targetObject, "Optional Variable Changed");
+                EditorUtility.SetDirty(property.serializedObject.targetObject);
+            }
+
             EditorGUI.EndProperty();
         }
     }

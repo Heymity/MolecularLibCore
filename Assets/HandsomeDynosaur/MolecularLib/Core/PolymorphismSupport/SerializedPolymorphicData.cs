@@ -39,7 +39,11 @@ namespace MolecularLib.PolymorphismSupport
                 if (fieldInfo == null)
                     continue;
 
-                fieldInfo.SetValue(target, field.DeserializedValue);
+                try
+                {
+                    fieldInfo.SetValue(target, field.DeserializedValue);
+                }
+                catch(ArgumentException){ /*This means the type of the field was changed, should not throw*/ }
             }
 
             return target;
