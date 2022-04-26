@@ -30,7 +30,6 @@ namespace MolecularEditor
         private const float ElementHeight = 22f;
         
         private int _selectedIndex = -1;
-        private float _cumulativeHeight;
         private bool _dontCheckForNewSelection;
         
         private List<object> _usedKeys;
@@ -38,10 +37,38 @@ namespace MolecularEditor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             if (!property.isExpanded) return HeaderHeight;
+
+            var keysProp = property.FindPropertyRelative("keys");
+            var valuesProp = property.FindPropertyRelative("values");
             
-            var arraySize = property.FindPropertyRelative("keys").arraySize;
-            var height = HeaderHeight + _cumulativeHeight + FooterHeight;
-            if (arraySize == 0) height += NoElementHeight;
+            var height = HeaderHeight + FooterHeight;
+
+            if (keysProp.arraySize == 0)
+            {
+                height += NoElementHeight;
+                return height;
+            }
+            
+            for (var i = 0; i < keysProp.arraySize; i++)
+            {
+                var keyProp = keysProp.GetArrayElementAtIndex(i);
+                
+                if (i >= valuesProp.arraySize) 
+                {
+                    Debug.LogError("The number of keys is greater than the number of values, aborting");
+                    return height;
+                }
+                var valueProp = valuesProp.GetArrayElementAtIndex(i);
+                
+                var keyHeight = EditorGUI.GetPropertyHeight(keyProp);
+                var valueHeight = EditorGUI.GetPropertyHeight(valueProp);
+                var maxHeight = Mathf.Max(keyHeight, valueHeight);
+                
+                var elementHeight = maxHeight <= ElementHeight ? ElementHeight : maxHeight;
+
+                height += elementHeight + 2;
+            }
+          
             return height;
         }
 
@@ -66,7 +93,7 @@ namespace MolecularEditor
             var boxRect = DrawBox(position, label, keysProp.arraySize > 0, property);
             
             if (property.isExpanded)
-                DrawDictionary(boxRect, keysProp, valuesProp, label);
+                DrawDictionary(boxRect, keysProp, valuesProp);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -114,13 +141,13 @@ namespace MolecularEditor
             return rectBox;
         }
         
-        private void DrawDictionary(Rect boxRect, SerializedProperty keysProp, SerializedProperty valuesProp, GUIContent label)
+        private void DrawDictionary(Rect boxRect, SerializedProperty keysProp, SerializedProperty valuesProp)
         {
             // Draw elements
             _usedKeys ??= new List<object>();
             _usedKeys.Clear();
             
-            _cumulativeHeight = 0f;
+            var cumulativeHeight = 0f;
             const float handleWidth = 0; //= 10f;
             for (var i = 0; i < keysProp.arraySize; i++)
             {
@@ -133,14 +160,14 @@ namespace MolecularEditor
                 var maxHeight = Mathf.Max(keyHeight, valueHeight);
 
                 var elementHeight = maxHeight <= ElementHeight ? ElementHeight : maxHeight;
-                var elementAreaRect = new Rect(boxRect.x + 1, boxRect.y + _cumulativeHeight, boxRect.width - 2, elementHeight);
+                var elementAreaRect = new Rect(boxRect.x + 1, boxRect.y + cumulativeHeight, boxRect.width - 2, elementHeight);
                 var elementRect = new Rect(
                     elementAreaRect.x + 2 * Padding + handleWidth, 
                     elementAreaRect.y, 
                     elementAreaRect.width - (3 * Padding) - handleWidth, 
                     elementAreaRect.height);
 
-                _cumulativeHeight += elementHeight;
+                cumulativeHeight += elementHeight;
                 
                 HandleSelection(elementAreaRect, i, keyProp);
                 
@@ -159,8 +186,7 @@ namespace MolecularEditor
                
                 DrawDictionaryElement(elementRect, keyProp, valueProp, isDuplicate, i);
             }
-            _cumulativeHeight += 5f;
-            
+
             DrawFooter(boxRect, keysProp, valuesProp);
         }
 

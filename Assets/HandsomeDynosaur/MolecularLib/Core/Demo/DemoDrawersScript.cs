@@ -99,7 +99,7 @@ namespace MolecularLib.Demo
     [Serializable]
     public class B : Base
     {
-        //public Range bClassRange;
+        public Range bClassRange;
         public int bClassInt;
     }
 

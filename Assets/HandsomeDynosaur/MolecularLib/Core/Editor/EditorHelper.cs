@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using MolecularLib;
 using MolecularLib.Helpers;
 using UnityEditor;
@@ -148,10 +149,30 @@ namespace MolecularEditor
             if (valueType == typeof(double)) return EditorGUI.DoubleField(rect, label, value is double i ? i : 0);
             if (valueType == typeof(bool)) return EditorGUI.Toggle(rect, label, value is bool i && i);
             if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value is string i ? i : "");
+            if (valueType == typeof(Vector4)) return EditorGUI.Vector4Field(rect, label, value is Vector4 vector4 ? vector4 : Vector4.zero);
             if (valueType == typeof(Vector3)) return EditorGUI.Vector3Field(rect, label, value is Vector3 vec3 ? vec3 : Vector3.zero);
             if (valueType == typeof(Vector3Int)) return EditorGUI.Vector3IntField(rect, label, value is Vector3Int vec3Int ? vec3Int : Vector3Int.zero);
             if (valueType == typeof(Vector2)) return EditorGUI.Vector2Field(rect, label, value is Vector2 vec2 ? vec2 : Vector2.zero);
             if (valueType == typeof(Vector2Int)) return EditorGUI.Vector2IntField(rect, label, value is Vector2Int vec2Int ? vec2Int : Vector2Int.zero);
+            if (valueType == typeof(Rect)) return EditorGUI.RectField(rect, label, value is Rect rect2 ? rect2 : Rect.zero);
+            if (valueType == typeof(RectInt)) return EditorGUI.RectIntField(rect, label, value is RectInt rectInt ? rectInt : new RectInt());
+            if (valueType == typeof(Bounds)) return EditorGUI.BoundsField(rect, label, value is Bounds bounds ? bounds : new Bounds(Vector3.zero, Vector3.one));
+            if (valueType == typeof(BoundsInt)) return EditorGUI.BoundsIntField(rect, label, value is BoundsInt boundsInt ? boundsInt : new BoundsInt(Vector3Int.zero, Vector3Int.one));
+            if (valueType == typeof(Color)) return EditorGUI.ColorField(rect, label, value is Color color ? color : Color.white);
+            if (valueType == typeof(Color32)) return EditorGUI.ColorField(rect, label, value is Color32 color32 ? color32 : Color.white.ToColor32());
+            if (valueType == typeof(LayerMask)) return EditorGUI.LayerField(rect, label, value is LayerMask layerMask ? layerMask : (LayerMask)0);
+            if (valueType == typeof(AnimationCurve)) return EditorGUI.CurveField(rect, label, value is AnimationCurve curve ? curve : AnimationCurve.Linear(0, 0, 1, 1));
+            if (valueType == typeof(Gradient)) return EditorGUI.GradientField(rect, label, value is Gradient gradient ? gradient : new Gradient());
+
+            if (valueType == typeof(Quaternion))
+            {
+                var quaternion = value is Quaternion qua ? qua : Quaternion.identity;
+                var quaternionAsVec4 = new Vector4(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+                
+                var result = EditorGUI.Vector4Field(rect, label, quaternionAsVec4);
+                
+                return new Quaternion(result.x, result.y, result.z, result.w);
+            }
 
             if (valueType.IsEnum)
                 return EditorGUI.EnumPopup(rect, label, (Enum) Enum.Parse(valueType, value?.ToString() ?? ""));
@@ -161,6 +182,54 @@ namespace MolecularEditor
 
             if (valueType == typeof(object))
                 return null;
+
+            if (valueType.GetCustomAttribute<SerializableAttribute>() != null)
+            {
+                value ??= Activator.CreateInstance(valueType);
+                
+                var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("SerializableObject"), AssemblyBuilderAccess.Run);
+                var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObject");
+                var typeBuilder = moduleBuilder.DefineType("AutoTypeFieldRuntimeSerializableObject", TypeAttributes.Public, typeof(Object));
+                
+                var typeDefinedFields = valueType.GetFields(UnitySerializesBindingFlags)
+                    .Where(f => f.IsPublic || f.GetCustomAttribute<SerializeField>() != null).ToArray();
+                var typeDefinedFieldsTypes = typeDefinedFields.Select(f => f.FieldType).ToArray();
+               
+                var constructor = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, typeDefinedFieldsTypes);
+                var constructorIl = constructor.GetILGenerator();
+
+                constructorIl.Emit(OpCodes.Ldarg_0);
+                var superConstructor = typeof(Object).GetConstructor(Type.EmptyTypes);
+                constructorIl.Emit(OpCodes.Call, superConstructor);
+
+                for (var i = 0; i < typeDefinedFields.Length; i++)
+                {
+                    var typeDefinedField = typeDefinedFields[i];
+                    constructorIl.Emit(OpCodes.Ldarg_0);
+                    constructorIl.Emit(OpCodes.Ldarg, i + 1);
+                    
+                    var fieldBuilder = typeBuilder.DefineField(typeDefinedField.Name, typeDefinedField.FieldType,
+                        FieldAttributes.Public);
+                    
+                    constructorIl.Emit(OpCodes.Stfld, fieldBuilder);
+                }
+
+                constructorIl.Emit(OpCodes.Ret);
+
+                Debug.Log($"{constructor}");
+                var dynamicType = typeBuilder.CreateType();
+
+                Debug.Log($"{dynamicType.FullName}");
+
+                var dynamicTypeObj = Activator.CreateInstance(dynamicType, typeDefinedFields.Select(f => f.GetValue(value)).ToArray());
+                
+                Debug.Log($"{dynamicTypeObj}");
+                
+                /*var serializedObject = new SerializedObject(dynamicTypeObj);
+                var property = serializedObject.GetIterator();
+                property.Next(true);
+                return EditorGUI.PropertyField(rect, property, label, true);*/
+            }
 
             EditorGUI.LabelField(rect, label, new GUIContent(value?.ToString() ?? $"{valueType.Name} has null value and is not supported"));
 
@@ -214,28 +283,6 @@ namespace MolecularEditor
             return r;
         }
 
-        /* These require a different optimization and caching approach to be useful
-        public static Type TypeField(Rect rect, string label, Type currentValue, Assembly assembly)
-        {
-            var types = assembly.GetTypes().ToList();
-
-            return DrawTypeField(rect, label, types, currentValue);
-        }
-
-        public static Type TypeField<TBaseClass>(Rect rect, string label, Type currentValue, Assembly assembly)
-        {
-            var types = assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(TBaseClass))).ToList();
-
-            return DrawTypeField(rect, label, types, currentValue);
-        }
-
-        public static Type TypeField(Rect rect, string label, Type currentValue, Type baseType, Assembly assembly)
-        {
-            var types = assembly.GetTypes().Where(type => type.IsSubclassOf(baseType)).ToList();
-
-            return DrawTypeField(rect, label, types, currentValue);
-        }*/
-        
         public static Type DrawTypeField(Rect rect, string label, List<Type> types, Type current)
         {
             var selected = types.FindIndex(t => t == current);
