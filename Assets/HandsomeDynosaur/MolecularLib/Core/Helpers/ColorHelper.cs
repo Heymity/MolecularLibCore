@@ -44,7 +44,7 @@ namespace MolecularLib.Helpers
         /// <returns>Random color between the min and max RGB values</returns>
         public static Color Random(byte minRGB, byte maxRGB)
         {
-            var span = maxRGB - minRGB;
+            var span = (maxRGB + 1) - minRGB;
             
             return NormalizeToColor(
                 (byte) (UnityEngine.Random.Range(0, 255) % span + minRGB),
@@ -63,7 +63,7 @@ namespace MolecularLib.Helpers
         {
             var divider = value.Length >= 3 ? Mathf.CeilToInt(value.Length / 3f) : 0;
 
-            var span = maxRGB - minRGB;
+            var span = (maxRGB + 1) - minRGB;
 
             var r = Mathf.Abs(value.Substring(0, divider).GetHashCode() % span) + minRGB;
             var g = Mathf.Abs(value.Substring(divider, divider).GetHashCode() % span) + minRGB;
@@ -139,7 +139,7 @@ namespace MolecularLib.Helpers
         /// </summary>
         /// <param name="color">The color to get the hex string</param>
         /// <returns>The hex string of the provided color</returns>
-        public static string ToHexString(this Color color)
+        public static string ToHexString(this Color color, bool addSharpAtStart = true)
         {
             var r = (byte) (color.r * 255);
             var g = (byte) (color.g * 255);
@@ -148,7 +148,7 @@ namespace MolecularLib.Helpers
 
             var colorBytes = new[] { r, g, b, a };
 
-            var hex = "#" + BitConverter.ToString(colorBytes).Replace("-", string.Empty);
+            var hex = (addSharpAtStart ? "#" : string.Empty) + BitConverter.ToString(colorBytes).Replace("-", string.Empty);
             return hex;
         }
         
@@ -157,7 +157,7 @@ namespace MolecularLib.Helpers
         /// </summary>
         /// <param name="color">The color to get the hex string</param>
         /// <returns>The hex string of the provided color ignoring the alpha channel</returns>
-        public static string ToHexStringNoAlpha(this Color color)
+        public static string ToHexStringNoAlpha(this Color color, bool add00ToEnd = true)
         {
             var r = (byte) (color.r * 255);
             var g = (byte) (color.g * 255);
@@ -165,7 +165,7 @@ namespace MolecularLib.Helpers
 
             var colorBytes = new[] { r, g, b };
 
-            var hex = "#" + BitConverter.ToString(colorBytes).Replace("-", string.Empty);
+            var hex = "#" + BitConverter.ToString(colorBytes).Replace("-", string.Empty) + (add00ToEnd ? "00" : string.Empty);
             return hex;
         }
 

@@ -23,11 +23,13 @@ namespace MolecularLibTests
 {
     public class TimerTests
     {
+        private const float TimerDelay = 0.5f;
+        
         [UnityTest]
         public IEnumerator TimerCoroutineTest()
         {
-            var timer = Timer.Create(3f, () => Debug.Log("Finished"));
-            yield return new WaitForSeconds(3f);
+            var timer = Timer.Create(TimerDelay, () => Debug.Log("Finished"));
+            yield return new WaitForSeconds(TimerDelay);
             Assert.True(timer.HasFinished);
         }
         
@@ -35,14 +37,14 @@ namespace MolecularLibTests
         public IEnumerator TimerRepeatCoroutineTest()
         {
             var finishedTimes = 0;
-            var timer = Timer.Create(3f, () =>
+            var timer = Timer.Create(TimerDelay, () =>
             {
                 finishedTimes++;
                 Debug.Log($"Finished Repeat normal for the {finishedTimes} time");
             }, true);
             for (var i = 0; i <= 2; i++)
             {
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(TimerDelay);
                 Debug.Log("Complete now");
             }
             timer.StopTimer();
@@ -55,7 +57,7 @@ namespace MolecularLibTests
         public IEnumerator TimerRepeatAbruptlyStopTest()
         {
             var finishedTimes = 0;
-            var timer = Timer.Create(3f, () =>
+            var timer = Timer.Create(TimerDelay, () =>
             {
                 finishedTimes++;
                 Debug.Log($"Finished for the {finishedTimes} time");
@@ -64,12 +66,12 @@ namespace MolecularLibTests
             {
                 if (i == 1)
                 {
-                    yield return new WaitForSeconds(1.5f);
+                    yield return new WaitForSeconds(TimerDelay * .5f);
                     timer.StopTimer();
-                    yield return new WaitForSeconds(4f);
+                    yield return new WaitForSeconds(2 * TimerDelay);
                     break;
                 }
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(TimerDelay);
             }
             
             Debug.Log($"Asserting {finishedTimes}");
