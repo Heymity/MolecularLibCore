@@ -24,10 +24,6 @@ namespace MolecularLib.Helpers
         public static readonly Color DarkTextColor = NormalizeToColor(16, 16, 16);
         public static readonly Color LightTextColor = NormalizeToColor(201, 201, 201);
 
-        public static Color32 ToColor32(this Color color)
-        {
-            return new Color32((byte) (color.r * 255), (byte) (color.g * 255), (byte) (color.b * 255), (byte) (color.a * 255));
-        }
         
         /// <summary>
         /// Gets a totally random color
@@ -61,6 +57,8 @@ namespace MolecularLib.Helpers
         /// <returns>A color based on the provided string</returns>
         public static Color FromString(string value, byte minRGB = 0, byte maxRGB = 255)
         {
+            if (value.Length == 0) return Color.white;
+            
             var divider = value.Length >= 3 ? Mathf.CeilToInt(value.Length / 3f) : 0;
 
             var span = (maxRGB + 1) - minRGB;
@@ -133,11 +131,22 @@ namespace MolecularLib.Helpers
 
             return NormalizeToColor(r, g, b, a);
         }
+        
+        /// <summary>
+        /// Converts a color to a Color32
+        /// </summary>
+        /// <param name="color">The color</param>
+        /// <returns>The provided color as a Color32</returns>
+        public static Color32 ToColor32(this Color color)
+        {
+            return new Color32((byte) (color.r * 255), (byte) (color.g * 255), (byte) (color.b * 255), (byte) (color.a * 255));
+        }
 
         /// <summary>
         /// Gets the hex string that represents the provided color
         /// </summary>
         /// <param name="color">The color to get the hex string</param>
+        /// <param name="addSharpAtStart">Whether the returned string should have a # at the beginning</param>
         /// <returns>The hex string of the provided color</returns>
         public static string ToHexString(this Color color, bool addSharpAtStart = true)
         {
@@ -156,8 +165,10 @@ namespace MolecularLib.Helpers
         /// Gets the hex string that represents the provided color ignoring the alpha channel
         /// </summary>
         /// <param name="color">The color to get the hex string</param>
+        /// <param name="addSharpAtStart">Whether the returned string should have a # at the beginning</param>
+        /// <param name="add00ToEnd">Whether the returned string should have a 00 at the place of the alpha</param>
         /// <returns>The hex string of the provided color ignoring the alpha channel</returns>
-        public static string ToHexStringNoAlpha(this Color color, bool add00ToEnd = true)
+        public static string ToHexStringNoAlpha(this Color color, bool addSharpAtStart = true, bool add00ToEnd = true)
         {
             var r = (byte) (color.r * 255);
             var g = (byte) (color.g * 255);
@@ -165,7 +176,7 @@ namespace MolecularLib.Helpers
 
             var colorBytes = new[] { r, g, b };
 
-            var hex = "#" + BitConverter.ToString(colorBytes).Replace("-", string.Empty) + (add00ToEnd ? "00" : string.Empty);
+            var hex = (addSharpAtStart ? "#" : string.Empty) + BitConverter.ToString(colorBytes).Replace("-", string.Empty) + (add00ToEnd ? "00" : string.Empty);
             return hex;
         }
 

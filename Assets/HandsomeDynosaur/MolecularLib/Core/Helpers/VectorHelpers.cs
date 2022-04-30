@@ -461,53 +461,53 @@ namespace MolecularLib.Helpers
         #region IsBetween&IsWithin
 
         /// <summary>
-        /// Checks if a vector has all of his values between(greater or equal) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is contained in said square.
+        /// Checks if a vector has all of his values between(greater/less) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is contained in said square.
         /// </summary>
         /// <param name="vec2">The value to be between the min and max</param>
         /// <param name="min">The minimum vector</param>
         /// <param name="max">The maximum vector</param>
-        /// <returns>True if the vector has all of his values between(greater/less than or equal) the ones of the min and max vector</returns>
+        /// <returns>True if the vector has all of his values between(greater/less) the ones of the min and max vector</returns>
         public static bool IsBetween(this Vector2 vec2, Vector2 min, Vector2 max) => vec2.x.IsBetween(min.x, max.x) && vec2.y.IsBetween(min.y, max.y);
         /// <summary>
-        /// Checks if a vector has all of his values between(greater or equal) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is contained in said square.
+        /// Checks if a vector has all of his values between(greater/less) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is contained in said square.
         /// </summary>
         /// <param name="vec3">The value to be between the min and max</param>
         /// <param name="min">The minimum vector</param>
         /// <param name="max">The maximum vector</param>
-        /// <returns>True if the vector has all of his values between(greater/less than or equal) the ones of the min and max vector</returns>
+        /// <returns>True if the vector has all of his values between(greater/less) the ones of the min and max vector</returns>
         public static bool IsBetween(this Vector3 vec3, Vector3 min, Vector3 max) => vec3.x.IsBetween(min.x, max.x) && vec3.y.IsBetween(min.y, max.y) && vec3.z.IsBetween(min.z, max.z);
         /// <summary>
-        /// Checks if a vector has all of his values between(greater or equal) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is contained in said square.
+        /// Checks if a vector has all of his values between(greater/less) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is contained in said square.
         /// </summary>
         /// <param name="vec4">The value to be between the min and max</param>
         /// <param name="min">The minimum vector</param>
         /// <param name="max">The maximum vector</param>
-        /// <returns>True if the vector has all of his values between(greater/less than or equal) the ones of the min and max vector</returns>
+        /// <returns>True if the vector has all of his values between(greater/less) the ones of the min and max vector</returns>
         public static bool IsBetween(this Vector4 vec4, Vector4 min, Vector4 max) => vec4.x.IsBetween(min.x, max.x) && vec4.y.IsBetween(min.y, max.y) && vec4.z.IsBetween(min.z, max.z) && vec4.w.IsBetween(min.w, max.w);
         
         /// <summary>
-        /// Checks if a vector has all of his values within(greater/less than) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is inside in said square.
+        /// Checks if a vector has all of his values within(greater/less than or equal) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is inside in said square.
         /// </summary>
         /// <param name="vec2">The value to be within the min and max</param>
         /// <param name="min">The minimum vector</param>
         /// <param name="max">The maximum vector</param>
-        /// <returns>True if the vector has all of his values between(greater/less than) the ones of the min and max vector</returns>
+        /// <returns>True if the vector has all of his values within(greater/less than or equal) the ones of the min and max vector</returns>
         public static bool IsWithin(this Vector2 vec2, Vector2 min, Vector2 max) => vec2.x.IsWithin(min.x, max.x) && vec2.y.IsWithin(min.y, max.y);
         /// <summary>
-        /// Checks if a vector has all of his values within(greater/less than) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is inside in said square.
+        /// Checks if a vector has all of his values within(greater/less than or equal) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is inside in said square.
         /// </summary>
         /// <param name="vec3">The value to be within the min and max</param>
         /// <param name="min">The minimum vector</param>
         /// <param name="max">The maximum vector</param>
-        /// <returns>True if the vector has all of his values between(greater/less than) the ones of the min and max vector</returns>
+        /// <returns>True if the vector has all of his values within(greater/less than or equal) the ones of the min and max vector</returns>
         public static bool IsWithin(this Vector3 vec3, Vector3 min, Vector3 max) => vec3.x.IsWithin(min.x, max.x) && vec3.y.IsWithin(min.y, max.y) && vec3.z.IsWithin(min.z, max.z);
         /// <summary>
-        /// Checks if a vector has all of his values within(greater/less than) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is inside in said square.
+        /// Checks if a vector has all of his values within(greater/less than or equal) the ones of the min and max vector. In the cartesian space, where the min and max defines a square, the vector is between if it is inside in said square.
         /// </summary>
         /// <param name="vec4">The value to be within the min and max</param>
         /// <param name="min">The minimum vector</param>
         /// <param name="max">The maximum vector</param>
-        /// <returns>True if the vector has all of his values between(greater/less than) the ones of the min and max vector</returns>
+        /// <returns>True if the vector has all of his values within(greater/less than or equal) the ones of the min and max vector</returns>
         public static bool IsWithin(this Vector4 vec4, Vector4 min, Vector4 max) => vec4.x.IsWithin(min.x, max.x) && vec4.y.IsWithin(min.y, max.y) && vec4.z.IsWithin(min.z, max.z) && vec4.w.IsWithin(min.w, max.w);
 
         #endregion

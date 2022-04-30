@@ -1,17 +1,38 @@
 ﻿using System;
-using System.Collections;
-using System.Reflection;
 using MolecularLib.Helpers;
 using NUnit.Framework;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.TestTools;
 using Random = UnityEngine.Random;
 
 namespace MolecularLibTests
 {
     public class ColorTests
     {
+        private readonly Color32 aStringColor = new Color32(254, 254, 189, 255);
+        private readonly Color32 abStringColor = new Color32(254, 254, 71, 255);
+        private readonly Color32 abcStringColor = new Color32(189, 192, 191, 255);
+        private readonly Color32 abcdStringColor = new Color32(71, 235, 254, 255);
+        
+        [Test]
+        public void ColorFromString()
+        {
+            var c0Char = "".ToColor();
+            var c1Char = "a".ToColor();
+            var c2Char = "ab".ToColor();
+            var c3Char = "abc".ToColor();
+            var c4Char = "abcd".ToColor();
+            
+            Assert.AreEqual(Color.white, c0Char);
+            Assert.True(c1Char != c2Char && c1Char != c3Char && c1Char != c4Char);
+            Assert.True(c2Char != c3Char && c2Char != c4Char);
+            Assert.True(c3Char != c4Char);
+            
+            Assert.AreEqual(aStringColor, c1Char.ToColor32());
+            Assert.AreEqual(abStringColor, c2Char.ToColor32());
+            Assert.AreEqual(abcStringColor, c3Char.ToColor32());
+            Assert.AreEqual(abcdStringColor, c4Char.ToColor32());
+        }
+        
         [Test]
         public void RandomColor()
         {
