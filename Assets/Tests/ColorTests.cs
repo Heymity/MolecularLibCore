@@ -135,7 +135,7 @@ namespace MolecularLibTests
         {
             var color = ColorHelper.Random();
             var colorHex = color.ToHexStringNoAlpha();
-            var colorHexNo00 = color.ToHexStringNoAlpha(false);
+            var colorHexNo00 = color.ToHexStringNoAlpha(false, false);
             
             Assert.AreEqual(color.WithA(0), ColorHelper.FromHex(colorHex));
             Assert.AreEqual(color, ColorHelper.FromHex(colorHexNo00));
