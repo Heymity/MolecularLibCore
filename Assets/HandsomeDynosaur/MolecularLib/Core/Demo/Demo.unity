@@ -545,9 +545,9 @@ RectTransform:
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 92.93, y: -65}
-  m_SizeDelta: {x: 160, y: 22.160004}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -112.07001, y: -65}
+  m_SizeDelta: {x: -250, y: 22.160004}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &342918057
 MonoBehaviour:
@@ -627,9 +627,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 281.965, y: -65}
-  m_SizeDelta: {x: 218.07, y: 30}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 76.965, y: -65}
+  m_SizeDelta: {x: -191.93, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &394904720
 MonoBehaviour:
@@ -848,9 +848,9 @@ RectTransform:
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 205, y: -106}
-  m_SizeDelta: {x: 384.13, y: 31.119995}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -106}
+  m_SizeDelta: {x: -25.869995, y: 31.119995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &592243654
 MonoBehaviour:
@@ -1138,6 +1138,35 @@ MonoBehaviour:
     values:
     - {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
     - {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  myPolymorphicVariable:
+    selectedPolymorphicType:
+      typeName: MolecularLib.Demo.A
+      assemblyName: Molecular.Core
+    polymorphicData:
+      fields:
+      - fieldName: aClassInt
+        fieldType:
+          typeName: System.Int32
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <int>0</int>'
+      - fieldName: aPrivateDictionary
+        fieldType:
+          typeName: MolecularLib.SerializableDictionary`2[[System.String, mscorlib,
+            Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32,
+            mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+          assemblyName: Molecular.Core
+        serializedValue: '{"keys":[],"values":[]}'
+      - fieldName: myBaseString
+        fieldType:
+          typeName: System.String
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <string>Heyyy
+          this string will be kept if you change the value type, thogh the others
+          wont</string>'
   myOptionalString:
     value: Hello, thanks for donwloading this package!
     useValue: 1
@@ -1160,42 +1189,6 @@ MonoBehaviour:
       min: -6.75
       max: 7.54
     useValue: 0
-  myPolymorphicVariable:
-    selectedPolymorphicType:
-      typeName: MolecularLib.Demo.C
-      assemblyName: Molecular.Core
-    polymorphicData:
-      fields:
-      - fieldName: cClassFloat
-        fieldType:
-          typeName: System.Single
-          assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <float>-25.2</float>'
-      - fieldName: bClassRange
-        fieldType:
-          typeName: MolecularLib.Helpers.Range
-          assemblyName: Molecular.Core
-        serializedValue: "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<Range xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"
-          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Min>-158.74</Min>\r\n 
-          <Max>376</Max>\r\n</Range>"
-      - fieldName: bClassInt
-        fieldType:
-          typeName: System.Int32
-          assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <int>56</int>'
-      - fieldName: myBaseString
-        fieldType:
-          typeName: System.String
-          assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <string>Heyyy
-          this string will be kept if you change the value type, thogh the others
-          wont</string>'
 --- !u!4 &722621933
 Transform:
   m_ObjectHideFlags: 0
@@ -1245,10 +1238,10 @@ RectTransform:
   m_Father: {fileID: 2064996356}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 481, y: -67}
-  m_SizeDelta: {x: 435.73, y: 185.73}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -12.8, y: -67}
+  m_SizeDelta: {x: 423.74, y: 185.73}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &737512359
 MonoBehaviour:
@@ -1712,10 +1705,10 @@ RectTransform:
   m_Father: {fileID: 2064996356}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -332, y: -80.737}
-  m_SizeDelta: {x: 410, y: 226.08}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 134.38998, y: -80.737}
+  m_SizeDelta: {x: 376.82, y: 226.08}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1204733060
 MonoBehaviour:
@@ -1963,10 +1956,10 @@ RectTransform:
   m_Father: {fileID: 2064996356}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 809, y: -53}
-  m_SizeDelta: {x: 409.82, y: 142.92}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -148, y: -52}
+  m_SizeDelta: {x: 409.82007, y: 142.92}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1322689980
 MonoBehaviour:
@@ -2410,9 +2403,9 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 205.0025, y: -25}
-  m_SizeDelta: {x: 409.12, y: 30}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.0025024414, y: -25}
+  m_SizeDelta: {x: -0.8800049, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1635601832
 MonoBehaviour:
@@ -2491,9 +2484,9 @@ RectTransform:
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 205.00249, y: -146}
-  m_SizeDelta: {x: 384.13, y: 31.119995}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.0024871826, y: -146}
+  m_SizeDelta: {x: -25.869995, y: 31.119995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1672133778
 MonoBehaviour:
@@ -2622,10 +2615,10 @@ RectTransform:
   m_Father: {fileID: 2064996356}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 136.59, y: -427}
-  m_SizeDelta: {x: 409.82, y: 142.92}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 127, y: 47}
+  m_SizeDelta: {x: 409.82, y: 142.91998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1703827092
 MonoBehaviour:
@@ -3064,9 +3057,9 @@ RectTransform:
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 201.97, y: -217.70999}
-  m_SizeDelta: {x: 378.06, y: 93.42999}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -3.030014, y: -217.70999}
+  m_SizeDelta: {x: -31.940002, y: 93.42999}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2135322908
 MonoBehaviour:

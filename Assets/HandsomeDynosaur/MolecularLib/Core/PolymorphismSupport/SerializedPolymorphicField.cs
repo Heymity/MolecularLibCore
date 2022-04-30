@@ -31,6 +31,36 @@ namespace MolecularLib.PolymorphismSupport
 
         public object DeserializedValue { get; set; }
 
+        private static string SerializeData(Type fieldType, object value)
+        {
+            using var writer = new StringWriter();
+            if (value is IPolymorphicSerializationOverride inter)
+            {
+                inter.Serialize(writer);
+                return writer.ToString();
+            }
+            
+            var serializer = new XmlSerializer(fieldType);
+            serializer.Serialize(writer, value!);
+
+            return writer.ToString();
+        }
+        
+        private static object DeserializeData(Type fieldType, string serializedValue)
+        {
+            var inter = fieldType.GetInterface("IPolymorphicSerializationOverride");
+            if (inter != null)
+            {
+                var deserialized = Activator.CreateInstance(fieldType);
+                (deserialized as IPolymorphicSerializationOverride).Deserialize(serializedValue);
+                return deserialized;
+            }
+            
+            using var reader = new StringReader(serializedValue);
+            var serializer = new XmlSerializer(fieldType);
+            return serializer.Deserialize(reader);
+        }
+        
         public void OnBeforeSerialize()
         {
             if (DeserializedValue is null) return;
@@ -38,12 +68,8 @@ namespace MolecularLib.PolymorphismSupport
             var valueToSerialize = DeserializedValue;
             
             fieldType.Type = valueToSerialize.GetType();
-            
-            var serializer = new XmlSerializer(fieldType.Type);
-            using var writer = new StringWriter();
-            serializer.Serialize(writer, valueToSerialize!);
-            
-            serializedValue = writer.ToString();
+
+            serializedValue = SerializeData(fieldType.Type, valueToSerialize!);
         }
 
         public void OnAfterDeserialize()
@@ -55,12 +81,8 @@ namespace MolecularLib.PolymorphismSupport
                     DeserializedValue = null;
                     return;
                 }
-
-                var serializer = new XmlSerializer(fieldType.Type);
-                using var reader = new StringReader(serializedValue);
-                var deserialized = serializer.Deserialize(reader);
                 
-                DeserializedValue = deserialized;
+                DeserializedValue = DeserializeData(fieldType.Type, serializedValue);
             }
             catch (ArgumentNullException)
             {

@@ -14,13 +14,15 @@
 */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using MolecularLib.PolymorphismSupport;
 using UnityEngine;
 
 namespace MolecularLib
 {
     [System.Serializable]
-    public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
+    public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver, IPolymorphicSerializationOverride
     {
         [SerializeField] private List<TKey> keys;
         [SerializeField] private List<TValue> values;
@@ -85,5 +87,9 @@ namespace MolecularLib
                 base.Add(keys[i], values[i]);
             }
         }
+
+        public object Deserialize(string reader) { return JsonUtility.FromJson<SerializableDictionary<TKey, TValue>>(reader); }
+
+        public void Serialize(StringWriter writer) { writer.Write(JsonUtility.ToJson(this)); }
     }
 }

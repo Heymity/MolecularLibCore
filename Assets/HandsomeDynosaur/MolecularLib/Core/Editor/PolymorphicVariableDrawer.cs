@@ -31,6 +31,7 @@ namespace MolecularLib.Core.Editor
             return EditorGUIUtility.singleLineHeight + (property.isExpanded ? _cumulativeFieldsHeight + 1 : 1);
         }
         
+        //TODO stop using and doing this
         private float _cumulativeFieldsHeight;
         
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

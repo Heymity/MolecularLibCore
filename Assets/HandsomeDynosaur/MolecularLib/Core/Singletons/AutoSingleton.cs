@@ -26,12 +26,11 @@ namespace MolecularLib
     {
         private static T _current;
         public static T Current => _current ??= FindObjectOfType<T>() ?? CreateSingleton();
-        
+
         private static T CreateSingleton()
         {
             var singleton = new GameObject(typeof(T).Name);
             _current = singleton.AddComponent<T>();
-            singleton.hideFlags = HideFlags.DontSave;
             return _current;
         }
     }

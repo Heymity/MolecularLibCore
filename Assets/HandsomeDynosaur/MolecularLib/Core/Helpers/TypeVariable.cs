@@ -89,4 +89,12 @@ namespace MolecularLib.Helpers
 
         public Type Type { get; }
     }
+
+    [Serializable, DataContract]
+    public class MyClass
+    {
+        public int myPublicField;
+        
+        [SerializeField, DataMember] private int myPrivateField;
+    }
 }

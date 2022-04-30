@@ -26,6 +26,8 @@ namespace MolecularLib.Timers
         public float StartTime { get; private set; }
         public bool Repeat { get; set; }
         
+        public bool IsStopped { get; private set; }
+        
         public float DurationInSeconds { get; private set; }
 
         public event Action OnComplete;
@@ -54,6 +56,8 @@ namespace MolecularLib.Timers
 
         public void RestartTimer()
         {
+            IsStopped = false;
+            
             StartTime = Time.time;
             TimerCoroutine = StartTimer();
    
@@ -64,6 +68,7 @@ namespace MolecularLib.Timers
         public void StopTimer()
         {
             TimerManager.Current.RemoveTimer(this);
+            IsStopped = true;
         }
 
         public void ResumeTimer()
@@ -74,11 +79,13 @@ namespace MolecularLib.Timers
         
         public IEnumerator StartTimer()
         {
+            IsStopped = false;
             yield return new WaitForSeconds(DurationInSeconds);
+            IsStopped = true;
             OnComplete?.Invoke();
         }
         
-        #region Static Timers
+        #region Async Timers
 
         /// <summary>
         /// Makes a timer using the await Task.Delay() method, not needing to create a MonoBehaviour

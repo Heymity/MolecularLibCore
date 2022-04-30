@@ -18,8 +18,8 @@ MonoBehaviour:
       play mode, edit some values, leave play mode, and compare the values you changed
       with what you have now!'
     myBehaviour: {fileID: 0}
-    myInt: 218
-    myFloat: 4.87
+    myInt: -177
+    myFloat: 19.78
     myList:
     - aergr
     - asd
@@ -41,8 +41,8 @@ MonoBehaviour:
       play mode, edit some values, leave play mode, and compare the values you changed
       with what you have now!'
     myBehaviour: {fileID: 0}
-    myInt: 218
-    myFloat: 4.87
+    myInt: -177
+    myFloat: 19.78
     myList:
     - aergr
     - asd

@@ -24,6 +24,25 @@ namespace MolecularLibTests
     public class TimerTests
     {
         private const float TimerDelay = 0.5f;
+
+        private const float TimerAsyncMultiplierErrorMargin = 1.1f;
+        
+        [UnityTest]
+        public IEnumerator TimerAsyncTest()
+        {
+            var finished = false;
+            Timer.TimerAsync(TimerDelay, () => finished = true);
+            yield return new WaitForSeconds(TimerAsyncMultiplierErrorMargin * TimerDelay);
+            Assert.True(finished);
+        }
+
+        [UnityTest]
+        public IEnumerator TimerReferenceAsyncTest()
+        {   
+            var timerReference = Timer.TimerAsyncReference(TimerDelay);
+            yield return new WaitForSeconds(TimerAsyncMultiplierErrorMargin * TimerDelay);
+            Assert.True(timerReference.HasFinished);
+        }
         
         [UnityTest]
         public IEnumerator TimerCoroutineTest()

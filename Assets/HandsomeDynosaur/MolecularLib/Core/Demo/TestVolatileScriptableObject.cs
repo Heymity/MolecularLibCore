@@ -23,17 +23,32 @@ namespace MolecularLib.Demo
     [CreateAssetMenu(fileName = "Volatile SO", menuName = "New Volatile SO", order = 0)]
     public class TestVolatileScriptableObject : VolatileScriptableObject<TestVolatileScriptableObject.Data>
     {
+        // Here is a quick way of accessing the data. Can be done in other ways too.
         public Data VolatileData
         {
             get => Value;
             set => Value = value;
         }
         
+        // Can be done like this too.
+        public string MyString
+        {
+            get => Value.myString;
+            set => Value.myString = value;
+        }
+        public int MyInt
+        {
+            get => Value.myInt;
+            set => Value.myInt = value;
+        }
+        // ...etc...
+        
         public static implicit operator Data(TestVolatileScriptableObject obj)
         {
             return obj.VolatileData;
         }
         
+        // Here you will put all the data you want to be volatile
         [Serializable]
         public class Data
         { 

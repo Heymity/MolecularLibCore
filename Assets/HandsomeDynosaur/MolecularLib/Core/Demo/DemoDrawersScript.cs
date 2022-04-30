@@ -49,15 +49,15 @@ namespace MolecularLib.Demo
         [SerializeField] private SerializableDictionary<TestStruct, TestStruct> myStructsBoth;
         [SerializeField] private SerializableDictionary<string, Sprite> stringToSprite;
         [Space] 
+        [Header("Polymorphic variable examples")] 
+        [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
+        [Space] 
         [Header("Optional variable examples")] 
         [SerializeField] private Optional<string> myOptionalString;
         [SerializeField] private Optional<List<string>> myList;
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
         [SerializeField] private Optional<Range> myOptionalRange;
-        [Space] 
-        [Header("Polymorphic variable examples")] 
-        [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
-
+        
         public PolymorphicVariable<Base> PolymorphicVariable => myPolymorphicVariable;
 
         [ContextMenu("Test Polymorphic Variable")]
@@ -94,6 +94,7 @@ namespace MolecularLib.Demo
     public class A : Base
     {
         public int aClassInt;
+        [SerializeField] private SerializableDictionary<string, int> aPrivateDictionary;
     }
 
     [Serializable]

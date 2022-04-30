@@ -26,7 +26,8 @@ namespace MolecularLib.Timers
 
         private void Awake()
         {
-            hideFlags = HideFlags.HideAndDontSave;
+            gameObject.hideFlags = HideFlags.HideAndDontSave;
+            DontDestroyOnLoad(this);
         }
 
         internal void AddTimer(Timer timer)
