@@ -29,6 +29,8 @@ namespace MolecularLib.Core.Editor
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
+            if (!property.isExpanded) return EditorGUIUtility.singleLineHeight;
+            
             var targetObj = fieldInfo.GetValue(property.serializedObject.targetObject);
             _typeField ??= fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
             if (_typeField is null)
