@@ -33,7 +33,7 @@ namespace MolecularLib.Core.Editor
         
         //TODO stop using and doing this
         private float _cumulativeFieldsHeight;
-        
+        private FieldInfo typeField;
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -57,7 +57,7 @@ namespace MolecularLib.Core.Editor
             EditorGUI.EndFoldoutHeaderGroup();
             
             var targetObj = fieldInfo.GetValue(property.serializedObject.targetObject);
-            var typeField = fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
+            typeField ??= fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
             if (typeField is null)
                 throw new Exception("selectedPolymorphicType field not found");
             var typeVar = typeField.GetValue(targetObj) as TypeVariable;

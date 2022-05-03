@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using MolecularLib.Helpers;
 using MolecularLib.PolymorphismSupport;
-using MolecularLib.Testing;
 using UnityEngine;
 
 namespace MolecularLib.Demo
@@ -63,6 +62,14 @@ namespace MolecularLib.Demo
         [ContextMenu("Test Polymorphic Variable")]
         public void TestPoly()
         {
+            if (myOptionalString.HasValue)
+                Debug.Log(myOptionalString.Value);
+            
+            // Or simply (Using implicit operators)
+            
+            if (myOptionalString)
+                Debug.Log(myOptionalString);
+            
             if (myPolymorphicVariable.As<A>(out var asA))
                 Debug.Log($"As A | aClassInt: {asA.aClassInt}");
             else if (myPolymorphicVariable.As<B>(out var asB))

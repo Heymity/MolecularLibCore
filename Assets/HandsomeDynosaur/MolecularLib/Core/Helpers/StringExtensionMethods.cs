@@ -41,7 +41,7 @@ namespace MolecularLib.Helpers
         {
             return text.Ellipsis(maxWidth, c => style.CalcSize(c).x);
         }
-        
+
         /// <summary>
         /// Based on a function to calculate the text width and a max width, will generate a string that will just fit the width. When the string is shortened it will have "..." added to its end
         /// </summary>

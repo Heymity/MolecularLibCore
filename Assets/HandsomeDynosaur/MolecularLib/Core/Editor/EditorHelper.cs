@@ -16,7 +16,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -31,39 +30,6 @@ using Object = UnityEngine.Object;
 
 namespace MolecularEditor
 {
-    public class ToggleableProp<T1>
-    {
-        public T1 Value { get; set; }
-
-        public bool Active { get; set; }
-
-        public void DoEditor(string toggleLabel, Action drawer)
-        {
-            Active = EditorGUILayout.Toggle(toggleLabel, Active);
-            EditorGUI.BeginDisabledGroup(!Active);
-            drawer?.Invoke();
-            EditorGUI.EndDisabledGroup();
-        }
-
-        public ToggleableProp(bool active, T1 value = default)
-        {
-            Active = active;
-            Value = value;
-        }
-
-        public ToggleableProp() : this(false) { }
-
-        public static implicit operator bool(ToggleableProp<T1> a) => a.Active;
-
-        public static implicit operator T1(ToggleableProp<T1> a) => a.Value;
-
-        public static implicit operator ToggleableProp<T1>(bool a) => new ToggleableProp<T1>(a);
-
-        public static implicit operator ToggleableProp<T1>(T1 a) => new ToggleableProp<T1>(false, a);
-
-        public static implicit operator ToggleableProp<T1>((bool active, T1 value) a) => new ToggleableProp<T1>(a.active, a.value);
-    }
-
     public static class EditorHelper
     {
         #region IMGUI
@@ -138,7 +104,13 @@ namespace MolecularEditor
             // some properties dont have the set method, to be refactored
             pi.SetValue(targetObj, AutoTypeField(ref rect, pi.PropertyType, field, label));
         }
-
+        
+        private static readonly Dictionary<string, Type> cachedRuntimeTypesForAutoTypeField =
+            new SerializableDictionary<string, Type>();
+        private static readonly Dictionary<string, SerializedObject> cachedRuntimeSOsForAutoTypeField =
+            new SerializableDictionary<string, SerializedObject>();
+        private static readonly Dictionary<string, ScriptableObject> cachedRuntimeScriptableObjectsForAutoTypeField =
+            new SerializableDictionary<string, ScriptableObject>();
         public static object AutoTypeField(ref Rect rect, Type valueType, object value, string labelStr = null)
         {
             var label = GUIContent.none;
@@ -148,6 +120,7 @@ namespace MolecularEditor
             if (valueType == typeof(float)) return EditorGUI.FloatField(rect, label, value is float i ? i : 0);
             if (valueType == typeof(double)) return EditorGUI.DoubleField(rect, label, value is double i ? i : 0);
             if (valueType == typeof(bool)) return EditorGUI.Toggle(rect, label, value is bool i && i);
+            if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value is string i ? i : "");
             if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value is string i ? i : "");
             if (valueType == typeof(Vector4)) return EditorGUI.Vector4Field(rect, label, value is Vector4 vector4 ? vector4 : Vector4.zero);
             if (valueType == typeof(Vector3)) return EditorGUI.Vector3Field(rect, label, value is Vector3 vec3 ? vec3 : Vector3.zero);
@@ -267,45 +240,6 @@ namespace MolecularEditor
                 return scriptableObject;
             }
         }
-        private static readonly Dictionary<string, Type> cachedRuntimeTypesForAutoTypeField =
-            new SerializableDictionary<string, Type>();
-        private static readonly Dictionary<string, SerializedObject> cachedRuntimeSOsForAutoTypeField =
-            new SerializableDictionary<string, SerializedObject>();
-        private static readonly Dictionary<string, ScriptableObject> cachedRuntimeScriptableObjectsForAutoTypeField =
-            new SerializableDictionary<string, ScriptableObject>();
-
-        public static readonly Dictionary<string, (Func<Rect, string, object, object> drawer, Type type)> ObjectTypes = new Dictionary<string, (Func<Rect, string, object, object> drawer, Type type)>
-        {
-            { "Bool", ((rect, label, value) => EditorGUI.Toggle(rect, label, value is bool v && v), typeof(bool)) }, 
-            { "Int", ((rect, label, value) => EditorGUI.IntField(rect, label, value is int v ? v : 0), typeof(int)) }, 
-            { "Float", ((rect, label, value) => EditorGUI.FloatField(rect, label, value is float v ? v : 0f), typeof(float)) }, 
-            { "Object", ((rect, label, value) 
-                => EditorGUI.ObjectField(rect, label, value is Object obj ? obj : null, value?.GetType() ?? typeof(Object), true), typeof(Object)) }, 
-            { "Vector3", ((rect, label, value) => EditorGUI.Vector3Field(rect, label, value is Vector3 v ? v : Vector3.zero), typeof(Vector3)) }, 
-            { "Vector2", ((rect, label, value) => EditorGUI.Vector2Field(rect, label, value is Vector2 v ? v : Vector2.zero), typeof(Vector2)) },
-        };
-        public static object ObjectField(Rect rect, object value, string label, ref string selectedType)
-        {
-            var btnRect = new Rect(rect.x, rect.y, rect.width / ObjectTypes.Count, EditorGUIUtility.singleLineHeight);
-            for (var i = 0; i < ObjectTypes.Count; i++)
-            {
-                var style = EditorStyles.miniButtonMid;
-                if (i == 0) style = EditorStyles.miniButtonLeft;
-                if (i == ObjectTypes.Count - 1) style = EditorStyles.miniButtonRight;
-
-                var thisElement = ObjectTypes.ElementAt(i);
-
-                if (GUI.Toggle(btnRect, thisElement.Key == selectedType, thisElement.Key, style))
-                    selectedType = thisElement.Key;
-
-                btnRect.x += btnRect.width;
-            }
-
-            var valueRect = new Rect(rect.x, rect.y + btnRect.height + 2f, rect.width, EditorGUIUtility.singleLineHeight);
-            value = ObjectTypes[selectedType].drawer?.Invoke(valueRect, label, value);
-
-            return value;
-        }       
         
         public static Type TypeField<TBaseClass>(Rect rect, string label, Type currentValue, bool showBaseType)
         {
@@ -521,21 +455,6 @@ namespace MolecularEditor
             return oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>);
         }
 
-        public static Color GetColorFromString(string value, byte minRGBValue = 0, byte maxRGBValue = 255) => ColorHelper.FromString(value, minRGBValue, maxRGBValue);
-
-        public static readonly Color DarkTextColor = NormalizeToColor(16, 16, 16);
-        public static readonly Color LightTextColor = NormalizeToColor(201, 201, 201);
-        public static Color GetTextColorFromBackground(Color background) => TextColorShouldBeDark(background) ? DarkTextColor : LightTextColor;
-
-        public static bool TextColorShouldBeDark(Color backgroundColor) => backgroundColor.TextForegroundColorShouldBeDark();
-
-        public static Color NormalizeToColor(byte r, byte g, byte b, byte a = 255) => ColorHelper.NormalizeToColor(r, g, b, a);
-
-        public static Color HexColor(string hex)
-        {
-            return ColorHelper.FromHex(hex);
-        }
-        
         #endregion
     }
 }
