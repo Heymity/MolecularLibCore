@@ -121,7 +121,6 @@ namespace MolecularEditor
             if (valueType == typeof(double)) return EditorGUI.DoubleField(rect, label, value is double i ? i : 0);
             if (valueType == typeof(bool)) return EditorGUI.Toggle(rect, label, value is bool i && i);
             if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value is string i ? i : "");
-            if (valueType == typeof(string)) return EditorGUI.TextField(rect, label, value is string i ? i : "");
             if (valueType == typeof(Vector4)) return EditorGUI.Vector4Field(rect, label, value is Vector4 vector4 ? vector4 : Vector4.zero);
             if (valueType == typeof(Vector3)) return EditorGUI.Vector3Field(rect, label, value is Vector3 vec3 ? vec3 : Vector3.zero);
             if (valueType == typeof(Vector3Int)) return EditorGUI.Vector3IntField(rect, label, value is Vector3Int vec3Int ? vec3Int : Vector3Int.zero);
@@ -187,7 +186,7 @@ namespace MolecularEditor
                     
                     cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);
                     
-                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType);
+                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
                     
                     if (cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out _))
                         cachedRuntimeSOsForAutoTypeField[runtimeTypeName] = serializedObject;
@@ -196,7 +195,7 @@ namespace MolecularEditor
                 }
                 
                 if (!cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out serializedObject))
-                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType);
+                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
 
                 if (so == null) so = GetScriptableObject(runtimeTypeName, dynamicType);
                 
@@ -216,31 +215,109 @@ namespace MolecularEditor
 
             return value;
 
-            (SerializedObject serializedObject, ScriptableObject so) GetSerializedObjectAndScriptableObject(string runtimeTypeName, Type dynamicType)
-            {
-                var so = GetScriptableObject(runtimeTypeName, dynamicType);
-                    
-                var valueField = dynamicType.GetField("value");
-                valueField.SetValue(so, value);
-
-                return (new SerializedObject(so), so);
-            }
-
-            ScriptableObject GetScriptableObject(string runtimeTypeName, Type dynamicType)
-            {
-                if (cachedRuntimeScriptableObjectsForAutoTypeField.TryGetValue(runtimeTypeName,
-                        out var scriptableObject))
-                    return scriptableObject;
-                
-                scriptableObject = ScriptableObject.CreateInstance(dynamicType);
-                scriptableObject.hideFlags = HideFlags.DontSave;
-                
-                cachedRuntimeScriptableObjectsForAutoTypeField.Add(runtimeTypeName, scriptableObject);
-
-                return scriptableObject;
-            }
+           
         }
         
+        private static (SerializedObject serializedObject, ScriptableObject so) GetSerializedObjectAndScriptableObject(string runtimeTypeName, Type dynamicType, object value)
+        {
+            var so = GetScriptableObject(runtimeTypeName, dynamicType);
+                    
+            var valueField = dynamicType.GetField("value");
+            valueField.SetValue(so, value);
+
+            return (new SerializedObject(so), so);
+        }
+
+        private static ScriptableObject GetScriptableObject(string runtimeTypeName, Type dynamicType)
+        {
+            if (cachedRuntimeScriptableObjectsForAutoTypeField.TryGetValue(runtimeTypeName,
+                    out var scriptableObject))
+                return scriptableObject;
+                
+            scriptableObject = ScriptableObject.CreateInstance(dynamicType);
+            scriptableObject.hideFlags = HideFlags.DontSave;
+                
+            cachedRuntimeScriptableObjectsForAutoTypeField.Add(runtimeTypeName, scriptableObject);
+
+            return scriptableObject;
+        }
+        
+        public static float AutoTypeFieldGetHeight(Type valueType, object value, string labelStr = null)
+        {
+            var label = GUIContent.none;
+            if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
+            
+            if (valueType == typeof(int)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Integer, label);
+            if (valueType == typeof(float)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Float, label);
+            if (valueType == typeof(double)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Float, label);
+            if (valueType == typeof(bool)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Boolean, label);
+            if (valueType == typeof(string)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.String, label);
+            if (valueType == typeof(Vector2)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Vector2, label);
+            if (valueType == typeof(Vector3)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Vector3, label);
+            if (valueType == typeof(Vector4)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Vector4, label);
+            if (valueType == typeof(Vector2Int)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Vector2Int, label);
+            if (valueType == typeof(Vector3Int)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Vector3Int, label);
+            if (valueType == typeof(Rect)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Rect, label);
+            if (valueType == typeof(RectInt)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.RectInt, label);
+            if (valueType == typeof(Bounds)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Bounds, label);
+            if (valueType == typeof(BoundsInt)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.BoundsInt, label);
+            if (valueType == typeof(Color)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Color, label);
+            if (valueType == typeof(Color32)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Color, label);
+            if (valueType == typeof(LayerMask)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.LayerMask, label);
+            if (valueType == typeof(AnimationCurve)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.AnimationCurve, label);
+            if (valueType == typeof(Gradient)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Gradient, label);
+            if (valueType == typeof(Quaternion)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Quaternion, label);
+            
+            if (valueType.IsEnum) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Enum, label);
+            
+            if (valueType.IsSubclassOf(typeof(Object))) return EditorGUI.GetPropertyHeight(SerializedPropertyType.ObjectReference, label);
+
+            if (valueType.GetCustomAttribute<SerializableAttribute>() != null)
+            {
+                value ??= Activator.CreateInstance(valueType);
+                
+                var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
+
+                SerializedObject serializedObject;
+                ScriptableObject so = null;
+                if (!cachedRuntimeTypesForAutoTypeField.TryGetValue(runtimeTypeName, out var dynamicType))
+                {
+                    var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+                        new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
+                    var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
+                    var typeBuilder = moduleBuilder.DefineType(runtimeTypeName, TypeAttributes.Public,
+                        typeof(ScriptableObject));
+
+                    typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
+
+                    dynamicType = typeBuilder.CreateType();
+                    
+                    cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);
+                    
+                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
+                    
+                    if (cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out _))
+                        cachedRuntimeSOsForAutoTypeField[runtimeTypeName] = serializedObject;
+                    else
+                        cachedRuntimeSOsForAutoTypeField.Add(runtimeTypeName, serializedObject);
+                }
+                
+                if (!cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out serializedObject))
+                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
+
+                if (so == null) so = GetScriptableObject(runtimeTypeName, dynamicType);
+                
+                var property = serializedObject.GetIterator();
+                
+                property.NextVisible(true); // Move to first property
+                property.NextVisible(true); // Skip m_Script
+                
+                return EditorGUI.GetPropertyHeight(property);
+            }
+            
+            return EditorGUIUtility.singleLineHeight;
+        }
+
         public static Type TypeField<TBaseClass>(Rect rect, string label, Type currentValue, bool showBaseType)
         {
             return TypeField(rect, label, currentValue, typeof(TBaseClass), showBaseType);

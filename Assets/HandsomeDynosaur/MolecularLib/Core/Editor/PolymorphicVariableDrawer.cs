@@ -14,6 +14,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Reflection;
 using MolecularEditor;
 using MolecularLib.Helpers;
@@ -28,12 +29,20 @@ namespace MolecularLib.Core.Editor
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight + (property.isExpanded ? _cumulativeFieldsHeight + 1 : 1);
+            var targetObj = fieldInfo.GetValue(property.serializedObject.targetObject);
+            _typeField ??= fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
+            if (_typeField is null)
+                throw new Exception("selectedPolymorphicType field not found");
+            var typeVar = _typeField.GetValue(targetObj) as TypeVariable;
+            
+            var editProps = GetEditablePolymorphicData(typeVar, targetObj);
+            
+            var height = editProps.fields.Sum(prop => EditorHelper.AutoTypeFieldGetHeight(prop.fieldType, prop.DeserializedValue, ObjectNames.NicifyVariableName(prop.fieldName)));
+
+            return EditorGUIUtility.singleLineHeight + height;
         }
         
-        //TODO stop using and doing this
-        private float _cumulativeFieldsHeight;
-        private FieldInfo typeField;
+        private FieldInfo _typeField;
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
@@ -57,13 +66,12 @@ namespace MolecularLib.Core.Editor
             EditorGUI.EndFoldoutHeaderGroup();
             
             var targetObj = fieldInfo.GetValue(property.serializedObject.targetObject);
-            typeField ??= fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
-            if (typeField is null)
+            _typeField ??= fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
+            if (_typeField is null)
                 throw new Exception("selectedPolymorphicType field not found");
-            var typeVar = typeField.GetValue(targetObj) as TypeVariable;
+            var typeVar = _typeField.GetValue(targetObj) as TypeVariable;
             var editProps = GetEditablePolymorphicData(typeVar, targetObj);
      
-            _cumulativeFieldsHeight = 0;
             if (property.isExpanded)
             {
                 var fieldRect = position;
@@ -73,7 +81,6 @@ namespace MolecularLib.Core.Editor
                 foreach (var prop in editProps.fields)
                 {
                     fieldRect.y += fieldRect.height + 2;
-                    _cumulativeFieldsHeight += fieldRect.height + 2;
                     fieldRect.height = EditorGUIUtility.singleLineHeight;
                     
                     prop.DeserializedValue = EditorHelper.AutoTypeField(ref fieldRect, prop.fieldType, prop.DeserializedValue,

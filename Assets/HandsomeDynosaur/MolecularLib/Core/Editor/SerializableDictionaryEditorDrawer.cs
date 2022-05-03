@@ -192,8 +192,6 @@ namespace MolecularEditor
 
         private static void DrawDictionaryElement(Rect position, SerializedProperty keyProp, SerializedProperty valueProp, bool duplicatedKey, int index)
         {
-            EditorGUI.BeginChangeCheck();
-
             var keyRect = new Rect(position.x, position.y + 2, position.width * 0.5f - Padding, ElementHeight - 4);
             var valueRect = new Rect(position.x + position.width * 0.5f + Padding,
                 position.y + 2, position.width * 0.5f - Padding, ElementHeight - 4);
@@ -211,21 +209,19 @@ namespace MolecularEditor
 
             var originalLabelWidth = EditorGUIUtility.labelWidth;
             
-            EditorGUI.BeginChangeCheck();
             EditorGUIUtility.labelWidth = 50;
             if (keyProp.isExpanded) EditorGUIUtility.labelWidth = originalLabelWidth / 2;
             EditorGUI.PropertyField(keyRect, keyProp, new GUIContent($"Key {index}"), true);
             
             // Even though this line seems arbitrary and useless, it somehow is needed to fix a problem of int and string keys not updating properly, the problem is probably caused by something else in the code, but I couldn't find what.
-            if (EditorGUI.EndChangeCheck()) keyProp.serializedObject.ApplyModifiedProperties();
+            keyProp.serializedObject.ApplyModifiedProperties();
             
-            EditorGUI.BeginChangeCheck();
             if (!valueProp.isExpanded) EditorGUIUtility.labelWidth = 55;
             else EditorGUIUtility.labelWidth = originalLabelWidth / 2;
             EditorGUI.PropertyField(valueRect, valueProp, new GUIContent($"Value {index}"), true);
 
             // Even though this line seems arbitrary and useless, it somehow is needed to fix a problem of int and string values not updating properly, the problem is probably caused by something else in the code, but I couldn't find what.
-            if (EditorGUI.EndChangeCheck()) valueProp.serializedObject.ApplyModifiedProperties();
+            valueProp.serializedObject.ApplyModifiedProperties();
             
             EditorGUIUtility.labelWidth = originalLabelWidth;
           }
