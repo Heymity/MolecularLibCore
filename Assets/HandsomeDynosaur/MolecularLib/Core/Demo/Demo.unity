@@ -1150,14 +1150,14 @@ MonoBehaviour:
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <int>0</int>'
+          <int>-6</int>'
       - fieldName: aPrivateDictionary
         fieldType:
           typeName: MolecularLib.SerializableDictionary`2[[System.String, mscorlib,
             Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32,
             mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
           assemblyName: Molecular.Core
-        serializedValue: '{"keys":[],"values":[]}'
+        serializedValue: '{"keys":["A","B"],"values":[61,350]}'
       - fieldName: myBaseString
         fieldType:
           typeName: System.String

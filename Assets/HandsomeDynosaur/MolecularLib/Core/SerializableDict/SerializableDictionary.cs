@@ -88,7 +88,12 @@ namespace MolecularLib
             }
         }
 
-        public object Deserialize(string reader) { return JsonUtility.FromJson<SerializableDictionary<TKey, TValue>>(reader); }
+        public void Deserialize(string reader) 
+        { 
+            var deserialized = JsonUtility.FromJson<SerializableDictionary<TKey, TValue>>(reader);
+            this.keys = deserialized.keys;
+            this.values = deserialized.values;
+        }
 
         public void Serialize(StringWriter writer) { writer.Write(JsonUtility.ToJson(this)); }
     }
