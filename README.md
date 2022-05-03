@@ -1,6 +1,12 @@
-# MolecularLibCore · [![GitHub license](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)](https://github.com/Heymity/MolecularLibCore/blob/master/LICENSE) [![Unity 2020.3 or later](https://img.shields.io/badge/unity-2020.3%20or%20later-brigthgreen.svg?logo=unity&cacheSeconds=2592000&style=flat)](https://unity3d.com/get-unity/download/archive) ![Tests Status](https://img.shields.io/github/workflow/status/Heymity/MolecularLibCore/Actions?label=Tests)
+# MolecularLibCore · [![GitHub license](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)](https://github.com/Heymity/MolecularLibCore/blob/master/LICENSE) [![Unity 2020.3 or later](https://img.shields.io/badge/unity-2020.3%20or%20later-brigthgreen.svg?logo=unity&cacheSeconds=2592000&style=flat)](https://unity3d.com/get-unity/download/archive) ![Tests Status](https://img.shields.io/github/workflow/status/Heymity/MolecularLibCore/Actions?label=Tests) 
+
+<img align="right" width="160px" height="160px" src="Media/LogoOnly@160.png" alt="Logo"/>
 
 This is a package for unity that provide useful utilities like the  PolymorphicVariable and SerializableDictionary<TKey, TBase>  classes and editor drawers, the ability to instantiate GameObjects with passing parameters to it, a safe Tag wrapper class, support for optional fields, a VolatileScriptableObject class and more!
+
+## How to download it
+
+The asset is available in the [Unity Asset Store](https://u3d.as/2PCg) where it can be easily downloaded and installed like any other unity package. Otherwise you can just download this repository and add it to your project. 
 
 ## What does it have?
 
@@ -26,8 +32,9 @@ This is a package for unity that provide useful utilities like the  PolymorphicV
 ## Contents
   
 ### PolymorphicVariable&lt;T&gt;
-
+![](Media/PolymorphicVar.gif)
 ### VolatileScriptableObject&lt;T&gt;
+![](Media/VolatileSO.gif)
 ### SerializableDictionary&lt;TKey, TValue&gt;
 ### Timers
 ### AutoSingleton
@@ -36,6 +43,7 @@ This is a package for unity that provide useful utilities like the  PolymorphicV
 ### Color helper methods
 ### String helper methods
 ### Optional&lt;T&gt;
+![](Media/OptionalVariable.gif)
 ### Ranges
 ### Tag wrapper
 ### TypeVariable
@@ -44,22 +52,4 @@ This is a package for unity that provide useful utilities like the  PolymorphicV
 ### TypeLibrary
 ### EditorHelper
 ### Enhanced Sprite Editor Drawer
-
-PolymorphicVariable<T>
-VolatileScriptableObject<T>
-SerializableDictionary<TKey, TValue>
-Timers
-AutoSingleton
-Instantiate with args
-Vector helper methods
-Color helper methods
-String helper methods
-Optional<T>
-Ranges
-Tag wrapper
-TypeVariable
-PlayStatus
-Maths
-TypeLibrary
-EditorHelper
-Enhanced Sprite Editor Drawer
+![](Media/SpriteEditorDrawer.gif)
