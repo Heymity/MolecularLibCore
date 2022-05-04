@@ -1103,13 +1103,12 @@ MonoBehaviour:
     - {r: 0, g: 0.93292975, b: 1, a: 1}
   myStructs:
     keys:
-    - fghmugy
+    - My struct
     values:
     - MyInt: 56
       MyBool: 1
       MyStringList:
-      - 344
-      - asdf
+      - 42
   myStructsOpposite:
     keys:
     - MyInt: 49
@@ -1140,24 +1139,31 @@ MonoBehaviour:
     - {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   myPolymorphicVariable:
     selectedPolymorphicType:
-      typeName: MolecularLib.Demo.A
+      typeName: MolecularLib.Demo.C
       assemblyName: Molecular.Core
     polymorphicData:
       fields:
-      - fieldName: aClassInt
+      - fieldName: cClassFloat
+        fieldType:
+          typeName: System.Single
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <float>-3.27</float>'
+      - fieldName: bClassRange
+        fieldType:
+          typeName: MolecularLib.Helpers.Range
+          assemblyName: Molecular.Core
+        serializedValue: "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<Range xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"
+          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Min>-4.13</Min>\r\n 
+          <Max>8.24</Max>\r\n</Range>"
+      - fieldName: bClassInt
         fieldType:
           typeName: System.Int32
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <int>774</int>'
-      - fieldName: aPrivateDictionary
-        fieldType:
-          typeName: MolecularLib.SerializableDictionary`2[[System.String, mscorlib,
-            Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32,
-            mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
-          assemblyName: Molecular.Core
-        serializedValue: '{"keys":["A","B"],"values":[-61,290]}'
+          <int>-113</int>'
       - fieldName: myBaseString
         fieldType:
           typeName: System.String
@@ -1183,7 +1189,7 @@ MonoBehaviour:
       values:
       - A utilities package for Unity
       - A wonderfull package still in development
-    useValue: 0
+    useValue: 1
   myOptionalRange:
     value:
       min: -6.75
@@ -2977,7 +2983,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.7264151, g: 0.40731174, b: 0.18160377, a: 1}
+  m_BackGroundColor: {r: 0.53453517, g: 0.16967781, b: 0.8773585, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

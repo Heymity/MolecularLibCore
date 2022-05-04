@@ -15,9 +15,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Timers;
 using MolecularLib.Helpers;
 using MolecularLib.PolymorphismSupport;
 using UnityEngine;
+using Timer = MolecularLib.Timers.Timer;
 
 namespace MolecularLib.Demo
 {
@@ -58,10 +60,51 @@ namespace MolecularLib.Demo
         [SerializeField] private Optional<Range> myOptionalRange;
         
         public PolymorphicVariable<Base> PolymorphicVariable => myPolymorphicVariable;
+        
+// ReSharper disable Unity.InefficientPropertyAccess
 
-        [ContextMenu("Test Polymorphic Variable")]
-        public void TestPoly()
+
+        [ContextMenu("Demos")]
+        public void Demos()
         {
+            var timer = Timer.Create(5, () => Debug.Log("Timer finished"));
+            Debug.Log(timer.ElapsedSeconds);
+            
+            
+            Timer.TimerAsync(2, () => Debug.Log("TimerAsync finished"));
+
+            
+            var timerReference = Timer.TimerAsyncReference(3, repeat: true);
+            timerReference.OnFinish += () => Debug.Log("TimerAsyncReference finished");
+            
+            floatRange.Random();
+
+            var min = floatRange.Min;
+            var max = floatRange.Max;
+
+            var middle = floatRange.MidPoint;
+
+            var patrolPos = vec3Range.Random();
+
+            if (vec2Range.IsInRange(transform.position))
+            {
+                // Do something...
+            }
+                
+            transform.position = transform.position.WithoutX().WithZ(1);
+
+            var myVector = transform.position;
+            var myTileMapPos = myVector.ToVec2Int();
+
+            Color titleColor = "Hello World".ToColor();
+            "This green string is in bold".Color(Color.green).Bold();
+            "This string will be cut to fit the container".Ellipsis(30, "Label");
+            
+            var backgroundColor = ColorHelper.NormalizeToColor(28, 28, 28);
+            var textColor = backgroundColor.TextForegroundColor();
+            textColor.WithR(1f);
+            var textColorHexString = textColor.ToHexString();
+            
             if (myOptionalString.HasValue)
                 Debug.Log(myOptionalString.Value);
             
