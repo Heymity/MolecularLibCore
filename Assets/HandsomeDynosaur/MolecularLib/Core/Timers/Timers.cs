@@ -81,6 +81,8 @@ namespace MolecularLib.Timers
         {
             IsStopped = false;
             yield return new WaitForSeconds(DurationInSeconds);
+            if (IsStopped) yield break;
+            
             IsStopped = true;
             OnComplete?.Invoke();
         }
