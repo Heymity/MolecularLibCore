@@ -14,7 +14,6 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,13 +23,12 @@ namespace MolecularLib
 {
     public static class TypeLibrary
     {
-#if USE_TYPE_LIBRARY
         public static IEnumerable<Type> AllAssembliesTypes { get; private set; }
         public static IEnumerable<Type> AllNonUnityAssembliesTypes { get; private set; }
         
         public static IDictionary<string, Assembly> AllAssemblies { get; private set; }
-#else
-        public static IEnumerable<Type> AllAssembliesTypes
+
+        /*public static IEnumerable<Type> AllAssembliesTypes
         {
             get => throw new Exception("The USE_TYPE_LIBRARY precompiler symbol is disabled, therefore this feature is no enabled. To enable it add USE_TYPE_LIBRARY to the script define symbols in unity project settings");
             set => throw new Exception("The USE_TYPE_LIBRARY precompiler symbol is disabled, therefore this feature is no enabled. To enable it add USE_TYPE_LIBRARY to the script define symbols in unity project settings");
@@ -39,13 +37,11 @@ namespace MolecularLib
         {
             get => throw new Exception("The USE_TYPE_LIBRARY precompiler symbol is disabled, therefore this feature is no enabled. To enable it add USE_TYPE_LIBRARY to the script define symbols in unity project settings");
             set => throw new Exception("The USE_TYPE_LIBRARY precompiler symbol is disabled, therefore this feature is no enabled. To enable it add USE_TYPE_LIBRARY to the script define symbols in unity project settings");
-        }
-#endif
+        }*/
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void Bootstrap()
         {
-#if USE_TYPE_LIBRARY
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             
             AllAssembliesTypes = assemblies
@@ -74,7 +70,6 @@ namespace MolecularLib
                        || assemblyName.Contains("UnityEngineInternal")
                        || assemblyName.Contains("UnityEditorInternal");
             }
-#endif
         }
         
         #if UNITY_EDITOR

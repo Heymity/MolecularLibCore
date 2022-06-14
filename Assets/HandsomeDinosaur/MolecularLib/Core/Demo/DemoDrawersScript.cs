@@ -13,9 +13,7 @@
 *  limitations under the License.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Timers;
 using MolecularLib.Helpers;
 using MolecularLib.PolymorphismSupport;
 using UnityEngine;
@@ -33,9 +31,9 @@ namespace MolecularLib.Demo
         [Header("Range variables and editor drawers")] 
         [SerializeField] private Range<double> doubleRange;
         [SerializeField] private Range<float> genericFloatRange;
-        [SerializeField] private Range floatRange;
-        [SerializeField] private Range intRange;
-        [SerializeField, MinMaxRange(-30.6345f, 24.34634f)] private Range minMaxFloatRange;
+        [SerializeField] private MolecularLib.Helpers.Range floatRange;
+        [SerializeField] private MolecularLib.Helpers.Range intRange;
+        [SerializeField, MinMaxRange(-30.6345f, 24.34634f)] private MolecularLib.Helpers.Range minMaxFloatRange;
         [SerializeField, MinMaxRange(-30, 20)] private RangeInteger minMaxIntRange;
         [SerializeField] private RangeVector2 vec2Range;
         [SerializeField] private RangeVector3 vec3Range;
@@ -57,7 +55,7 @@ namespace MolecularLib.Demo
         [SerializeField] private Optional<string> myOptionalString;
         [SerializeField] private Optional<List<string>> myList;
         [SerializeField] private Optional<SerializableDictionary<string, string>> myOptionalDictionary;
-        [SerializeField] private Optional<Range> myOptionalRange;
+        [SerializeField] private Optional<MolecularLib.Helpers.Range> myOptionalRange;
         
         public PolymorphicVariable<Base> PolymorphicVariable => myPolymorphicVariable;
         
@@ -126,7 +124,7 @@ namespace MolecularLib.Demo
         }
     }
 
-    [Serializable]
+    [System.Serializable]
     public struct TestStruct
     {
         public int MyInt;
@@ -134,27 +132,27 @@ namespace MolecularLib.Demo
         public List<string> MyStringList;
     }
         
-    [Serializable]
+    [System.Serializable]
     public class Base
     {
         public string myBaseString;
     }
 
-    [Serializable]
+    [System.Serializable]
     public class A : Base
     {
         public int aClassInt;
         [SerializeField] private SerializableDictionary<string, int> aPrivateDictionary;
     }
 
-    [Serializable]
+    [System.Serializable]
     public class B : Base
     {
-        public Range bClassRange;
+        public MolecularLib.Helpers.Range bClassRange;
         public int bClassInt;
     }
 
-    [Serializable]
+    [System.Serializable]
     public class C : B
     {
         public float cClassFloat;
