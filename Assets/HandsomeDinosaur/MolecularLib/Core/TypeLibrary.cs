@@ -1,18 +1,3 @@
-/*  Copyright 2022 Gabriel Pasquale Rodrigues Scavone
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,9 +39,9 @@ namespace MolecularLib
                 .Aggregate(new List<Type>() as IEnumerable<Type>,(a, s) => a.Concat(s));
 
             AllAssemblies = AllAssembliesTypes
-                .Select(t => new { t.Assembly, Name = t.Assembly.GetName().Name })
-                .Distinct()
-                .ToDictionary(a => a.Name, a => a.Assembly);
+                .Select(t => (Assembly: t.Assembly, Name: t.Assembly.GetName().Name))
+                .Distinct<(Assembly a, string name)>(new AssemblyTypeEqualityComparer())
+                .ToDictionary(a => a.name, a => a.a);
             
             /*PlayerAssembliesTypes = CompilationPipeline
                 .GetAssemblies(AssembliesType.Player).Select(a => a.)
@@ -79,5 +64,18 @@ namespace MolecularLib
             Bootstrap();
         }
         #endif
+    }
+    
+    internal class AssemblyTypeEqualityComparer : IEqualityComparer<(Assembly a, string name)>
+    {
+        public bool Equals((Assembly a, string name) x, (Assembly a, string name) y)
+        {
+            return x.name == y.name;
+        }
+
+        public int GetHashCode((Assembly a, string name) obj)
+        {
+            return obj.name.GetHashCode();
+        }
     }
 }

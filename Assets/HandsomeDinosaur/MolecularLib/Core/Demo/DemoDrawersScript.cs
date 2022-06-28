@@ -1,17 +1,9 @@
-/*  Copyright 2022 Gabriel Pasquale Rodrigues Scavone
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+// Because this is a script just demonstrating the drawers of the types, it has lots of warnings from ReSharper about unused fields or inefficient code, this line just hide those warnings so they don't clog up the screen.
+// ReSharper disable NotAccessedField.Local
+// ReSharper disable Unity.InefficientPropertyAccess
+// ReSharper disable RedundantNameQualifier
+// ReSharper disable UnusedVariable
+// ReSharper disable InconsistentNaming
 
 using System.Collections.Generic;
 using MolecularLib.Helpers;
@@ -20,7 +12,7 @@ using UnityEngine;
 using Timer = MolecularLib.Timers.Timer;
 
 namespace MolecularLib.Demo
-{
+{   
     public class DemoDrawersScript : MonoBehaviour
     {
         [Header("Sprite, Tag and Type variable editor drawers")] 
@@ -29,8 +21,8 @@ namespace MolecularLib.Demo
         [SerializeField, TypeVariableBaseType(typeof(MonoBehaviour))] private TypeVariable type;
         [Space] 
         [Header("Range variables and editor drawers")] 
-        [SerializeField] private Range<double> doubleRange;
-        [SerializeField] private Range<float> genericFloatRange;
+        [SerializeField] private MolecularLib.Helpers.Range<double> doubleRange;
+        [SerializeField] private MolecularLib.Helpers.Range<float> genericFloatRange;
         [SerializeField] private MolecularLib.Helpers.Range floatRange;
         [SerializeField] private MolecularLib.Helpers.Range intRange;
         [SerializeField, MinMaxRange(-30.6345f, 24.34634f)] private MolecularLib.Helpers.Range minMaxFloatRange;
@@ -59,8 +51,6 @@ namespace MolecularLib.Demo
         
         public PolymorphicVariable<Base> PolymorphicVariable => myPolymorphicVariable;
         
-// ReSharper disable Unity.InefficientPropertyAccess
-
 
         [ContextMenu("Demos")]
         public void Demos()
@@ -89,6 +79,7 @@ namespace MolecularLib.Demo
                 // Do something...
             }
                 
+            
             transform.position = transform.position.WithoutX().WithZ(1);
 
             var myVector = transform.position;
@@ -103,6 +94,7 @@ namespace MolecularLib.Demo
             textColor.WithR(1f);
             var textColorHexString = textColor.ToHexString();
             
+            
             if (myOptionalString.HasValue)
                 Debug.Log(myOptionalString.Value);
             
@@ -110,6 +102,7 @@ namespace MolecularLib.Demo
             
             if (myOptionalString)
                 Debug.Log(myOptionalString);
+            
             
             if (myPolymorphicVariable.As<A>(out var asA))
                 Debug.Log($"As A | aClassInt: {asA.aClassInt}");
@@ -142,7 +135,7 @@ namespace MolecularLib.Demo
     public class A : Base
     {
         public int aClassInt;
-        [SerializeField] private SerializableDictionary<string, int> aPrivateDictionary;
+        [SerializeField] private SerializableDictionary<string, int> aPrivateDictionary; // can be public as well ;)
     }
 
     [System.Serializable]
@@ -156,6 +149,6 @@ namespace MolecularLib.Demo
     public class C : B
     {
         public float cClassFloat;
-        // Types derived from UnityEngine.Object aren't working yet, but in future versions it will; public TestVolatileScriptableObject cClassScriptableObject;
+        // Types derived from UnityEngine.Object aren't supported yet, but in future versions it will ;) public TestVolatileScriptableObject cClassScriptableObject;
     }
 }

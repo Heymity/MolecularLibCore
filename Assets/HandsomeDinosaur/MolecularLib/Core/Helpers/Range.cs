@@ -1,19 +1,3 @@
-/*  Copyright 2022 Gabriel Pasquale Rodrigues Scavone
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
-
-using System;
 using UnityEngine;
 
 namespace MolecularLib.Helpers
@@ -29,8 +13,8 @@ namespace MolecularLib.Helpers
         T Max { get; set; }
     }
 
-    [Serializable]
-    public class Range<T> : IRange<T> where T : IComparable
+    [System.Serializable]
+    public class Range<T> : IRange<T> where T : System.IComparable
     {
         [SerializeField] protected T min;
         [SerializeField] protected T max;
@@ -91,7 +75,7 @@ namespace MolecularLib.Helpers
         }
     }
 
-    [Serializable]
+    [System.Serializable]
     public class Range : Range<float>
     {
         public float MidPoint => (Min + Max) / 2f;
@@ -108,7 +92,7 @@ namespace MolecularLib.Helpers
         public float Random() => UnityEngine.Random.Range(Min, Max);
     }
 
-    [Serializable]
+    [System.Serializable]
     public class RangeInteger : Range<int>
     {
         public int MidPoint => Mathf.RoundToInt((Min + Max) / 2f);
@@ -125,7 +109,7 @@ namespace MolecularLib.Helpers
         public int Random() => UnityEngine.Random.Range(Min, Max);
     }
 
-    [Serializable]
+    [System.Serializable]
     public class RangeVector3 : Range<(float x, float y, float z)>, ISerializationCallbackReceiver
     {
         [SerializeField] private Vector3 minVector3SaveData;
@@ -211,7 +195,7 @@ namespace MolecularLib.Helpers
         }
     }
 
-    [Serializable]
+    [System.Serializable]
     public class RangeVector2 : Range<(float x, float y)>, ISerializationCallbackReceiver
     {
         [SerializeField] private Vector2 minVector2SaveData;
@@ -290,7 +274,7 @@ namespace MolecularLib.Helpers
         }
     }
     
-    [Serializable]
+    [System.Serializable]
     public class RangeVector3Int : Range<(int x, int y, int z)>, ISerializationCallbackReceiver
     {
         [SerializeField] private Vector3Int minVector2SaveData;
@@ -379,7 +363,7 @@ namespace MolecularLib.Helpers
         }
     }
     
-    [Serializable]
+    [System.Serializable]
     public class RangeVector2Int : Range<(int x, int y)>, ISerializationCallbackReceiver
     {
         [SerializeField] private Vector2Int minVector2SaveData;
@@ -464,7 +448,7 @@ namespace MolecularLib.Helpers
         }
     }
 
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+    [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = true)]
     public class MinMaxRangeAttribute : PropertyAttribute
     {
         public MinMaxRangeAttribute(float min, float max)
@@ -481,9 +465,9 @@ namespace MolecularLib.Helpers
     public static class RangeExtensionMethods
     {
         public static float Random(this Range<float> range) =>
-            (range as Range)?.Random() ?? throw new NullReferenceException();
+            (range as Range)?.Random() ?? throw new System.NullReferenceException();
 
         public static float Random(this Range<int> range) =>
-            (range as RangeInteger)?.Random() ?? throw new NullReferenceException();
+            (range as RangeInteger)?.Random() ?? throw new System.NullReferenceException();
     }
 }
