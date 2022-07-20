@@ -38,10 +38,11 @@ namespace MolecularLib
                 .Select(a => a.GetTypes())
                 .Aggregate(new List<Type>() as IEnumerable<Type>,(a, s) => a.Concat(s));
 
-            AllAssemblies = AllAssembliesTypes
-                .Select(t => (Assembly: t.Assembly, Name: t.Assembly.GetName().Name))
-                .Distinct<(Assembly a, string name)>(new AssemblyTypeEqualityComparer())
-                .ToDictionary(a => a.name, a => a.a);
+            var seenAssemblies = new HashSet<string>();
+            AllAssemblies = assemblies
+                .Select(a => (assembly: a, name: a.GetName().Name))
+                .Where(a => seenAssemblies.Add(a.name))
+                .ToDictionary(a => a.name, a => a.assembly);
             
             /*PlayerAssembliesTypes = CompilationPipeline
                 .GetAssemblies(AssembliesType.Player).Select(a => a.)
@@ -64,18 +65,5 @@ namespace MolecularLib
             Bootstrap();
         }
         #endif
-    }
-    
-    internal class AssemblyTypeEqualityComparer : IEqualityComparer<(Assembly a, string name)>
-    {
-        public bool Equals((Assembly a, string name) x, (Assembly a, string name) y)
-        {
-            return x.name == y.name;
-        }
-
-        public int GetHashCode((Assembly a, string name) obj)
-        {
-            return obj.name.GetHashCode();
-        }
     }
 }
