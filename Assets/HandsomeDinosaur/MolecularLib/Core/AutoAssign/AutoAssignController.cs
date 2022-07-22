@@ -38,7 +38,7 @@ namespace MolecularLib.AutoAssign
             {
                 if (!t.IsSubclassOf(typeof(MonoBehaviour))) continue;
                 var useAutoAssignAtt = t.GetCustomAttribute<UseAutoAssignAttribute>();
-                if (useAutoAssignAtt is null) continue;
+                if (useAutoAssignAtt is null && !t.IsSubclassOf(typeof(AutoAssignMonoBehaviour))) continue;
                 //if (useAutoAssignAtt.DefaultAutoAssignMoment == AutoAssignAt.None) throw new NotSupportedException("Cannot have UseAutoAssignAttribute with DefaultAutoAssignMoment of None");
 
                 var typeName = t.FullName;

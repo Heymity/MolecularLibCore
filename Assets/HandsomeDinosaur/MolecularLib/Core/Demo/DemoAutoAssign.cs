@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace MolecularLib.Demo
 {
-    // Remember to add this attribute here on the class!
-    [UseAutoAssign]
+    // Remember to add this attribute here on the class if you don't derive it from AutoAssignMonoBehaviour!
+    //[UseAutoAssign]
     public class DemoAutoAssign : AutoAssignMonoBehaviour
     {
         [GetComponent] private Rigidbody2D _rigidbody2D;
