@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace MolecularLib.Demo
 {
+    // Remember to add this attribute here on the class!
     [UseAutoAssign]
-    public class DemoAutoAssign : MonoBehaviour
+    public class DemoAutoAssign : AutoAssignMonoBehaviour
     {
         [GetComponent] private Rigidbody2D _rigidbody2D;
         [GetComponent] private Rigidbody2D _rigidbody2DProp { get; set; }
@@ -28,6 +29,13 @@ namespace MolecularLib.Demo
         [FindObjectsOfType(typeof(DemoDrawersScript))] private DemoDrawersScript[] _drawersScripts;
         [FindObjectsOfType(typeof(DemoDrawersScript))] private DemoDrawersScript[] _drawersScriptsProp { get; set; }
 
+        /* If you can't derive from AutoAssignMonoBehaviour, you can just call the function below like that
+        private void Awake()
+        {
+            this.AutoAssign();
+        }*/
+        
+        
         
         [ContextMenu("Test")]
         public void Test()
@@ -45,11 +53,6 @@ namespace MolecularLib.Demo
                 $"FindObjectsOfType: Field {_drawersScripts} ({_drawersScripts.Length}) | Prop {_drawersScriptsProp} ({_drawersScriptsProp.Length})");
 
             Debug.Log(builder.ToString());
-        }
-
-        private void Awake()
-        {
-            this.AutoAssign();
         }
     }
 }
