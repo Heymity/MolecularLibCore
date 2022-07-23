@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using MolecularLib.AutoAssign;
 using UnityEngine;
 
@@ -9,25 +10,34 @@ namespace MolecularLib.Demo
     public class DemoAutoAssign : AutoAssignMonoBehaviour
     {
         [GetComponent] private Rigidbody2D _rigidbody2D;
-        [GetComponent] private Rigidbody2D _rigidbody2DProp { get; set; }
+        [GetComponent] private Rigidbody2D Rigidbody2DProp { get; set; }
+
+        [GetComponents(typeof(BoxCollider2D))] private List<Collider2D> _colliders;
+        [GetComponents(typeof(BoxCollider2D))] private List<Collider2D> CollidersProp { get; set; }
 
         [GetComponentInChildren] private Collider2D _collider;
-        [GetComponentInChildren] private Collider2D _colliderProp { get; set; }
+        [GetComponentInChildren] private Collider2D ColliderProp { get; set; }
+        
+        [GetComponentsInChildren] private List<Transform> _transformList;
+        [GetComponentsInChildren] private List<Transform> TransformListProp { get; set; }
 
         [Find("DEMO DRAWERS")] private GameObject _drawers;
-        [Find("DEMO DRAWERS")] private GameObject _drawersProp { get; set; }
+        [Find("DEMO DRAWERS")] private GameObject DrawersProp { get; set; }
 
         [FindWithTag("MainCamera")] private GameObject _camera;
-        [FindWithTag("MainCamera")] private GameObject _cameraProp { get; set; }
+        [FindWithTag("MainCamera")] private GameObject CameraProp { get; set; }
 
         [FindGameObjectsWithTag("GameController")] private GameObject[] _gameControllers;
-        [FindGameObjectsWithTag("GameController")] private GameObject[] _gameControllersProp { get; set; }
+        [FindGameObjectsWithTag("GameController")] private GameObject[] GameControllersProp { get; set; }
 
         [FindObjectOfType(typeof(DemoDrawersScript))] private DemoDrawersScript _drawersScript;
-        [FindObjectOfType(typeof(DemoDrawersScript))] private DemoDrawersScript _drawersScriptProp { get; set; }
+        [FindObjectOfType(typeof(DemoDrawersScript))] private DemoDrawersScript DrawersScriptProp { get; set; }
 
         [FindObjectsOfType(typeof(DemoDrawersScript))] private DemoDrawersScript[] _drawersScripts;
-        [FindObjectsOfType(typeof(DemoDrawersScript))] private DemoDrawersScript[] _drawersScriptsProp { get; set; }
+        [FindObjectsOfType(typeof(DemoDrawersScript))] private DemoDrawersScript[] DrawersScriptsProp { get; set; }
+        
+        [LoadResource("ArgsInstantiated")] private GameObject _gameObject;
+        [LoadResource("ArgsInstantiated")] private GameObject GameObjectProp { get; set; } 
 
         /* If you can't derive from AutoAssignMonoBehaviour, you can just call the function below like that
         private void Awake()
@@ -42,15 +52,18 @@ namespace MolecularLib.Demo
         {
             var builder = new StringBuilder();
             builder.AppendLine("Demo AutoAssign:");
-            builder.AppendLine($"GetComponent: Field {_rigidbody2D} | Prop {_rigidbody2DProp}");
-            builder.AppendLine($"GetComponentInChildren: Field {_collider} | Prop {_colliderProp}");
-            builder.AppendLine($"Find: Field {_drawers} | Prop {_drawersProp}");
-            builder.AppendLine($"FindWithTag: Field {_camera} | Prop {_cameraProp}");
+            builder.AppendLine($"GetComponent: Field {_rigidbody2D} | Prop {Rigidbody2DProp}");
+            builder.AppendLine($"GetComponents: Field {_colliders} ({_colliders.Count}) | Prop {CollidersProp} ({CollidersProp.Count})");
+            builder.AppendLine($"GetComponentInChildren: Field {_collider} | Prop {ColliderProp}");
+            builder.AppendLine($"GetComponentsInChildren: Field {_transformList} ({_transformList.Count}) | Prop {TransformListProp} ({TransformListProp.Count})");
+            builder.AppendLine($"Find: Field {_drawers} | Prop {DrawersProp}");
+            builder.AppendLine($"FindWithTag: Field {_camera} | Prop {CameraProp}");
             builder.AppendLine(
-                $"FindGameObjectsWithTag: Field {_gameControllers} ({_gameControllers.Length}) | Prop {_gameControllersProp} ({_gameControllersProp.Length})");
-            builder.AppendLine($"FindObjectOfType: Field {_drawersScript} | Prop {_drawersScriptProp}");
+                $"FindGameObjectsWithTag: Field {_gameControllers} ({_gameControllers.Length}) | Prop {GameControllersProp} ({GameControllersProp.Length})");
+            builder.AppendLine($"FindObjectOfType: Field {_drawersScript} | Prop {DrawersScriptProp}");
             builder.AppendLine(
-                $"FindObjectsOfType: Field {_drawersScripts} ({_drawersScripts.Length}) | Prop {_drawersScriptsProp} ({_drawersScriptsProp.Length})");
+                $"FindObjectsOfType: Field {_drawersScripts} ({_drawersScripts.Length}) | Prop {DrawersScriptsProp} ({DrawersScriptsProp.Length})");
+            builder.AppendLine($"LoadResource: Field {_gameObject.name} | Prop {GameObjectProp.name}");
 
             Debug.Log(builder.ToString());
         }

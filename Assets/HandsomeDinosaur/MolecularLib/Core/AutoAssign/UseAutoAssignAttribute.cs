@@ -2,6 +2,8 @@
 
 namespace MolecularLib.AutoAssign
 {
+    [AttributeUsage(AttributeTargets.Class)]
+    [JetBrains.Annotations.UsedImplicitly]
     public class UseAutoAssignAttribute : Attribute
     {
         //public readonly AutoAssignAt DefaultAutoAssignMoment;

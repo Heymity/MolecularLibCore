@@ -4,11 +4,11 @@ namespace MolecularLib.AutoAssign
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     [JetBrains.Annotations.MeansImplicitUse(JetBrains.Annotations.ImplicitUseKindFlags.Assign), JetBrains.Annotations.UsedImplicitly]
-    public class GetComponentInChildrenAttribute : Attribute
+    public class GetComponentsInChildrenAttribute : Attribute
     {
         public readonly Type ComponentType;
 
-        public GetComponentInChildrenAttribute(Type componentType = null)
+        public GetComponentsInChildrenAttribute(Type componentType = null)
         {
             ComponentType = componentType;
         }

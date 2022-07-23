@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -12,12 +14,15 @@ namespace MolecularLib.AutoAssign
         {
             None,
             GetComponent,
+            GetComponents,
             GetComponentInChild,
+            GetComponentsInChild,
             Find,
             FindWithTag,
             FindGameObjectsWithTag,
             FindObjectOfType,
             FindObjectsOfType,
+            LoadResource,
         }
         
         private struct AutoAssignData
@@ -26,7 +31,7 @@ namespace MolecularLib.AutoAssign
             public Mode AssignMode;
             public MemberInfo MemberInfo;
             public Type ProvidedType;
-            public string NameOrTag;
+            public string NameOrTagOrPath;
         }
         
         private static readonly Dictionary<string, List<AutoAssignData>> autoAssignData = new Dictionary<string, List<AutoAssignData>>();
@@ -50,33 +55,54 @@ namespace MolecularLib.AutoAssign
                 foreach (var member in members)
                 {
                     Mode mode;
-                    var nameOrTag = "";
+                    var nameOrTagOrPath = "";
                     Type providedType = null;
                     
                     var getCompAtt = member.GetCustomAttribute<GetComponentAttribute>();
+                    var getAllCompAtt = member.GetCustomAttribute<GetComponentsAttribute>();
                     var getCompInChildAtt = member.GetCustomAttribute<GetComponentInChildrenAttribute>();
+                    var getAllCompInChildAtt = member.GetCustomAttribute<GetComponentsInChildrenAttribute>();
                     var findAtt = member.GetCustomAttribute<FindAttribute>();
                     var findTagAtt = member.GetCustomAttribute<FindWithTagAttribute>();
                     var findAllTagAtt = member.GetCustomAttribute<FindGameObjectsWithTag>();
                     var findTypeAtt = member.GetCustomAttribute<FindObjectOfTypeAttribute>();
                     var findAllTypeAtt = member.GetCustomAttribute<FindObjectsOfTypeAttribute>();
-                    
-                    if (getCompAtt != null) {mode = Mode.GetComponent;}
-                    else if (getCompInChildAtt != null) mode = Mode.GetComponentInChild;
+                    var loadResourceAtt = member.GetCustomAttribute<LoadResourceAttribute>();
+                   
+                    if (getCompAtt != null)
+                    {
+                        mode = Mode.GetComponent;
+                        providedType = getCompAtt.ComponentType;
+                    }
+                    else if (getCompInChildAtt != null)
+                    {
+                        mode = Mode.GetComponentInChild;
+                        providedType = getCompInChildAtt.ComponentType;
+                    }
+                    else if (getAllCompAtt != null)
+                    {
+                        mode = Mode.GetComponents;
+                        providedType = getAllCompAtt.ComponentType;
+                    }
+                    else if (getAllCompInChildAtt != null)
+                    {
+                        mode = Mode.GetComponentsInChild;
+                        providedType = getAllCompInChildAtt.ComponentType;
+                    }
                     else if (findAtt != null)
                     {
                         mode = Mode.Find;
-                        nameOrTag = findAtt.Name;
+                        nameOrTagOrPath = findAtt.Name;
                     }
                     else if (findTagAtt != null)
                     {
                         mode = Mode.FindWithTag;
-                        nameOrTag = findTagAtt.Tag;
+                        nameOrTagOrPath = findTagAtt.Tag;
                     }
                     else if (findAllTagAtt != null)
                     {
                         mode = Mode.FindGameObjectsWithTag;
-                        nameOrTag = findAllTagAtt.Tag;
+                        nameOrTagOrPath = findAllTagAtt.Tag;
                     }
                     else if (findTypeAtt != null)
                     {
@@ -88,6 +114,11 @@ namespace MolecularLib.AutoAssign
                         mode = Mode.FindObjectsOfType;
                         providedType = findAllTypeAtt.Type;
                     }
+                    else if (loadResourceAtt != null)
+                    {
+                        mode = Mode.LoadResource;
+                        nameOrTagOrPath = loadResourceAtt.ResourcePath;
+                    }
                     else continue;
                     
                     var data = new AutoAssignData
@@ -96,7 +127,7 @@ namespace MolecularLib.AutoAssign
                         MemberInfo = member,
                         AssignMode = mode,
                         ProvidedType = providedType,
-                        NameOrTag = nameOrTag,
+                        NameOrTagOrPath = nameOrTagOrPath,
                     };
                     
                     if (autoAssignData.TryGetValue(typeName, out var datas))
@@ -119,11 +150,15 @@ namespace MolecularLib.AutoAssign
                 {
                     case MemberTypes.Field:
                         var field = (FieldInfo) assignData.MemberInfo;
-                        field.SetValue(targetMonoBehaviour, GetValue(targetMonoBehaviour, assignData, field.FieldType));
+                        var value = GetValue(targetMonoBehaviour, assignData, field.FieldType);
+
+                        field.SetValue(targetMonoBehaviour, HandleTypeConversions(value, field.FieldType));
                         break;
                     case MemberTypes.Property:
                         var property = (PropertyInfo) assignData.MemberInfo;
-                        property.SetValue(targetMonoBehaviour, GetValue(targetMonoBehaviour, assignData, property.PropertyType));
+                        var valueProp = GetValue(targetMonoBehaviour, assignData, property.PropertyType);
+
+                        property.SetValue(targetMonoBehaviour, HandleTypeConversions(valueProp, property.PropertyType));
                         break;
                     case MemberTypes.All:
                     case MemberTypes.Constructor:
@@ -137,18 +172,76 @@ namespace MolecularLib.AutoAssign
                 }
             }
         }
-        
+
+        private static object HandleTypeConversions(object currentValue, Type targetType)
+        {
+            object GetList(Type t)
+            {
+                var listType = typeof(List<>).MakeGenericType(t);
+                var list = Activator.CreateInstance(listType);
+                var tmp = ((IEnumerable<object>) currentValue).ToList();
+
+                var cList = (IList) list;
+                foreach (var i in tmp)
+                {
+                    cList.Add(i);
+                }
+
+                return list;
+            }
+            
+            if (!currentValue.GetType().IsArray) return currentValue;
+
+            var valuePropElementType = currentValue.GetType().GetElementType();
+            var propElementType = targetType.GetArrayOrListElementType();
+
+            if (targetType.IsGenericList())
+            {
+                currentValue = GetList(propElementType);
+            }
+            
+            if (!valuePropElementType!.IsAssignableFrom(propElementType))
+                return currentValue;
+
+            var list = GetList(propElementType);
+
+            if (targetType.IsGenericList())
+                currentValue = list;
+            else
+            {
+                var arrayType = propElementType.MakeArrayType();
+                var array = Activator.CreateInstance(arrayType, ((IList) list).Count);
+
+                for (var i = 0; i < ((IList) list).Count; i++)
+                    ((Array) array).SetValue(((IList) list)[i], i);
+
+                currentValue = array;
+            }
+            
+            return currentValue;
+        }
+
+        private static bool IsGenericList(this Type t) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>);
+
+        private static Type GetArrayOrListElementType(this Type t) =>
+            t.IsArray ? 
+                t.GetElementType()
+                : t.GenericTypeArguments[0];
+
         private static object GetValue(Component targetMonoBehaviour, AutoAssignData data, Type memberType)
         {
             return data.AssignMode switch
             {
-                Mode.GetComponent => targetMonoBehaviour.GetComponent(memberType),
-                Mode.GetComponentInChild => targetMonoBehaviour.GetComponentInChildren(memberType),
-                Mode.Find => GameObject.Find(data.NameOrTag),
-                Mode.FindWithTag => GameObject.FindWithTag(data.NameOrTag),
-                Mode.FindGameObjectsWithTag => GameObject.FindGameObjectsWithTag(data.NameOrTag),
+                Mode.GetComponent => targetMonoBehaviour.GetComponent(data.ProvidedType ?? memberType),
+                Mode.GetComponents => targetMonoBehaviour.GetComponents(data.ProvidedType ?? memberType.GetArrayOrListElementType()),
+                Mode.GetComponentInChild => targetMonoBehaviour.GetComponentInChildren(data.ProvidedType ?? memberType),
+                Mode.GetComponentsInChild => targetMonoBehaviour.GetComponentsInChildren(data.ProvidedType ?? memberType.GetArrayOrListElementType()),
+                Mode.Find => GameObject.Find(data.NameOrTagOrPath),
+                Mode.FindWithTag => GameObject.FindWithTag(data.NameOrTagOrPath),
+                Mode.FindGameObjectsWithTag => GameObject.FindGameObjectsWithTag(data.NameOrTagOrPath),
                 Mode.FindObjectOfType => Object.FindObjectOfType(data.ProvidedType),
                 Mode.FindObjectsOfType => Object.FindObjectsOfType(data.ProvidedType),
+                Mode.LoadResource => Resources.Load(data.NameOrTagOrPath),
                 Mode.None => throw new NotSupportedException(),
                 _ => throw new ArgumentOutOfRangeException()
             };

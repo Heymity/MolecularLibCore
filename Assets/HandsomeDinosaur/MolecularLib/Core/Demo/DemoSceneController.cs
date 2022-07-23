@@ -1,3 +1,4 @@
+using MolecularLib.AutoAssign;
 using MolecularLib.Helpers;
 using MolecularLib.PolymorphismSupport;
 using MolecularLib.Timers;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 
 namespace MolecularLib.Demo
 {
-    public class DemoSceneController : MonoBehaviour
+    public class DemoSceneController : AutoAssignMonoBehaviour
     {
         [Header("Timers")]
         [SerializeField] private InputField timerDelay;
@@ -20,6 +21,8 @@ namespace MolecularLib.Demo
         [Header("Polymorphic Variable")]
         [SerializeField] private DemoDrawersScript demoDrawersScript;
         [SerializeField] private Text polymorphicVariableText;
+        
+        [FindObjectOfType(typeof(DemoAutoAssign))] private DemoAutoAssign _demoAutoAssign;
         
         private PolymorphicVariable<Base> PolymorphicVariable => demoDrawersScript.PolymorphicVariable;
 
@@ -63,6 +66,11 @@ namespace MolecularLib.Demo
                 polymorphicVariableText.text = $"As C | cClassFloat: {asC.cClassFloat}";
             else
                 polymorphicVariableText.text = $"As Base | myBaseString: {PolymorphicVariable.Value.myBaseString}";
+        }
+
+        public void TestAutoAssign()
+        {
+            _demoAutoAssign.Test();
         }
         
         public void Update()
