@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace MolecularLib.Demo
 {
-    // Remember to add this attribute here on the class if you don't derive it from AutoAssignMonoBehaviour!
+    // Remember to add this attribute here on the class and call this.AutoAssign()
+    // if you don't derive it from AutoAssignMonoBehaviour!
     //[UseAutoAssign]
     public class DemoAutoAssign : AutoAssignMonoBehaviour
     {
@@ -14,30 +15,31 @@ namespace MolecularLib.Demo
 
         [GetComponents(typeof(BoxCollider2D))] private List<Collider2D> _colliders;
         [GetComponents(typeof(BoxCollider2D))] private List<Collider2D> CollidersProp { get; set; }
-
+        
         [GetComponentInChildren] private Collider2D _collider;
         [GetComponentInChildren] private Collider2D ColliderProp { get; set; }
         
         [GetComponentsInChildren] private List<Transform> _transformList;
         [GetComponentsInChildren] private List<Transform> TransformListProp { get; set; }
-
+        
         [Find("DEMO DRAWERS")] private GameObject _drawers;
         [Find("DEMO DRAWERS")] private GameObject DrawersProp { get; set; }
-
+        
         [FindWithTag("MainCamera")] private GameObject _camera;
         [FindWithTag("MainCamera")] private GameObject CameraProp { get; set; }
-
+        
         [FindGameObjectsWithTag("GameController")] private GameObject[] _gameControllers;
         [FindGameObjectsWithTag("GameController")] private GameObject[] GameControllersProp { get; set; }
-
+        
         [FindObjectOfType(typeof(DemoDrawersScript))] private DemoDrawersScript _drawersScript;
         [FindObjectOfType(typeof(DemoDrawersScript))] private DemoDrawersScript DrawersScriptProp { get; set; }
-
+        
         [FindObjectsOfType(typeof(DemoDrawersScript))] private DemoDrawersScript[] _drawersScripts;
         [FindObjectsOfType(typeof(DemoDrawersScript))] private DemoDrawersScript[] DrawersScriptsProp { get; set; }
         
         [LoadResource("ArgsInstantiated")] private GameObject _gameObject;
         [LoadResource("ArgsInstantiated")] private GameObject GameObjectProp { get; set; } 
+        
 
         /* If you can't derive from AutoAssignMonoBehaviour, you can just call the function below like that
         private void Awake()

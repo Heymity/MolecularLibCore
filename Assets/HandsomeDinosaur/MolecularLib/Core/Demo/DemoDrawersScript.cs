@@ -55,10 +55,12 @@ namespace MolecularLib.Demo
         [ContextMenu("Demos")]
         public void Demos()
         {
+            // Coroutine Timer (can also be used outside of a MonoBehaviour)
             var timer = Timer.Create(5, () => Debug.Log("Timer finished"));
             Debug.Log(timer.ElapsedSeconds);
             
             
+            // Async Timers
             Timer.TimerAsync(2, () => Debug.Log("TimerAsync finished"));
 
             

@@ -6,8 +6,22 @@ using UnityEngine;
 namespace MolecularLib.Demo
 {
     [CreateAssetMenu(fileName = "Volatile SO", menuName = "New Volatile SO", order = 0)]
-    public class TestVolatileScriptableObject : VolatileScriptableObject<TestVolatileScriptableObject.Data>
+    public class TestVolatileScriptableObject 
+        : VolatileScriptableObject<TestVolatileScriptableObject.Data>
     {
+        // Here you will put all the data you want to be volatile
+        [Serializable]
+        public class Data
+        { 
+            [TextArea] public string myString;
+            public MonoBehaviour myBehaviour;
+            public int myInt;
+            public float myFloat;
+            public List<string> myList;
+            public Optional<SerializableDictionary<int, string>> myOptionalDictionary;
+            public ScriptableObject myScriptableObject;
+        } 
+        
         // Here is a quick way of accessing the data. Can be done in other ways too.
         public Data VolatileData
         {
@@ -32,18 +46,5 @@ namespace MolecularLib.Demo
         {
             return obj.VolatileData;
         }
-        
-        // Here you will put all the data you want to be volatile
-        [Serializable]
-        public class Data
-        { 
-            [TextArea] public string myString;
-            public MonoBehaviour myBehaviour;
-            public int myInt;
-            public float myFloat;
-            public List<string> myList;
-            public Optional<SerializableDictionary<int, string>> myOptionalDictionary;
-            public ScriptableObject myScriptableObject;
-        } 
     }
 }
