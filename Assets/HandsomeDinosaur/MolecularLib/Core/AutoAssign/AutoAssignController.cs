@@ -17,6 +17,8 @@ namespace MolecularLib.AutoAssign
             GetComponents,
             GetComponentInChild,
             GetComponentsInChild,
+            GetComponentInParent,
+            GetComponentsInParent,
             Find,
             FindWithTag,
             FindGameObjectsWithTag,
@@ -36,7 +38,7 @@ namespace MolecularLib.AutoAssign
         
         private static readonly Dictionary<string, List<AutoAssignData>> autoAssignData = new Dictionary<string, List<AutoAssignData>>();
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void Start()
         {
             foreach (var t in TypeLibrary.AllNonUnityAssembliesTypes)
@@ -62,6 +64,8 @@ namespace MolecularLib.AutoAssign
                     var getAllCompAtt = member.GetCustomAttribute<GetComponentsAttribute>();
                     var getCompInChildAtt = member.GetCustomAttribute<GetComponentInChildrenAttribute>();
                     var getAllCompInChildAtt = member.GetCustomAttribute<GetComponentsInChildrenAttribute>();
+                    var getCompInParentAtt = member.GetCustomAttribute<GetComponentInParentAttribute>();
+                    var getAllCompInParentAtt = member.GetCustomAttribute<GetComponentsInParentAttribute>();
                     var findAtt = member.GetCustomAttribute<FindAttribute>();
                     var findTagAtt = member.GetCustomAttribute<FindWithTagAttribute>();
                     var findAllTagAtt = member.GetCustomAttribute<FindGameObjectsWithTag>();
@@ -88,6 +92,16 @@ namespace MolecularLib.AutoAssign
                     {
                         mode = Mode.GetComponentsInChild;
                         providedType = getAllCompInChildAtt.ComponentType;
+                    }
+                    else if (getCompInParentAtt != null)
+                    {
+                        mode = Mode.GetComponentInParent;
+                        providedType = getCompInParentAtt.ComponentType;
+                    }
+                    else if (getAllCompInParentAtt != null)
+                    {
+                        mode = Mode.GetComponentsInParent;
+                        providedType = getAllCompInParentAtt.ComponentType;
                     }
                     else if (findAtt != null)
                     {
@@ -236,11 +250,13 @@ namespace MolecularLib.AutoAssign
                 Mode.GetComponents => targetMonoBehaviour.GetComponents(data.ProvidedType ?? memberType.GetArrayOrListElementType()),
                 Mode.GetComponentInChild => targetMonoBehaviour.GetComponentInChildren(data.ProvidedType ?? memberType),
                 Mode.GetComponentsInChild => targetMonoBehaviour.GetComponentsInChildren(data.ProvidedType ?? memberType.GetArrayOrListElementType()),
+                Mode.GetComponentInParent => targetMonoBehaviour.GetComponentInParent(data.ProvidedType ?? memberType),
+                Mode.GetComponentsInParent => targetMonoBehaviour.GetComponentsInParent(data.ProvidedType ?? memberType.GetArrayOrListElementType()),
                 Mode.Find => GameObject.Find(data.NameOrTagOrPath),
                 Mode.FindWithTag => GameObject.FindWithTag(data.NameOrTagOrPath),
                 Mode.FindGameObjectsWithTag => GameObject.FindGameObjectsWithTag(data.NameOrTagOrPath),
-                Mode.FindObjectOfType => Object.FindObjectOfType(data.ProvidedType),
-                Mode.FindObjectsOfType => Object.FindObjectsOfType(data.ProvidedType),
+                Mode.FindObjectOfType => Object.FindObjectOfType(data.ProvidedType ?? memberType),
+                Mode.FindObjectsOfType => Object.FindObjectsOfType(data.ProvidedType ?? memberType.GetArrayOrListElementType()),
                 Mode.LoadResource => Resources.Load(data.NameOrTagOrPath),
                 Mode.None => throw new NotSupportedException(),
                 _ => throw new ArgumentOutOfRangeException()

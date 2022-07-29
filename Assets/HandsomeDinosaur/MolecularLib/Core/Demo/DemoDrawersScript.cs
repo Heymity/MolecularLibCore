@@ -41,7 +41,8 @@ namespace MolecularLib.Demo
         [SerializeField] private SerializableDictionary<string, Sprite> stringToSprite;
         [Space] 
         [Header("Polymorphic variable examples")] 
-        [SerializeField] private PolymorphicVariable<Base> myPolymorphicVariable;
+        [SerializeField] 
+        private PolymorphicVariable<Base> myPolymorphicVariable;
         [Space] 
         [Header("Optional variable examples")] 
         [SerializeField] private Optional<string> myOptionalString;
@@ -116,6 +117,21 @@ namespace MolecularLib.Demo
                 Debug.Log($"As Base | myBaseString: {myPolymorphicVariable.Value.myBaseString}");
 
             myPolymorphicVariable.Value.myBaseString = "Hey, I changed it!";
+            
+            
+            stringToInt.Add("Hello", 1);
+            flagsToColor.Add(HideFlags.HideAndDontSave, Color.red);
+            stringToSprite.Add("Hello", sprite);
+            
+            stringToInt["Hello"] = 2;
+            if (!stringToInt.TryGetValue("Nonexistent", out var value))
+                stringToInt.Add("Nonexistent", 0);
+            
+            
+            
+            myStructs.Add("Hello", new TestStruct());
+            myStructsOpposite.Add(new TestStruct(), "Hello");
+            myStructsBoth.Add(new TestStruct(), new TestStruct());
         }
     }
 

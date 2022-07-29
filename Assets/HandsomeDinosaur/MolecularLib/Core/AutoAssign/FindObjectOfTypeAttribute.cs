@@ -8,7 +8,7 @@ namespace MolecularLib.AutoAssign
     {
         public readonly Type Type; 
         
-        public FindObjectOfTypeAttribute(Type type)
+        public FindObjectOfTypeAttribute(Type type = null)
         {
             Type = type;
         }

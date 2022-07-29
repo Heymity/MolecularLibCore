@@ -1217,31 +1217,10 @@ MonoBehaviour:
     - {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   myPolymorphicVariable:
     selectedPolymorphicType:
-      typeName: MolecularLib.Demo.C
+      typeName: MolecularLib.Demo.Base
       assemblyName: Molecular.Core
     polymorphicData:
       fields:
-      - fieldName: cClassFloat
-        fieldType:
-          typeName: System.Single
-          assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <float>-3.27</float>'
-      - fieldName: bClassRange
-        fieldType:
-          typeName: MolecularLib.Helpers.Range
-          assemblyName: Molecular.Core
-        serializedValue: "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<Range xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"
-          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n  <Min>-4.13</Min>\r\n 
-          <Max>8.24</Max>\r\n</Range>"
-      - fieldName: bClassInt
-        fieldType:
-          typeName: System.Int32
-          assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <int>-113</int>'
       - fieldName: myBaseString
         fieldType:
           typeName: System.String

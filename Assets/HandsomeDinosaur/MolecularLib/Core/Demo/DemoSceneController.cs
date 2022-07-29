@@ -53,7 +53,10 @@ namespace MolecularLib.Demo
         
         public void InstantiateWithArgs()
         {
-            Molecular.Instantiate(instantiateWithArgsDemoObject,  instantiatePosRange.Random(), Quaternion.identity, stringArgument.text);
+            Molecular.Instantiate(instantiateWithArgsDemoObject, instantiatePosRange.Random(), 
+                Quaternion.identity, stringArgument.text);
+            
+            Molecular.Instantiate(instantiateWithArgsDemoObject, stringArgument.text);
         }
         
         public void TestPoly()

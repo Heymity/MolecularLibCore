@@ -4,7 +4,7 @@ namespace MolecularLib.AutoAssign
 {
     public class AutoAssignMonoBehaviour : MonoBehaviour
     {
-        protected void Awake()
+        protected virtual void Awake()
         {
             this.AutoAssign();
         }
