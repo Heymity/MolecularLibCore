@@ -78,7 +78,7 @@ namespace MolecularEditor
             var field = fi.GetValue(targetObj);
             label ??= fi.Name;
 
-            fi.SetValue(targetObj, AutoTypeField(ref rect, fi.FieldType, field, label));
+            fi.SetValue(targetObj, AutoTypeField(ref rect, fi.FieldType, field, label, fi.GetCustomAttributesData()));
         }
 
         public static void AutoTypePropertyInfo(ref Rect rect, PropertyInfo pi, object targetObj, string label = null)
@@ -87,7 +87,7 @@ namespace MolecularEditor
             label ??= pi.Name;
 
             // some properties dont have the set method, to be refactored
-            pi.SetValue(targetObj, AutoTypeField(ref rect, pi.PropertyType, field, label));
+            pi.SetValue(targetObj, AutoTypeField(ref rect, pi.PropertyType, field, label, pi.GetCustomAttributesData()));
         }
         
         private static readonly Dictionary<string, Type> cachedRuntimeTypesForAutoTypeField =
@@ -96,7 +96,7 @@ namespace MolecularEditor
             new SerializableDictionary<string, SerializedObject>();
         private static readonly Dictionary<string, ScriptableObject> cachedRuntimeScriptableObjectsForAutoTypeField =
             new SerializableDictionary<string, ScriptableObject>();
-        public static object AutoTypeField(ref Rect rect, Type valueType, object value, string labelStr = null)
+        public static object AutoTypeField(ref Rect rect, Type valueType, object value, string labelStr = null, IList<CustomAttributeData> attributes = null)
         {
             var label = GUIContent.none;
             if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
@@ -165,8 +165,9 @@ namespace MolecularEditor
                     var typeBuilder = moduleBuilder.DefineType(runtimeTypeName, TypeAttributes.Public,
                         typeof(ScriptableObject));
 
-                    typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
-
+                    var fieldBuilder = typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
+                    //fieldBuilder.SetCustomAttribute();
+                    
                     dynamicType = typeBuilder.CreateType();
                     
                     cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);

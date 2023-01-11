@@ -162,13 +162,14 @@ namespace MolecularLib.Demo
     {
         public MolecularLib.Helpers.Range bClassRange;
         public int bClassInt;
+        [SerializeField] private float bClassPrivateFloat;
+        [SerializeField] protected float bClassProtectedFloat;
     }
 
     [System.Serializable]
     public class C : B
     {
         public float cClassFloat;
-        // Types derived from UnityEngine.Object aren't supported yet, but in future versions it will ;) public TestVolatileScriptableObject cClassScriptableObject;
     }
 
     [System.Serializable]

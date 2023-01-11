@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MolecularLib.Helpers;
@@ -21,7 +22,7 @@ namespace MolecularEditor
                 throw new Exception("selectedPolymorphicType field not found");
             var typeVar = _typeField.GetValue(targetObj) as TypeVariable;
             
-            var editProps = GetEditablePolymorphicData(typeVar, targetObj);
+            var (editProps, _) = GetEditablePolymorphicData(typeVar, targetObj);
             
             var height = editProps.fields.Sum(prop => EditorHelper.AutoTypeFieldGetHeight(prop.fieldType, prop.DeserializedValue, ObjectNames.NicifyVariableName(prop.fieldName)));
 
@@ -56,7 +57,7 @@ namespace MolecularEditor
             if (_typeField is null)
                 throw new Exception("selectedPolymorphicType field not found");
             var typeVar = _typeField.GetValue(targetObj) as TypeVariable;
-            var editProps = GetEditablePolymorphicData(typeVar, targetObj);
+            var (editProps, attrDatas) = GetEditablePolymorphicData(typeVar, targetObj);
      
             if (property.isExpanded)
             {
@@ -64,14 +65,17 @@ namespace MolecularEditor
                 fieldRect.x += 15;
                 fieldRect.width -= 15;
                 fieldRect.height = EditorGUIUtility.singleLineHeight;
-                foreach (var prop in editProps.fields)
+                for (var i = 0; i < editProps.fields.Count; i++)
                 {
+                    var prop = editProps.fields[i];
+                    var attrData = attrDatas[i];
                     fieldRect.y += fieldRect.height + 2;
                     fieldRect.height = EditorGUIUtility.singleLineHeight;
-                    
-                    prop.DeserializedValue = EditorHelper.AutoTypeField(ref fieldRect, prop.fieldType, prop.DeserializedValue,
-                        ObjectNames.NicifyVariableName(prop.fieldName));
-                    
+
+                    prop.DeserializedValue = EditorHelper.AutoTypeField(ref fieldRect, prop.fieldType,
+                        prop.DeserializedValue,
+                        ObjectNames.NicifyVariableName(prop.fieldName), attrData);
+
                     prop.OnBeforeSerialize();
                 }
             }
@@ -89,19 +93,19 @@ namespace MolecularEditor
             EditorGUI.EndProperty();
         }
 
-        private SerializedPolymorphicData GetEditablePolymorphicData(Type type, object targetObject)
+        private (SerializedPolymorphicData, List<IList<CustomAttributeData>>) GetEditablePolymorphicData(Type type, object targetObject)
         {
-            var idealTypePolyData = GetTypeIdealSerializedPolymorphicData(type);
+            var (idealTypePolyData, idealAttrDatas) = GetTypeIdealSerializedPolymorphicData(type);
 
             var polymorphicDataField = fieldInfo.FieldType.GetField("polymorphicData", EditorHelper.UnitySerializesBindingFlags);
             if (polymorphicDataField is null)
                 throw new Exception("Could not find the polymorphicData field in the PolymorphicVariable class");
-
+            
             var definedTypePolyData = polymorphicDataField.GetValue(targetObject) as SerializedPolymorphicData;
             //Debug.Log($"[GENERATION] DefinedPlyData: {definedTypePolyData.fields[0].serializedValue}");
             var editableProps = new SerializedPolymorphicData();
 
-            if (definedTypePolyData is null || definedTypePolyData.fields.Count == 0) return idealTypePolyData;
+            if (definedTypePolyData is null || definedTypePolyData.fields.Count == 0) return (idealTypePolyData, idealAttrDatas);
             
             for (var i = 0; i < idealTypePolyData.fields.Count; i++)
             {
@@ -140,14 +144,15 @@ namespace MolecularEditor
                 editableProps.fields.Add(fieldData);
             }
 
-            return editableProps;
+            return (editableProps, idealAttrDatas);
         }
 
-        private static SerializedPolymorphicData GetTypeIdealSerializedPolymorphicData(Type type)
+        private static (SerializedPolymorphicData, List<IList<CustomAttributeData>>) GetTypeIdealSerializedPolymorphicData(Type type)
         {
             //Debug.Log($"[GENERATION] Type: {type}");
             var fields = type.GetFields(EditorHelper.UnitySerializesBindingFlags);
-
+            var attrDatas = new List<IList<CustomAttributeData>>();
+            
             var serializedData = new SerializedPolymorphicData();
             foreach (var field in fields)
             {
@@ -159,9 +164,11 @@ namespace MolecularEditor
                 };
 
                 serializedData.fields.Add(polymorphicField);
+
+                attrDatas.Add(field.GetCustomAttributesData());
             }
 
-            return serializedData;
+            return (serializedData, attrDatas);
         }
 
         private MethodInfo _cachedOnAfterDeserializeMethod;
