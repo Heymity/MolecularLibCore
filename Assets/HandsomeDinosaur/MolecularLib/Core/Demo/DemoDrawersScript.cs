@@ -154,6 +154,7 @@ namespace MolecularLib.Demo
     {
         public int aClassInt;
         [SerializeField] private SerializableDictionary<string, int> aPrivateDictionary; // can be public as well ;)
+        [SerializeField] protected string protectedString;
     }
 
     [System.Serializable]
@@ -168,5 +169,11 @@ namespace MolecularLib.Demo
     {
         public float cClassFloat;
         // Types derived from UnityEngine.Object aren't supported yet, but in future versions it will ;) public TestVolatileScriptableObject cClassScriptableObject;
+    }
+
+    [System.Serializable]
+    public class WithUnityObject : A
+    {
+        public Sprite sprite;
     }
 }

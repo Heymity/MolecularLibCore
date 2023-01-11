@@ -1217,10 +1217,34 @@ MonoBehaviour:
     - {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   myPolymorphicVariable:
     selectedPolymorphicType:
-      typeName: MolecularLib.Demo.Base
+      typeName: MolecularLib.Demo.WithUnityObject
       assemblyName: Molecular.Core
     polymorphicData:
       fields:
+      - fieldName: sprite
+        fieldType:
+          typeName: UnityEngine.Sprite
+          assemblyName: UnityEngine.CoreModule
+        serializedValue: --UNITYOBJECT--
+        unityObjectValue: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+      - fieldName: aClassInt
+        fieldType:
+          typeName: System.Int32
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <int>789</int>'
+        unityObjectValue: {fileID: 0}
+      - fieldName: protectedString
+        fieldType:
+          typeName: System.String
+          assemblyName: mscorlib
+        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
+
+          <string>This
+          string is protected, so it will appear in subclasses. Private fields will
+          appear only in their original class</string>'
+        unityObjectValue: {fileID: 0}
       - fieldName: myBaseString
         fieldType:
           typeName: System.String
@@ -1230,6 +1254,7 @@ MonoBehaviour:
           <string>Heyyy
           this string will be kept if you change the value type, thogh the others
           wont</string>'
+        unityObjectValue: {fileID: 0}
   myOptionalString:
     value: Hello, thanks for donwloading this package!
     useValue: 1

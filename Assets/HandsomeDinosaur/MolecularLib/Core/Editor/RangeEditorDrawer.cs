@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Reflection;
 using MolecularLib.Helpers;
@@ -419,9 +418,9 @@ namespace MolecularEditor
 
                 EditorGUI.MinMaxSlider(minMaxSliderPos, ref min, ref max, minLimit, maxLimit);
 
-                if (Math.Abs(range.Min - min) > 0.00000000000000001f)
+                if (System.Math.Abs(range.Min - min) > 0.00000000000000001f)
                     range.Min = min;
-                if (Math.Abs(range.Max - max) > 0.00000000000000001f)
+                if (System.Math.Abs(range.Max - max) > 0.00000000000000001f)
                     range.Max = max;
             }
         }
@@ -508,9 +507,9 @@ namespace MolecularEditor
 
                 EditorGUI.MinMaxSlider(minMaxSliderPos, ref min, ref max, minLimit, maxLimit);
 
-                if (Math.Abs(range.Min - min) > 0.00000000000000001f) 
+                if (System.Math.Abs(range.Min - min) > 0.00000000000000001f) 
                     range.Min = Mathf.RoundToInt(min);
-                if (Math.Abs(range.Max - max) > 0.00000000000000001f) 
+                if (System.Math.Abs(range.Max - max) > 0.00000000000000001f) 
                     range.Max = Mathf.RoundToInt(max);
             }
         }

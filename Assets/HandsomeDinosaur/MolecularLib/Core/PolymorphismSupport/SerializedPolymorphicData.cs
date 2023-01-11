@@ -10,7 +10,7 @@ namespace MolecularLib.PolymorphismSupport
         private const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
         
         public List<SerializedPolymorphicField> fields;
-
+        
         public SerializedPolymorphicData()
         {
             fields = new List<SerializedPolymorphicField>();

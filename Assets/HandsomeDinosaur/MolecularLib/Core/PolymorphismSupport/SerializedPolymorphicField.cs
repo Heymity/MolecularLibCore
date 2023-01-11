@@ -10,13 +10,16 @@ namespace MolecularLib.PolymorphismSupport
     [Serializable]
     public class SerializedPolymorphicField : ISerializationCallbackReceiver
     {
+        private const string UnityObject = "--UNITYOBJECT--";
+        
         public string fieldName;
         public TypeVariable fieldType;
         [TextArea] public string serializedValue; 
+        public Object unityObjectValue;
 
         public object DeserializedValue { get; set; }
 
-        private static string SerializeData(Type fieldType, object value)
+        private string SerializeData(object value)
         {
             using var writer = new StringWriter();
             if (value is IPolymorphicSerializationOverride inter)
@@ -25,24 +28,35 @@ namespace MolecularLib.PolymorphismSupport
                 return writer.ToString();
             }
             
+            if (value is Object unityObject)
+            {
+                unityObjectValue = unityObject;
+                return UnityObject;
+            }
+            
             var serializer = new XmlSerializer(fieldType);
             serializer.Serialize(writer, value!);
 
             return writer.ToString();
         }
         
-        private static object DeserializeData(Type fieldType, string serializedValue)
+        private object DeserializeData()
         {
-            var inter = fieldType.GetInterface("IPolymorphicSerializationOverride");
+            var inter = fieldType.Type.GetInterface("IPolymorphicSerializationOverride");
             if (inter != null)
             {
-                var deserialized = Activator.CreateInstance(fieldType);
-                (deserialized as IPolymorphicSerializationOverride).Deserialize(serializedValue);
+                var deserialized = Activator.CreateInstance(fieldType.Type);
+                (deserialized as IPolymorphicSerializationOverride)?.Deserialize(serializedValue);
                 return deserialized;
+            }
+
+            if (serializedValue == UnityObject && typeof(Object).IsAssignableFrom(fieldType.Type))
+            {
+                return unityObjectValue;
             }
             
             using var reader = new StringReader(serializedValue);
-            var serializer = new XmlSerializer(fieldType);
+            var serializer = new XmlSerializer(fieldType.Type);
             return serializer.Deserialize(reader);
         }
         
@@ -54,7 +68,7 @@ namespace MolecularLib.PolymorphismSupport
             
             fieldType.Type = valueToSerialize.GetType();
 
-            serializedValue = SerializeData(fieldType.Type, valueToSerialize!);
+            serializedValue = SerializeData(valueToSerialize!);
         }
 
         public void OnAfterDeserialize()
@@ -67,19 +81,12 @@ namespace MolecularLib.PolymorphismSupport
                     return;
                 }
                 
-                DeserializedValue = DeserializeData(fieldType.Type, serializedValue);
+                DeserializedValue = DeserializeData();
             }
             catch (ArgumentNullException)
             {
                 DeserializedValue = null;
             }
-        }
-        
-        private static Object FindObjectFromInstanceID(int iid)
-        {
-            return (Object)typeof(Object)
-                .GetMethod("FindObjectFromInstanceID", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
-                .Invoke(null, new object[] { iid });
         }
     }
 }

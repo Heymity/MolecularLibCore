@@ -1,9 +1,10 @@
 using System;
 using System.Reflection;
+using MolecularLib;
 using UnityEditor;
 using UnityEngine;
 
-namespace MolecularLib.Core.Editor
+namespace MolecularEditor
 {
     [CustomEditor(typeof(VolatileScriptableObject<>), true)]
     [CanEditMultipleObjects]

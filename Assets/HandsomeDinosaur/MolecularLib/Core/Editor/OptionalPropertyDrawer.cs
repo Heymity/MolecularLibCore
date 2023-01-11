@@ -2,7 +2,7 @@ using MolecularLib.Helpers;
 using UnityEditor;
 using UnityEngine;
 
-namespace MolecularLib
+namespace MolecularEditor
 {
     [CustomPropertyDrawer(typeof(Optional<>))]
     public class OptionalPropertyDrawer : PropertyDrawer

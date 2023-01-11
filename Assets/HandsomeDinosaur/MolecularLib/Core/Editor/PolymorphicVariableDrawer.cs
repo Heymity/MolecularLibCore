@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using MolecularEditor;
 using MolecularLib.Helpers;
 using MolecularLib.PolymorphismSupport;
 using UnityEditor;
 using UnityEngine;
 
-namespace MolecularLib.Core.Editor
+namespace MolecularEditor
 {
     [CustomPropertyDrawer(typeof(PolymorphicVariable<>))]
     public class PolymorphicVariableDrawer : PropertyDrawer
@@ -119,7 +118,8 @@ namespace MolecularLib.Core.Editor
                         fieldName = idealTypeCurrentField.fieldName,
                         fieldType = idealTypeCurrentField.fieldType,
                         DeserializedValue = null,
-                        serializedValue = idealTypeCurrentField.serializedValue
+                        serializedValue = idealTypeCurrentField.serializedValue,
+                        unityObjectValue = idealTypeCurrentField.unityObjectValue,
                     };
                 }
                 else
@@ -129,7 +129,8 @@ namespace MolecularLib.Core.Editor
                         fieldName = targetCurrentField.fieldName,
                         fieldType = targetCurrentField.fieldType,
                         DeserializedValue = targetCurrentField.DeserializedValue,
-                        serializedValue = targetCurrentField.serializedValue
+                        serializedValue = targetCurrentField.serializedValue,
+                        unityObjectValue = targetCurrentField.unityObjectValue,
                     };
                 }
 

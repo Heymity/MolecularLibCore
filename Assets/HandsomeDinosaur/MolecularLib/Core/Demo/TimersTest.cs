@@ -1,7 +1,7 @@
 using MolecularLib.Timers;
 using UnityEngine;
 
-namespace MolecularLib.Testing
+namespace MolecularLib.Demo
 {
     public class TimersTest : MonoBehaviour
     {
