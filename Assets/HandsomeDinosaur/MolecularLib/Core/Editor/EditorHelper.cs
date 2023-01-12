@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -11,6 +12,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace MolecularEditor
@@ -101,6 +103,9 @@ namespace MolecularEditor
             var label = GUIContent.none;
             if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
 
+            if (attributes != null && attributes.Any(a => a.AttributeType != typeof(SerializeField))) goto DrawAnyType;
+            if (GetPropertyDrawer(valueType) != null) goto DrawAnyType;
+            
             if (valueType == typeof(int)) return EditorGUI.IntField(rect, label, value is int i ? i : 0);
             if (valueType == typeof(float)) return EditorGUI.FloatField(rect, label, value is float i ? i : 0);
             if (valueType == typeof(double)) return EditorGUI.DoubleField(rect, label, value is double i ? i : 0);
@@ -137,7 +142,8 @@ namespace MolecularEditor
             if (valueType.IsSubclassOf(typeof(Object)))
                 return EditorGUI.ObjectField(rect, label, value as Object, valueType, true);
             
-            if (valueType.GetCustomAttribute<SerializableAttribute>() != null)
+            DrawAnyType:
+            if (valueType.GetCustomAttribute<SerializableAttribute>() != null || typeof(Object).IsAssignableFrom(valueType))
             {
                 /*
                 To support user defined types we need this weird code below
@@ -150,9 +156,7 @@ namespace MolecularEditor
                 This works for all types marked with the Serializable attribute. The reason this is not the whole method is that it
                 is considerably slower than just converting the value and calling the EditorGUI.TYPEField(...) like it is done above.
                 */
-                
-                value ??= Activator.CreateInstance(valueType);
-                
+
                 var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
 
                 SerializedObject serializedObject;
@@ -166,8 +170,17 @@ namespace MolecularEditor
                         typeof(ScriptableObject));
 
                     var fieldBuilder = typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
-                    //fieldBuilder.SetCustomAttribute();
-                    
+                    if (attributes != null)
+                    {
+                        foreach (var attr in attributes)
+                        {
+                            if (attr.AttributeType == typeof(SerializeField)) continue;
+                            var attrBuilder = new CustomAttributeBuilder(attr.Constructor,
+                                attr.ConstructorArguments.Select(a => a.Value).ToArray());
+                            fieldBuilder.SetCustomAttribute(attrBuilder);
+                        }
+                    }
+
                     dynamicType = typeBuilder.CreateType();
                     
                     cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);
@@ -228,10 +241,13 @@ namespace MolecularEditor
             return scriptableObject;
         }
         
-        public static float AutoTypeFieldGetHeight(Type valueType, object value, string labelStr = null)
+        public static float AutoTypeFieldGetHeight(Type valueType, object value, string labelStr = null, IList<CustomAttributeData> attributes = null)
         {
             var label = GUIContent.none;
             if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
+            
+            if (attributes != null && attributes.Any(a => a.AttributeType != typeof(SerializeField))) goto DrawAnyType;
+            if (GetPropertyDrawer(valueType) != null) goto DrawAnyType;
             
             if (valueType == typeof(int)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Integer, label);
             if (valueType == typeof(float)) return EditorGUI.GetPropertyHeight(SerializedPropertyType.Float, label);
@@ -258,10 +274,9 @@ namespace MolecularEditor
             
             if (valueType.IsSubclassOf(typeof(Object))) return EditorGUI.GetPropertyHeight(SerializedPropertyType.ObjectReference, label);
 
-            if (valueType.GetCustomAttribute<SerializableAttribute>() != null)
+            DrawAnyType:
+            if (valueType.GetCustomAttribute<SerializableAttribute>() != null || typeof(Object).IsAssignableFrom(valueType))
             {
-                value ??= Activator.CreateInstance(valueType);
-                
                 var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
 
                 SerializedObject serializedObject;
@@ -274,8 +289,18 @@ namespace MolecularEditor
                     var typeBuilder = moduleBuilder.DefineType(runtimeTypeName, TypeAttributes.Public,
                         typeof(ScriptableObject));
 
-                    typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
-
+                    var fieldBuilder = typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
+                    if (attributes != null)
+                    {
+                        foreach (var attr in attributes)
+                        {
+                            if (attr.AttributeType == typeof(SerializeField)) continue;
+                            var attrBuilder = new CustomAttributeBuilder(attr.Constructor,
+                                attr.ConstructorArguments.Select(a => a.Value).ToArray());
+                            fieldBuilder.SetCustomAttribute(attrBuilder);
+                        }
+                    }
+                    
                     dynamicType = typeBuilder.CreateType();
                     
                     cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);
@@ -518,6 +543,25 @@ namespace MolecularEditor
             return oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>);
         }
 
+        private static MethodInfo _getDrawerTypeForTypeFuncCached;
+        private static object _scriptAttributeUtilityCached;
+        public static Type GetPropertyDrawer(Type classType)
+        {
+            if (_getDrawerTypeForTypeFuncCached == null || _scriptAttributeUtilityCached == null)
+            {
+                var assembly = Assembly.GetAssembly(typeof(UnityEditor.Editor));
+                var scriptAttributeUtility = assembly.CreateInstance("UnityEditor.ScriptAttributeUtility");
+                var scriptAttributeUtilityType = scriptAttributeUtility?.GetType();
+
+                _scriptAttributeUtilityCached = scriptAttributeUtility;
+                
+                const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Static;
+                _getDrawerTypeForTypeFuncCached = scriptAttributeUtilityType?.GetMethod("GetDrawerTypeForType", bindingFlags);
+            }
+
+            return (Type)_getDrawerTypeForTypeFuncCached?.Invoke(_scriptAttributeUtilityCached, new object[] { classType });
+        }
+        
         #endregion
     }
 }

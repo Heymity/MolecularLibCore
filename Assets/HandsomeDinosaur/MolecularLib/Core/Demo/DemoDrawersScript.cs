@@ -154,7 +154,7 @@ namespace MolecularLib.Demo
     {
         public int aClassInt;
         [SerializeField] private SerializableDictionary<string, int> aPrivateDictionary; // can be public as well ;)
-        [SerializeField] protected string protectedString;
+        [SerializeField, TextArea] protected string protectedString;
     }
 
     [System.Serializable]

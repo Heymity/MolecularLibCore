@@ -22,10 +22,18 @@ namespace MolecularEditor
                 throw new Exception("selectedPolymorphicType field not found");
             var typeVar = _typeField.GetValue(targetObj) as TypeVariable;
             
-            var (editProps, _) = GetEditablePolymorphicData(typeVar, targetObj);
-            
-            var height = editProps.fields.Sum(prop => EditorHelper.AutoTypeFieldGetHeight(prop.fieldType, prop.DeserializedValue, ObjectNames.NicifyVariableName(prop.fieldName)));
+            var (editProps, attrDatas) = GetEditablePolymorphicData(typeVar, targetObj);
 
+            var height = 0f;
+            for (var i = 0; i < editProps.fields.Count; i++)
+            {
+                var prop = editProps.fields[i];
+                var attrData = attrDatas[i];
+
+                height += EditorHelper.AutoTypeFieldGetHeight(prop.fieldType, prop.DeserializedValue,
+                    ObjectNames.NicifyVariableName(prop.fieldName), attrData);
+            }
+            
             return EditorGUIUtility.singleLineHeight + height;
         }
         

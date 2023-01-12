@@ -1233,17 +1233,13 @@ MonoBehaviour:
           assemblyName: mscorlib
         serializedValue: '<?xml version="1.0" encoding="utf-16"?>
 
-          <int>789</int>'
+          <int>0</int>'
         unityObjectValue: {fileID: 0}
       - fieldName: protectedString
         fieldType:
           typeName: System.String
           assemblyName: mscorlib
-        serializedValue: '<?xml version="1.0" encoding="utf-16"?>
-
-          <string>This
-          string is protected, so it will appear in subclasses. Private fields will
-          appear only in their original class</string>'
+        serializedValue: 
         unityObjectValue: {fileID: 0}
       - fieldName: myBaseString
         fieldType:
