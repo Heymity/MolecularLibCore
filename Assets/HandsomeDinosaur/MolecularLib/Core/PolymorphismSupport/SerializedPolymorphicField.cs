@@ -57,7 +57,16 @@ namespace MolecularLib.PolymorphismSupport
             
             using var reader = new StringReader(serializedValue);
             var serializer = new XmlSerializer(fieldType.Type);
-            return serializer.Deserialize(reader);
+            try
+            {
+                return serializer.Deserialize(reader);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Could not deserialize PolymorphicVariable, reason: {e}\n\n\n XML:\n{serializedValue}\n\n Deleting XML data");
+                serializedValue = "";
+                return null;
+            }
         }
         
         public void OnBeforeSerialize()

@@ -16,21 +16,23 @@ namespace MolecularEditor
         {
             if (!property.isExpanded) return EditorGUIUtility.singleLineHeight;
             
-            var targetObj = fieldInfo.GetValue(property.serializedObject.targetObject);
+            var targetObj = fieldInfo.GetValue(EditorHelper.GetTargetValue(property, 1));
             _typeField ??= fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
             if (_typeField is null)
                 throw new Exception("selectedPolymorphicType field not found");
             var typeVar = _typeField.GetValue(targetObj) as TypeVariable;
+
+            if (typeVar?.Type == null) return EditorGUIUtility.singleLineHeight;
             
             var (editProps, attrDatas) = GetEditablePolymorphicData(typeVar, targetObj);
 
-            var height = 0f;
+            var height = 4f;
             for (var i = 0; i < editProps.fields.Count; i++)
             {
                 var prop = editProps.fields[i];
                 var attrData = attrDatas[i];
 
-                height += EditorHelper.AutoTypeFieldGetHeight(prop.fieldType, prop.DeserializedValue,
+                height += EditorHelper.AutoTypeFieldGetHeight(prop.fieldType, prop.DeserializedValue, GetUniqueId(property, prop),
                     ObjectNames.NicifyVariableName(prop.fieldName), attrData);
             }
             
@@ -60,7 +62,7 @@ namespace MolecularEditor
             
             EditorGUI.EndFoldoutHeaderGroup();
             
-            var targetObj = fieldInfo.GetValue(property.serializedObject.targetObject);
+            var targetObj = fieldInfo.GetValue(EditorHelper.GetTargetValue(property, 1));
             _typeField ??= fieldInfo.FieldType.GetField("selectedPolymorphicType", EditorHelper.UnitySerializesBindingFlags);
             if (_typeField is null)
                 throw new Exception("selectedPolymorphicType field not found");
@@ -79,9 +81,10 @@ namespace MolecularEditor
                     var attrData = attrDatas[i];
                     fieldRect.y += fieldRect.height + 2;
                     fieldRect.height = EditorGUIUtility.singleLineHeight;
-
+                    
                     prop.DeserializedValue = EditorHelper.AutoTypeField(ref fieldRect, prop.fieldType,
                         prop.DeserializedValue,
+                        GetUniqueId(property, prop),
                         ObjectNames.NicifyVariableName(prop.fieldName), attrData);
 
                     prop.OnBeforeSerialize();
@@ -101,6 +104,9 @@ namespace MolecularEditor
             EditorGUI.EndProperty();
         }
 
+        private string GetUniqueId(SerializedProperty property, SerializedPolymorphicField prop) =>
+            (property.propertyPath + prop.fieldType.Type + fieldInfo.GetHashCode() + prop.fieldName).GetHashCode().ToString();
+        
         private (SerializedPolymorphicData, List<IList<CustomAttributeData>>) GetEditablePolymorphicData(Type type, object targetObject)
         {
             var (idealTypePolyData, idealAttrDatas) = GetTypeIdealSerializedPolymorphicData(type);

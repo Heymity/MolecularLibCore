@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -21,14 +20,14 @@ namespace MolecularEditor
     {
         #region IMGUI
 
-        private static readonly GUIStyle headerBackground = "RL Header";
-        private static readonly GUIStyle boxBackground = "RL Background";
+        private static readonly GUIStyle HeaderBackground = "RL Header";
+        private static readonly GUIStyle BoxBackground = "RL Background";
 
         // TODO Make a foldout option with this
         public static Rect DrawBoxWithTitle(Rect totalPos, GUIContent tittle)
         {
             if (Event.current.type == EventType.Repaint)
-                headerBackground.Draw(totalPos, false, false, false, false);
+                HeaderBackground.Draw(totalPos, false, false, false, false);
    
             var fieldRect = totalPos;
             fieldRect.height = EditorGUIUtility.singleLineHeight;
@@ -38,7 +37,7 @@ namespace MolecularEditor
             boxRect.y += fieldRect.height;
             boxRect.height = totalPos.height - fieldRect.height;
             if (Event.current.type == EventType.Repaint)
-                boxBackground.Draw(boxRect, false, false, false, false);
+                BoxBackground.Draw(boxRect, false, false, false, false);
 
             var boxAreaRect = boxRect;
             boxAreaRect.height -= 6;
@@ -52,7 +51,7 @@ namespace MolecularEditor
             var tittleRect = EditorGUILayout.GetControlRect();
             
             if (Event.current.type == EventType.Repaint)
-                headerBackground.Draw(tittleRect, false, false, false, false);
+                HeaderBackground.Draw(tittleRect, false, false, false, false);
 
             tittleRect.x += 2;
             tittleRect.height = EditorGUIUtility.singleLineHeight + 2;
@@ -65,7 +64,7 @@ namespace MolecularEditor
             var verticalRect = EditorGUILayout.BeginVertical(paddingStyle, options);
             
             if (Event.current.type == EventType.Repaint)
-                boxBackground.Draw(verticalRect, false, false, false, false);
+                BoxBackground.Draw(verticalRect, false, false, false, false);
 
             return verticalRect;
         }
@@ -75,30 +74,28 @@ namespace MolecularEditor
             EditorGUILayout.EndVertical();
         }
         
-        public static void AutoTypeFieldInfo(ref Rect rect, FieldInfo fi, object targetObj, string label = null)
+        public static void AutoTypeFieldInfo(ref Rect rect, FieldInfo fi, string uniqueIdentifier, object targetObj, string label = null)
         {
             var field = fi.GetValue(targetObj);
             label ??= fi.Name;
 
-            fi.SetValue(targetObj, AutoTypeField(ref rect, fi.FieldType, field, label, fi.GetCustomAttributesData()));
+            fi.SetValue(targetObj, AutoTypeField(ref rect, fi.FieldType, field, uniqueIdentifier, label, fi.GetCustomAttributesData()));
         }
 
-        public static void AutoTypePropertyInfo(ref Rect rect, PropertyInfo pi, object targetObj, string label = null)
+        public static void AutoTypePropertyInfo(ref Rect rect, PropertyInfo pi, string uniqueIdentifier, object targetObj, string label = null)
         {
             var field = pi.GetValue(targetObj);
             label ??= pi.Name;
 
             // some properties dont have the set method, to be refactored
-            pi.SetValue(targetObj, AutoTypeField(ref rect, pi.PropertyType, field, label, pi.GetCustomAttributesData()));
+            pi.SetValue(targetObj, AutoTypeField(ref rect, pi.PropertyType, field, uniqueIdentifier, label, pi.GetCustomAttributesData()));
         }
         
-        private static readonly Dictionary<string, Type> cachedRuntimeTypesForAutoTypeField =
+        private static readonly Dictionary<string, Type> CachedRuntimeTypesForAutoTypeField =
             new SerializableDictionary<string, Type>();
-        private static readonly Dictionary<string, SerializedObject> cachedRuntimeSOsForAutoTypeField =
-            new SerializableDictionary<string, SerializedObject>();
-        private static readonly Dictionary<string, ScriptableObject> cachedRuntimeScriptableObjectsForAutoTypeField =
+        private static readonly Dictionary<string, ScriptableObject> CachedRuntimeScriptableObjectsForAutoTypeField =
             new SerializableDictionary<string, ScriptableObject>();
-        public static object AutoTypeField(ref Rect rect, Type valueType, object value, string labelStr = null, IList<CustomAttributeData> attributes = null)
+        public static object AutoTypeField(ref Rect rect, Type valueType, object value, string uniqueIdentifier, string labelStr = null, IList<CustomAttributeData> attributes = null)
         {
             var label = GUIContent.none;
             if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
@@ -159,14 +156,16 @@ namespace MolecularEditor
 
                 var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
 
+                var id = runtimeTypeName + uniqueIdentifier;
+                
                 SerializedObject serializedObject;
                 ScriptableObject so = null;
-                if (!cachedRuntimeTypesForAutoTypeField.TryGetValue(runtimeTypeName, out var dynamicType))
+                if (!CachedRuntimeTypesForAutoTypeField.TryGetValue(id, out var dynamicType))
                 {
                     var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
                         new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
                     var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
-                    var typeBuilder = moduleBuilder.DefineType(runtimeTypeName, TypeAttributes.Public,
+                    var typeBuilder = moduleBuilder.DefineType(id, TypeAttributes.Public,
                         typeof(ScriptableObject));
 
                     var fieldBuilder = typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
@@ -183,21 +182,12 @@ namespace MolecularEditor
 
                     dynamicType = typeBuilder.CreateType();
                     
-                    cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);
-                    
-                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
-                    
-                    if (cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out _))
-                        cachedRuntimeSOsForAutoTypeField[runtimeTypeName] = serializedObject;
-                    else
-                        cachedRuntimeSOsForAutoTypeField.Add(runtimeTypeName, serializedObject);
+                    CachedRuntimeTypesForAutoTypeField.Add(id, dynamicType);
                 }
                 
-                if (!cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out serializedObject))
-                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
-
-                if (so == null) so = GetScriptableObject(runtimeTypeName, dynamicType);
+                (serializedObject, so) = GetSerializedObjectAndScriptableObject(id, dynamicType, value);
                 
+                if (so == null) so = GetScriptableObject(id, dynamicType);
                 var property = serializedObject.GetIterator();
                 
                 property.NextVisible(true); // Move to first property
@@ -205,7 +195,7 @@ namespace MolecularEditor
                 
                 rect.height = EditorGUI.GetPropertyHeight(property);
                 EditorGUI.PropertyField(rect, property, label,true);
-
+                
                 var valueField = dynamicType.GetField("value");
                 return valueField.GetValue(so);
             }
@@ -213,8 +203,6 @@ namespace MolecularEditor
             EditorGUI.LabelField(rect, label, new GUIContent(value?.ToString() ?? $"The provided value of type {valueType.Name} is null and is not supported"));
 
             return value;
-
-           
         }
         
         private static (SerializedObject serializedObject, ScriptableObject so) GetSerializedObjectAndScriptableObject(string runtimeTypeName, Type dynamicType, object value)
@@ -229,19 +217,19 @@ namespace MolecularEditor
 
         private static ScriptableObject GetScriptableObject(string runtimeTypeName, Type dynamicType)
         {
-            if (cachedRuntimeScriptableObjectsForAutoTypeField.TryGetValue(runtimeTypeName,
+            if (CachedRuntimeScriptableObjectsForAutoTypeField.TryGetValue(runtimeTypeName,
                     out var scriptableObject))
                 return scriptableObject;
                 
             scriptableObject = ScriptableObject.CreateInstance(dynamicType);
             scriptableObject.hideFlags = HideFlags.DontSave;
                 
-            cachedRuntimeScriptableObjectsForAutoTypeField.Add(runtimeTypeName, scriptableObject);
+            CachedRuntimeScriptableObjectsForAutoTypeField.Add(runtimeTypeName, scriptableObject);
 
             return scriptableObject;
         }
         
-        public static float AutoTypeFieldGetHeight(Type valueType, object value, string labelStr = null, IList<CustomAttributeData> attributes = null)
+        public static float AutoTypeFieldGetHeight(Type valueType, object value, string uniqueIdentifier, string labelStr = null, IList<CustomAttributeData> attributes = null)
         {
             var label = GUIContent.none;
             if (!string.IsNullOrEmpty(labelStr)) label = new GUIContent(labelStr);
@@ -278,15 +266,15 @@ namespace MolecularEditor
             if (valueType.GetCustomAttribute<SerializableAttribute>() != null || typeof(Object).IsAssignableFrom(valueType))
             {
                 var runtimeTypeName = $"RuntimeSerializableObjectFor{valueType.FullName?.Replace('.', '_') ?? valueType.Name.Replace('.', '_')}";
-
+                var id = runtimeTypeName + uniqueIdentifier;
                 SerializedObject serializedObject;
                 ScriptableObject so = null;
-                if (!cachedRuntimeTypesForAutoTypeField.TryGetValue(runtimeTypeName, out var dynamicType))
+                if (!CachedRuntimeTypesForAutoTypeField.TryGetValue(id, out var dynamicType))
                 {
                     var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
                         new AssemblyName("RuntimeSerializableObjectAssembly"), AssemblyBuilderAccess.Run);
                     var moduleBuilder = assemblyBuilder.DefineDynamicModule("RuntimeSerializableObjectModule");
-                    var typeBuilder = moduleBuilder.DefineType(runtimeTypeName, TypeAttributes.Public,
+                    var typeBuilder = moduleBuilder.DefineType(id, TypeAttributes.Public,
                         typeof(ScriptableObject));
 
                     var fieldBuilder = typeBuilder.DefineField("value", valueType, FieldAttributes.Public);
@@ -303,20 +291,12 @@ namespace MolecularEditor
                     
                     dynamicType = typeBuilder.CreateType();
                     
-                    cachedRuntimeTypesForAutoTypeField.Add(runtimeTypeName, dynamicType);
-                    
-                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
-                    
-                    if (cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out _))
-                        cachedRuntimeSOsForAutoTypeField[runtimeTypeName] = serializedObject;
-                    else
-                        cachedRuntimeSOsForAutoTypeField.Add(runtimeTypeName, serializedObject);
+                    CachedRuntimeTypesForAutoTypeField.Add(id, dynamicType);
                 }
                 
-                if (!cachedRuntimeSOsForAutoTypeField.TryGetValue(runtimeTypeName, out serializedObject))
-                    (serializedObject, so) = GetSerializedObjectAndScriptableObject(runtimeTypeName, dynamicType, value);
+                (serializedObject, so) = GetSerializedObjectAndScriptableObject(id, dynamicType, value);
 
-                if (so == null) so = GetScriptableObject(runtimeTypeName, dynamicType);
+                if (so == null) so = GetScriptableObject(id, dynamicType);
                 
                 var property = serializedObject.GetIterator();
                 
@@ -500,13 +480,25 @@ namespace MolecularEditor
  
         public static T GetTargetValue<T>(SerializedProperty property)
         {
+            return (T)GetTargetValue(property);
+        }
+        
+        // ReSharper disable Unity.PerformanceAnalysis
+        public static object GetTargetValue(SerializedProperty property, int getParentOfIndex = 0)
+        {
             var propertyPath = property.propertyPath;
             var pathSegments = propertyPath.Split('.');
             
             object currentSearchObj = property.serializedObject.targetObject;
             var currentSearchObjType = currentSearchObj.GetType();
 
-            for (var i = 0; i < pathSegments.Length; i++)
+            if (getParentOfIndex >= pathSegments.Length)
+            {
+                if (getParentOfIndex == pathSegments.Length) return property.serializedObject.targetObject;
+                Debug.LogError($"Cannot retrieve nonexistent object: Requested to get father of index {getParentOfIndex} in property {propertyPath}, which is outside bounds");
+            }
+            
+            for (var i = 0; i < pathSegments.Length - getParentOfIndex; i++)
             {
                 var pathSegment = pathSegments[i];
                 
@@ -534,7 +526,7 @@ namespace MolecularEditor
                 currentSearchObjType = currentSearchObj.GetType();
             }
 
-            return (T)currentSearchObj;
+            return currentSearchObj;
         }
 
         internal static bool IsGenericList(this object o)
