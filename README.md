@@ -1,4 +1,4 @@
-# MolecularLibCore · [![GitHub license](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)](https://github.com/Heymity/MolecularLibCore/blob/master/LICENSE) [![Unity 2020.3 or later](https://img.shields.io/badge/unity-2020.3%20or%20later-brigthgreen.svg?logo=unity&cacheSeconds=2592000&style=flat)](https://unity3d.com/get-unity/download/archive) ![Tests Status](https://img.shields.io/github/workflow/status/Heymity/MolecularLibCore/Actions?label=Tests) 
+# MolecularLibCore · [![GitHub license](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)](https://github.com/Heymity/MolecularLibCore/blob/master/LICENSE) [![Unity 2020.3 or later](https://img.shields.io/badge/unity-2020.3%20or%20later-brigthgreen.svg?logo=unity&cacheSeconds=2592000&style=flat)](https://unity3d.com/get-unity/download/archive) ![Tests Status](https://img.shields.io/github/actions/workflow/status/Heymity/MolecularLibCore/main.yml) 
 
 <img align="right" width="160px" height="160px" src="Media/LogoOnly@160.png" alt="Logo"/>
 
