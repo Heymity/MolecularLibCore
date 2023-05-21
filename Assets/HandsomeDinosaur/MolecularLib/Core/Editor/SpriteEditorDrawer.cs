@@ -58,7 +58,7 @@ namespace MolecularEditor
         private static Rect DoFoldoutLabel(Rect position, SerializedProperty property, GUIContent label)
         {
             var foldoutRect = position;
-            foldoutRect.width = EditorGUIUtility.labelWidth;
+            foldoutRect.width = label == GUIContent.none ? 0 : EditorGUIUtility.labelWidth;
             foldoutRect.height = EditorGUIUtility.singleLineHeight;
             property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, true);
 
@@ -108,7 +108,10 @@ namespace MolecularEditor
             if (!_isDragging) return;
 
             var mousePos = Event.current.mousePosition;
-
+            Debug.Log($"Current event: {Event.current.type}");
+            if (Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseUp)
+                Event.current.Use();
+            
             _spriteDisplaySize = (mousePos.y + _sizeEditRect.height / 2) - displayTextureRect.y;
 
             if (_spriteDisplaySize < MinSpriteDisplaySize) _spriteDisplaySize = MinSpriteDisplaySize;
