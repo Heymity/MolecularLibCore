@@ -6,7 +6,7 @@ namespace MolecularEditor
     [CustomPropertyDrawer(typeof(Sprite))]
     public class SpriteEditorDrawer : PropertyDrawer
     {
-        private float _spriteDisplaySize = 54f;
+        private float _spriteDisplaySize = MinSpriteDisplaySize;
         private const float MinSpriteDisplaySize = 54f;
 
         private bool _isDragging;
@@ -108,7 +108,6 @@ namespace MolecularEditor
             if (!_isDragging) return;
 
             var mousePos = Event.current.mousePosition;
-            Debug.Log($"Current event: {Event.current.type}");
             if (Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseUp)
                 Event.current.Use();
             

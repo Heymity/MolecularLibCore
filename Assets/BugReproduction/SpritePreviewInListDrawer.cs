@@ -13,6 +13,6 @@ namespace BugReproduction
 
         public SpW2 basd;
         
-        public List<SpW2> List2;
+        public List<Sprite> List2;
     }
 }
