@@ -1,9 +1,10 @@
 ---
 name: Bug report
+description: Creates a new bug report
 about: Create a report to help us improve
 title: "[BUG]"
 labels: bug
-assignees: ''
+assignees: 'Heymity'
 
 ---
 
@@ -11,10 +12,10 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+e.g. Steps to reproduce the behavior:
+1. Create '...'
+2. Add to '....'
+3. Click on '....'
 4. See the error
 
 **Expected behavior**
