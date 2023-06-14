@@ -203,8 +203,8 @@ namespace MolecularLib.AutoAssign
 
                 return list;
             }
-            
-            if (!currentValue.GetType().IsArray) return currentValue;
+
+            if (currentValue is null || !currentValue.GetType().IsArray) return currentValue;
 
             var valuePropElementType = currentValue.GetType().GetElementType();
             var propElementType = targetType.GetArrayOrListElementType();
