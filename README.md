@@ -56,9 +56,9 @@ else
 
 ![](Media/VolatileSO.gif)
 
-As you probably know, scriptable objects in unity have persistent data for entering and leaving play mode, so if you have an int in a scriptable object set to 100, and then, while in play mode, you change it to 50, when you exit play mode, it will still be 50, not 100.  This is sometimes good and sometimes bad. One of these bad times is when you’re using scriptable objects to hold changeable data, say player health. You would want for the player health to be reset when you leave play mode, but you also want to change it during play mode. If you are thinking this is a very strange way to code a game by the way, check this, it actually has some very good benefits. So, what the VolatileScriptableObject class does is that it solves this problem! You can change the data in it, and when you leave play mode it won’t be changed.
+As you probably know, scriptable objects in Unity have persistent data for entering and leaving play mode, so if you have an int in a scriptable object set to 100, and then, while in play mode, you change it to 50, when you exit play mode, it will still be 50, not 100.  This is sometimes good and sometimes bad. One of these bad times is when you’re using scriptable objects to hold changeable data, say player health. You would want the player's health to be reset when you leave play mode, but you also want to change it during play mode. If you are thinking this is a very strange way to code a game by the way, check [this](https://www.youtube.com/watch?v=raQ3iHhE_Kk), it has some very good benefits. So, what the VolatileScriptableObject class does is that it solves this problem! You can change the data in it, and when you leave play mode it won’t be changed.
 
-There is a very good demo and implementation of this in here “Demo > TestVolatileScriptableObject.cs”. But if you want a quick sneak-pic of it, here it is:
+There is a very good demo and implementation of this here “Demo > TestVolatileScriptableObject.cs”. But if you want a quick sneak-pic of it, here it is:
 ```c#
 [CreateAssetMenu(fileName = "Volatile SO", menuName = "New Volatile SO", order = 0)]
 public class TestVolatileScriptableObject : VolatileScriptableObject<TestVolatileScriptableObject.Data>
@@ -88,7 +88,7 @@ public class TestVolatileScriptableObject : VolatileScriptableObject<TestVolatil
 ### SerializableDictionary&lt;TKey, TValue&gt;
 
 ![](Media/SerializableDict.png)
-As it is commonly known, unity serializes Lists, but not Dictionaries. But what is a serialized dictionary if not 2 lists, one for the keys, and one for the values? That’s exactly what the SerializableDictionary<TKey, TValue> does! Right before unity serializes the class, it converts its dictionary to two list, keys and values, which are than serialized by unity. Then just after deserialization those lists are converted back to a dictionary. It also comes with a neat editor drawer! It will look like this in the inspector (if the variable is public or has [SerializeField]):
+As it is commonly known, unity serializes Lists, but not Dictionaries. But what is a serialized dictionary if not 2 lists, one for the keys, and one for the values? That’s exactly what the SerializableDictionary<TKey, TValue> does! Right before Unity serializes the class, it converts its dictionary to two lists, keys and values, which are then serialized by Unity. Then just after deserialization, those lists are converted back to a dictionary. It also comes with a neat editor drawer! It will look like this in the inspector (if the variable is public or has [SerializeField]):
 
 ### Timers
 
@@ -105,14 +105,14 @@ Both types of timers have the same functionalities:
 •	ElapsedSeconds
 •	Repeat
 
-The main diference between Timer Async and Timer Coroutine is the way they work:
-Timer Async, as the name suggests, uses an asynchronous function to count the time using Task.Delay(secondsToFinish) and the ElapsedSeconds is calculated via UnityEngine.Time.time – Timer.StartTime (Timer.StartTime is set to UnityEngine.Time.time when the timer starts).
+The main difference between Timer Async and Timer Coroutine is the way they work:
+Timer Async, as the name suggests, uses an asynchronous function to count the time using Task.Delay(secondsToFinish) and the ElapsedSeconds are calculated via UnityEngine.Time.time – Timer.StartTime (Timer.StartTime is set to UnityEngine.Time.time when the timer starts).
 
-Now the Timer Coroutine uses a coroutine to count time, using yield return new WaitForSeconds(delay) and the ElapsedSeconds is also calculated via UnityEngine.Time.time – Timer.StartTime (Timer.StartTime is set to UnityEngine.Time.time when the timer starts).
+Now the Timer Coroutine uses a coroutine to count time, using yield return new WaitForSeconds(delay), and the ElapsedSeconds are also calculated via UnityEngine.Time.time – Timer.StartTime (Timer.StartTime is set to UnityEngine.Time.time when the timer starts).
 
-Aside from how they work, TimerCoroutine will instantiate 1, and only one thru the entire program execution, GameObject with the TimerManager script (It has a singleton by the way). While the Async timer will not. The Timer Async CANNOT be paused or resumed, can only be permanently stopped in repeat mode. The Timer Coroutine CAN be paused and resumed, even in repeat mode.
+Aside from how they work, TimerCoroutine will instantiate 1, and only one through the entire program execution, GameObject with the TimerManager script (It has a singleton by the way). While the Async timer will not. The Timer Async CANNOT be paused or resumed, can only be permanently stopped in repeat mode. The Timer Coroutine CAN be paused and resumed, even in repeat mode.
 
-The way I suggest looking at this is like so: The Async timer is a lightwheight more basic version of the TimerCoroutine. If you just need a timer, real quick for some real basic stuff, use the Async, if you need it to be more controllable, use the Coroutine.
+The way I suggest looking at this is like so: The Async timer is a lightweight more basic version of the TimerCoroutine. If you just need a timer, real quick for some real basic stuff, use the Async, if you need it to be more controllable, use the Coroutine.
 
 ```c#
 Timer.TimerAsync(TimerDelay, () => Debug.Log("Finished”));
@@ -143,14 +143,14 @@ Using it this way, from anywhere in the code you will be able to access TimerMan
 
 Note: AutoSingleton<T> derives from MonoBehaviour
 
-#### How it gets the instance?
+#### How does it get the instance?
 
 In some ways: First, before you call Current for the first time, it has no idea where is this instance. When you call it the first time it will do the following:
 
 
 ### Instantiate with args
 
-First off to use this, the object that you want to instantiate needs have this interface: IArgsInstantiable<>. There are a total of 10 overrides of this interface, one with no parameters, one with 1 parameter, one with 2 parameters … and one with 10 parameters. The function that this interface implements will as parameters the types passed into the interface, like so:
+First off to use this, the object that you want to instantiate needs to have this interface: IArgsInstantiable<>. There are a total of 10 overrides of this interface, one with no parameters, one with 1 parameter, one with 2 parameters … and one with 10 parameters. The function that this interface implements will as parameters the types passed into the interface, like so:
 
 ```c#
 public class TestArgInstantiable : MonoBehaviour, IArgsInstantiable<float, int, string, GameObject>
@@ -172,20 +172,20 @@ public class TestArgInstantiable : MonoBehaviour, IArgsInstantiable<float, int, 
 }
 ```
 
-This function “Initialize” will then be called just after the awake and after the object is in fact instantiated. To instantiate this object, for example, you would do it like this:
+This function “Initialize” will then be called just after the awake and after the object is instantiated. To instantiate this object, for example, you would do it like this:
 
 ```c#
 var floatIntStringGo = Molecular.Instantiate(prefab, 23.3f, 342, "I am a string", someGo);
 ```
 
-It is simple like that to use it and implement it!
+It is simple to use and implement it!
 
-In the Demo folder there is a great example of this called InstantiateWithArgsDemoObject
+In the Demo folder, there is a great example of this called InstantiateWithArgsDemoObject
 
 
 ### Vector helper methods
 
-There are only extension methods, and the class they are contained is the VectorHelperExtensionMethods. So they are all used like this: myVector.METHOD()
+There are only extension methods, and the class they are contained in is the VectorHelperExtensionMethods. So they are all used like this: myVector.METHOD()
 
 There are methods like
 ```c#
@@ -200,7 +200,7 @@ myVec3Int.ToVec2();
 
 ### Color helper methods
 
-The ColorHelper static class provides helper functions for the Color class in unity. It contains both static methods and extension methods for colors, here are some of them, for the complete list, check the documentation
+The ColorHelper static class provides helper functions for the Color class in Unity. It contains both static methods and extension methods for colors, here are some of them, for the complete list, check the documentation
 
 ```c#
 ColorHelper.Random();
@@ -230,7 +230,7 @@ This class offers useful methods for working with rich text strings and some for
 
 There are both rich text methods and normal string manipulation methods, the rich text ones have two overloads, one using strings and one with StringBuilder, which is more efficient for calling more than one methods in a chain like in the example above
 
-The non rich text methods are:
+The non-rich text methods are:
 ```c#
 
 myString.ToColor()
@@ -297,7 +297,7 @@ var (min, max) = myRange;
 and it also implements implicit operators so you can convert your range to and from a Range.
 
 #### RangeInteger
-The Range class inherits from Range<int> and implement some extra useful methods and properties:
+The Range class inherits from Range<int> and implements some extra useful methods and properties:
 •	MidPoint :int
 
 •	Lerp(float t) : int
@@ -309,7 +309,7 @@ The Range class inherits from Range<int> and implement some extra useful methods
 #### RangeVector
 The RangeVector classes (RangeVector2, RangeVector3, RangeVetor2Int, RangeVector3Int) all derive from a tuple, like this: RangeVector2 : Range<(float x, float y)>. Because Vector doesn’t implement IComparable, that is needed. Apart from that, it works normally, as the properties are overridden to return a Vector and not a tuple.
 
-The RangeVector classes implements the following:
+The RangeVector classes implement the following:
 •	Lerp(float t) : Vector
 •	LerpUnclamped(float t) : Vector
 •	InverseLerp(Vector value) : float
@@ -317,16 +317,16 @@ The RangeVector classes implements the following:
 •	Random() : Vector
 •	GetBoundingBox() : Bounds
 
-The int version of these vector ranges also implement GetBoundingIntBox() :BoundsInt
+The int version of these vector ranges also implements GetBoundingIntBox() :BoundsInt
 
 
 ### Tag wrapper
 
-This provides a safe tag wrapper that makes so you don’t need to use string bindings at all while working with tags in unity! One less point of failure! Just declare as a field in your MonoBehaviour a tag like this: public Tag myTag; and check out the editor. It should look like this:
+This provides a safe tag wrapper that makes it so you don’t need to use string bindings at all while working with tags in Unity! One less point of failure! Just declare as a field in your MonoBehaviour a tag like this: public Tag myTag; and check out the editor. It should look like this:
 
 ![](Media/TagWrapper)
 
-You can than call 
+You can then call 
 
 ```c#
    tagTest.CompareTag(gameObject);
@@ -335,7 +335,7 @@ You can than call
 ```
 
 You can also get the tag as a string using the Tag.TagName property
-It also offer implicit operators to do the conversion from Tag to string and string to Tag.
+It also offers implicit operators to do the conversion from Tag to string and string to Tag.
 
 
 ### TypeVariable
@@ -345,16 +345,16 @@ There are two ways of using the type variable: TypeVariable<Base> and [TypeVaria
 ![](Media/TypeVar.png)
  
 
-If you go back to the first section of this manual, PolymorphicVariable<Base>, you will see that it uses this in its implementation. In the code you access the type via the implicit conversion or using TypeVariable.Type.
+If you go back to the first section of this manual, PolymorphicVariable<Base>, you will see that it uses this in its implementation. In the code, you access the type via the implicit conversion or using TypeVariable.Type.
 
 
 ### PlayStatus
 
-This is the simplest class in this library. When the game scene load, it sets its IsPlaying property to true. Yes, it does the same than Application.IsPlaying. This class only exists because not always you can call Application.IsPlaying.
+This is the simplest class in this library. When the game scene loads, it sets its IsPlaying property to true. Yes, it does the same as Application.IsPlaying. This class only exists because not always you can call Application.IsPlaying.
 
 ### Maths
 
-This is a static class that implements some little useful function involving maths. Here are the functions:
+This is a static class that implements some useful functions involving maths. Here are the functions:
 
 •	Lerp(float a, float b, float t) :float
 •	InvLerp(float a, float, b, float value) :float
@@ -371,7 +371,7 @@ This is a static class that implements some little useful function involving mat
 •	IsWithin(this float v, float min, float max) :bool
 •	IsBetween(this float v, float min, float max) :bool
 
-Lerp stands for Linear interpolation. The lerp functions here are unclamped, for the clamped ones and the ones for Vectors check UnityEngine.Mathf.Lerp and Vector.Lerp.
+Lerp stands for Linear interpolation. The Lerp functions here are unclamped, for the clamped ones and the ones for Vectors check UnityEngine.Mathf.Lerp and Vector.Lerp.
 
 The InverseLerp methods do the opposite of the lerp, instead of getting a value that is t% of the way between a and b, it gets the t% value of a given value v between a and b. For a more in-depth explanation of this, check [this](https://youtu.be/NzjF1pdlK7Y?t=539) video by Freya Holmer.
 
@@ -391,7 +391,7 @@ The class provides 3 properties:
 
 ### EditorHelper
 
-This class offers useful functions for handling editor drawers and custom inspectors. Most of the methods are used internally, but as they still are pretty useful, the class and methods are left as public. The methods can be split up in 3 categories: UIElements; IMGUI; General Utilities;
+This class offers useful functions for handling editor drawers and custom inspectors. Most of the methods are used internally, but as they still are pretty useful, the class and methods are left as public. The methods can be split up in 3 categories: UIElements; IMGUI; and General Utilities;
 
 For all the methods please check the documentation
 
